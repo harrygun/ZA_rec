@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pylab as pl
-#import pynbody as pn
+import pynbody as pn
 import matplotlib.colors as colors
 
 import genscript.progcontrol as pc
@@ -10,6 +10,7 @@ import genscript.mpiutil as mpi
 import cosmology.power  as power
 import genscript.read as read
 import genscript.myplot as mpl
+import genscript.read as rd
 
 import lagrangian.lpt_rec as lrec
 import misc.io as mio
@@ -85,6 +86,18 @@ def Testing_portal(p, data, import_data_type='field'):
 
 	            pl.show()
 
+
+    if False:
+        # ->> testing <<- #
+        pl.plot(y[:,:,100]*p.nbin, z[:,:,100]*p.nbin, 'k.', alpha=0.3)
+    
+        #_dd=np.swapaxes(den[100,:,:], 0, 1)
+        #_dd=den[100,:,:]
+        _dd=np.flipud(den[100,:,:])
+        #pl.pcolormesh(_dd, norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()), alpha=0.7)
+        pl.imshow(_dd, norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()), alpha=0.8)
+    
+        pl.show()
     return
 
 
@@ -96,7 +109,7 @@ def Testing_portal(p, data, import_data_type='field'):
 
 '''-------------------------------------------------------------------------- '''
 
-def import_data(p, droot_part, droot_field, fn, import_data_type='all'):
+def import_MIP_data(p, droot_part, droot_field, fn, import_data_type='all'):
 
     print ' >> Importing data ...'
 
@@ -110,9 +123,9 @@ def import_data(p, droot_part, droot_field, fn, import_data_type='all'):
         _x, _y, _z = mio.read_cgal(droot_part, fn, npart, import_type='position')
         print _x.shape
 
-        x=_x.reshape(p.nbin, p.nbin, p.nbin)
-        y=_y.reshape(p.nbin, p.nbin, p.nbin)
-        z=_z.reshape(p.nbin, p.nbin, p.nbin)
+        x=_x.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
+        y=_y.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
+        z=_z.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
         pos=np.array([x, y, z])
     
     # ->> import field <<- #
@@ -129,6 +142,23 @@ def import_data(p, droot_part, droot_field, fn, import_data_type='all'):
         return den
 
 
+def import_gadget_DTFE(p, fn_part, fn_field, import_data_type='all'):
+
+    s=pn.load(fn_part)
+    # ->> convert from kpc/h to Mpc/h <<- #
+    pos = np.reshape(np.swapaxes(s['pos']/1.e3, 0, 1), (3, p.nbin, p.nbin, p.nbin))
+    print 'pos.shape', pos.shape, 'pos boundary:', pos[0].min(), pos[1].max()
+
+    # ->> field
+    den=rd.rgrid(fn_field, ngrid=p.nbin, dtype='float', comp=1)
+    print 'den shape:', den.shape
+
+    if import_data_type=='all':
+        return pos, den
+    elif import_data_type=='particle':
+        return pos
+    elif import_data_type=='field':
+        return den
 
 
 
@@ -136,18 +166,19 @@ def import_data(p, droot_part, droot_field, fn, import_data_type='all'):
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'a_init': 1e-2,
-    'smooth_R': 1.,
+    'smooth_R': 10.,
     'smooth_type': 'Gaussian', 
     'smooth_R_list_type':  'linear', 
     'boxsize': 32.,
     'nbin':    256, 
+    'import_format':   'gadget_DTFE',
     }
 
 prog_control={
     #-------------------------------#
-    'do_LPT_rec': False,
+    'do_LPT_rec': True,
     #-------------------------------#
-    'do_testing': True, 
+    'do_testing': False, 
     }
 
 
@@ -161,19 +192,34 @@ if __name__=='__main__':
     p=pc.prog_init(**init_dict)
 
     root='../../workspace/result/'
-    droot_part='/mnt/scratch-lustre/xwang/data/velinv/MIP/particle/'
-    droot_field='/mnt/scratch-lustre/xwang/data/velinv/MIP/256/raw/'
+
 
     ''' -------------------------------------------------
 	-------------------------------------------------     
     '''
-    #import_type='all'
-    import_type='field'
+    import_type='all'
+    #import_type='field'
 
-    # ->> imporot particles <<- #
-    p.nbin=256
-    fn='REAL_00-00-00'
-    dd=import_data(p, droot_part, droot_field, fn, import_data_type=import_type)
+    # ->> imporot data <<- #
+    if p.import_format=='MIP':
+        p.nbin=256
+	p.boxsize=32.
+        droot_part='/mnt/scratch-lustre/xwang/data/velinv/MIP/particle/'
+        droot_field='/mnt/scratch-lustre/xwang/data/velinv/MIP/256/raw/'
+        fn='REAL_00-00-00'
+        dd=import_MIP_data(p, droot_part, droot_field, fn, import_data_type=import_type)
+
+    # ->>
+    if p.import_format=='gadget_DTFE':
+        p.nbin=256
+	p.boxsize=100.
+        droot_part='/mnt/scratch-lustre/xwang/data/velinv/cmpc/gadget/'
+        droot_field='/mnt/scratch-lustre/xwang/data/velinv/cmpc/field/'
+
+	fn_part=droot_part+'snap100Mpc256_z0'
+	fn_field=droot_field+'snap100Mpc256_z0.den'
+
+        dd=import_gadget_DTFE(p, fn_part, fn_field, import_data_type=import_type)
 
 
     ''' -------------------------------------------------
@@ -191,25 +237,33 @@ if __name__=='__main__':
         delta = den/dmean -1.
 	print 'data shape:', pos.shape, den.shape, delta.shape
 
-        if False:
-	    # ->> testing <<- #
-	    pl.plot(y[:,:,100]*p.nbin, z[:,:,100]*p.nbin, 'k.', alpha=0.3)
 
-	    #_dd=np.swapaxes(den[100,:,:], 0, 1)
-	    #_dd=den[100,:,:]
-	    _dd=np.flipud(den[100,:,:])
-            #pl.pcolormesh(_dd, norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()), alpha=0.7)
-            pl.imshow(_dd, norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()), alpha=0.8)
+
+        ''' ->> perform Lagrangian Reconstruction <<-  '''
+        disp = lrec.lag_rec(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type)
+
+	save_data=True
+	if save_data==True:
+
+
+        if True:
+	    # ->> comparison plot <<- #
+
+            nplt = 2
+            ncol = 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=10.,gap_size=0.5,return_figure=True)
+
+            #ax[0].imshow(np.flipud(phi[100,:,:]))
+	    ax[0].plot(pos[1,:,:,100], pos[2,:,:,100], 'k.', alpha=0.3)
+	    ax[1].plot(disp[1,:,:,100], disp[2,:,:,100], 'r.', alpha=0.3)
 
 	    pl.show()
 
 
-        ''' ->> perform Lagrangian Reconstruction <<-  '''
-        phi, si = lrec.lag_rec(p, pos, delta, boxsize=p.boxsize, smooth_R=p.smooth_R, \
-                               smooth_type=p.smooth_type)
+
 
         # ->> if making plots <<- #
-        if True:
+        if False:
             nplt = 4
             ncol = 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=2.,gap_size=0.15,return_figure=True)
