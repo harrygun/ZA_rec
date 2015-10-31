@@ -44,8 +44,14 @@ elif machine=='cita':
     library_dirs=[cython_gsl.get_library_dir(), './', "../c/"]    ) , 
     ]
 
+    module = [
+    Extension("cic", ["cic.pyx"], 
+    libraries=cython_gsl.get_libraries(),
+    include_dirs=[ np.get_include(), cython_gsl.get_cython_include_dir()], 
+    library_dirs=[cython_gsl.get_library_dir(), './']   ) , 
+    ]
 
-setup( name = 'Cgal Wrapper', cmdclass = {'build_ext': build_ext},
+setup( name = 'misc cython routine', cmdclass = {'build_ext': build_ext},
        ext_modules = module)
 
 #-------

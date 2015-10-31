@@ -79,10 +79,12 @@ if __name__=='__main__':
         fn=root+fn_import
         write_cgal(fn, pos, vel)
 
-    if True:
-        # ->> testing CIC <<- #
+    if False:
         s=pn.load(fn_part)
         # ->> convert from kpc/h to Mpc/h <<- #
         pos = s['pos']/1.e3
         print 'pos.shape', pos.shape, 'pos boundary:', pos[0].min(), pos[1].max()
 
+
+    if True:
+        # ->> testing CIC <<- #
