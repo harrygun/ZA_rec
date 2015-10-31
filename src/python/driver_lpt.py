@@ -162,11 +162,18 @@ def import_gadget_DTFE(p, fn_part, fn_field, import_data_type='all'):
 
 
 
+def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
+
+    pos, v=read_cita_simulation(fn, npart)
+
+    return
+
+
 
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'a_init': 1e-2,
-    'smooth_R': 10.,
+    'smooth_R': 15.,
     'smooth_type': 'Gaussian', 
     'smooth_R_list_type':  'linear', 
     'boxsize': 32.,
@@ -221,6 +228,18 @@ if __name__=='__main__':
 
         dd=import_gadget_DTFE(p, fn_part, fn_field, import_data_type=import_type)
 
+    if p.import_format=='cita_simulation':
+        p.nbin=256
+	p.boxsize=1000.
+        droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
+        droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
+
+	fn_part=droot_part+'0.000xv0.dat'
+	fn_field=droot_field+''
+
+        dd=import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+
+
 
     ''' -------------------------------------------------
                ->>      do some testing      <<- 
@@ -244,6 +263,7 @@ if __name__=='__main__':
 
 	save_data=True
 	if save_data==True:
+	    pass
 
 
         if True:

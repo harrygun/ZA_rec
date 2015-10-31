@@ -1,4 +1,5 @@
 import os, sys
+import array as arr
 import numpy as np
 import cyth.cgalio as cg
 import genscript.mpiutil as mpi
@@ -42,6 +43,31 @@ def read_cgal(root, fn, npart, import_type='position'):
         return x, y, z
     elif import_type=='velocity':
         return vd
+
+
+
+
+def read_cita_simulation(fn, npt):
+
+    F=open(fn, 'rb')
+
+    head=F.read(48)
+    _d = arr.array('f')
+    _d.fromfile(F, npt**3*6)
+
+    #d=np.array(_d).reshape(npt,npt,npt,6)
+    d=np.array(_d).reshape(npt**3,6)
+    pos, vel=d[...,:3], d[...,3:6]
+
+    F.close()
+
+    return pos, vel
+
+
+
+
+
+
 
 """
 def gadget2cgal(root, fn):
@@ -110,6 +136,9 @@ def cgal2delaunay(p, root, files, nbin):
 
 
     return
+
+
+
 
 
 
