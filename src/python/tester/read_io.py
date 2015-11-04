@@ -1,6 +1,7 @@
 import matplotlib
 matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as pl
+import matplotlib.colors as colors
 
 import numpy as np
 import array as arr
@@ -61,6 +62,7 @@ if __name__=='__main__':
 
     #pos, vel =read_test(fn,npt)
     pos, vel = mio.read_cita_simulation(fn, npt)
+    print 'pos shape', pos.shape
 
 
     #->>  <<- #
@@ -88,3 +90,19 @@ if __name__=='__main__':
 
     if True:
         # ->> testing CIC <<- #
+        npart=pos.shape[0]
+	nbin=npt
+        d=mcic.cic(npart, nbin, pos, pmass=1.e5)
+	print 'd shape:', d.shape
+
+        fn_out='0.000xv0.dat.den.npz'
+	np.savez(fn_out, d=d)
+         
+        if False:
+            fig=pl.figure(figsize=(20, 20))
+            ax=fig.add_subplot(111)
+
+	    data=d[...,100]+1e-3
+            ax.imshow(np.flipud(data), norm=colors.LogNorm(vmin=data.min(),vmax=data.max()) )
+
+            fig.savefig('cita_test.png')

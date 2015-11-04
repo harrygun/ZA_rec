@@ -1,8 +1,12 @@
+import matplotlib
+#matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
+
+import matplotlib.pyplot as pl
+import matplotlib.colors as colors
+
 import os
 import numpy as np
-import pylab as pl
 import pynbody as pn
-import matplotlib.colors as colors
 
 import genscript.progcontrol as pc
 from genscript.extendclass import *
@@ -15,6 +19,7 @@ import genscript.read as rd
 import lagrangian.lpt_rec as lrec
 import misc.io as mio
 import fourier.potential as ptt
+import misc.file_import as fimp
 
 
 
@@ -107,67 +112,6 @@ def Testing_portal(p, data, import_data_type='field'):
 
 
 
-'''-------------------------------------------------------------------------- '''
-
-def import_MIP_data(p, droot_part, droot_field, fn, import_data_type='all'):
-
-    print ' >> Importing data ...'
-
-    if import_data_type=='all':
-        datype=['particle', 'field']
-    else:
-        datype=[import_data_type]
-
-    if 'particle' in datype:
-        npart=int(p.nbin**3)
-        _x, _y, _z = mio.read_cgal(droot_part, fn, npart, import_type='position')
-        print _x.shape
-
-        x=_x.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
-        y=_y.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
-        z=_z.reshape(p.nbin, p.nbin, p.nbin)*p.boxsize
-        pos=np.array([x, y, z])
-    
-    # ->> import field <<- #
-    if 'field' in datype:
-        fn_d = droot_field+fn+'.'+str(p.nbin)+'.fvol'
-        den=read.rgrid(fn_d, ngrid=p.nbin, dtype='float', comp=1)
-        print 'imported density shape:', den.shape
-
-    if import_data_type=='all':
-        return pos, den
-    elif import_data_type=='particle':
-        return pos
-    elif import_data_type=='field':
-        return den
-
-
-def import_gadget_DTFE(p, fn_part, fn_field, import_data_type='all'):
-
-    s=pn.load(fn_part)
-    # ->> convert from kpc/h to Mpc/h <<- #
-    pos = np.reshape(np.swapaxes(s['pos']/1.e3, 0, 1), (3, p.nbin, p.nbin, p.nbin))
-    print 'pos.shape', pos.shape, 'pos boundary:', pos[0].min(), pos[1].max()
-
-    # ->> field
-    den=rd.rgrid(fn_field, ngrid=p.nbin, dtype='float', comp=1)
-    print 'den shape:', den.shape
-
-    if import_data_type=='all':
-        return pos, den
-    elif import_data_type=='particle':
-        return pos
-    elif import_data_type=='field':
-        return den
-
-
-
-def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
-
-    pos, v=read_cita_simulation(fn, npart)
-
-    return
-
 
 
 param_dict={
@@ -178,7 +122,9 @@ param_dict={
     'smooth_R_list_type':  'linear', 
     'boxsize': 32.,
     'nbin':    256, 
-    'import_format':   'gadget_DTFE',
+    #'import_format':   'gadget_DTFE',
+    'import_format':   'cita_simulation',
+    'save_displaced_particles':    True,
     }
 
 prog_control={
@@ -214,7 +160,7 @@ if __name__=='__main__':
         droot_part='/mnt/scratch-lustre/xwang/data/velinv/MIP/particle/'
         droot_field='/mnt/scratch-lustre/xwang/data/velinv/MIP/256/raw/'
         fn='REAL_00-00-00'
-        dd=import_MIP_data(p, droot_part, droot_field, fn, import_data_type=import_type)
+        dd=fimp.import_MIP_data(p, droot_part, droot_field, fn, import_data_type=import_type)
 
     # ->>
     if p.import_format=='gadget_DTFE':
@@ -226,7 +172,7 @@ if __name__=='__main__':
 	fn_part=droot_part+'snap100Mpc256_z0'
 	fn_field=droot_field+'snap100Mpc256_z0.den'
 
-        dd=import_gadget_DTFE(p, fn_part, fn_field, import_data_type=import_type)
+        dd=fimp.import_gadget_DTFE(p, fn_part, fn_field, import_data_type=import_type)
 
     if p.import_format=='cita_simulation':
         p.nbin=256
@@ -235,9 +181,10 @@ if __name__=='__main__':
         droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
 
 	fn_part=droot_part+'0.000xv0.dat'
-	fn_field=droot_field+''
+	fn_field=droot_field+'0.000xv0.dat.den.npz'
+	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
 
-        dd=import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
 
 
 
@@ -260,10 +207,14 @@ if __name__=='__main__':
 
         ''' ->> perform Lagrangian Reconstruction <<-  '''
         disp = lrec.lag_rec(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type)
+	#print 'displacement max/min:', np.max(disp), np.min(disp)
 
-	save_data=True
-	if save_data==True:
-	    pass
+        if p.save_displaced_particles:
+
+	    try: fn_write
+	    except: pass
+
+	    np.savez(fn_write, pos_displaced=disp)
 
 
         if True:
@@ -278,8 +229,7 @@ if __name__=='__main__':
 	    ax[1].plot(disp[1,:,:,100], disp[2,:,:,100], 'r.', alpha=0.3)
 
 	    pl.show()
-
-
+            #fig.savefig('rect.png')
 
 
         # ->> if making plots <<- #

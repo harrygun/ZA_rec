@@ -1,6 +1,7 @@
 import os
 import numpy as np
-import pylab as pl
+#import pylab as pl
+import matplotlib.pyplot as pl
 #import pynbody as pn
 
 import genscript.progcontrol as pc
@@ -20,11 +21,21 @@ def get_displacement(p, m, boxsize, smooth_R=None, smooth_type=None):
     # ->> 
     phi=ptt.Poisson3d(m, boxsize=boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
 
+    #pl.imshow(phi[:,:,100])
+    #pl.show()
+    #quit()
+
     # ->> inverse of ZA: Psi_i = -partial_i * Laplacian^{-1} delta(tau) <<- #
     dl=p.boxsize/np.float(p.nbin)
     si = np.array(np.gradient(phi))/dl
 
     print 'dl=', dl, '|si|<', np.max(np.fabs(si))
+
+    if False:
+        pl.hist(si.flatten(), bins=20)
+        pl.show()
+        #print 'histogram:', hist
+
 
     return phi, si
 
