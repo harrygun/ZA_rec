@@ -7,14 +7,15 @@ import numpy as np
 import array as arr
 import pynbody as pn
 
+import genscript.progcontrol as pc
+from genscript.extendclass import *
+
 import misc.io as mio
 import misc.cyth.cgalio as cg
 import misc.cic as mcic
 
 
 import misc.file_import as fimp
-
-
 
 
 
@@ -49,7 +50,6 @@ if __name__=='__main__':
     p=pc.prog_init(**init_dict)
 
     root='../../workspace/result/'
-
 
     ''' -------------------------------------------------
 	-------------------------------------------------     
@@ -87,28 +87,31 @@ if __name__=='__main__':
 	fn_part=droot_part+'0.000xv0.dat'
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
 	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
+	fn_rec_write=droot_part+'0.000xv0.dat.displaced.den.npz'
 
-        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+        #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+	pos= np.load(fn_write)['pos_displaced'].reshape(p.nbin**3, 3)
+	print 'pos.shape', pos.shape
 
 
     '''----------------------------------------------------------------------------- '''
 
 
+    npt=pos.shape[0]
+    print 'npart=', npt, 'nbin=', p.nbin, 
+
+    d=mcic.cic(npt, p.nbin, pos, pmass=1.e5)
+    print 'd shape:', d.shape
+
+    np.savez(fn_rec_write, d=d)
+
+
     if True:
-        # ->> testing CIC <<- #
-        npart=pos.shape[0]
-	nbin=npt
-        d=mcic.cic(npart, nbin, pos, pmass=1.e5)
-	print 'd shape:', d.shape
-
-        fn_out='0.000xv0.dat.den.npz'
-	np.savez(fn_out, d=d)
-         
-        if False:
-            fig=pl.figure(figsize=(20, 20))
-            ax=fig.add_subplot(111)
-
-	    data=d[...,100]+1e-3
-            ax.imshow(np.flipud(data), norm=colors.LogNorm(vmin=data.min(),vmax=data.max()) )
-
-            fig.savefig('cita_test.png')
+        fig=pl.figure(figsize=(20, 20))
+        ax=fig.add_subplot(111)
+    
+        data=d[...,100]+1e-3
+        ax.imshow(np.flipud(data), norm=colors.LogNorm(vmin=data.min(),vmax=data.max()) )
+    
+        #fig.savefig('cita_test.png')
+	pl.show()

@@ -214,7 +214,7 @@ if __name__=='__main__':
 	    try: fn_write
 	    except: pass
 
-	    np.savez(fn_write, pos_displaced=disp)
+	    np.savez(fn_write, pos_displaced=np.rollaxis(disp, 0, len(disp.shape)) )
 
 
         if True:

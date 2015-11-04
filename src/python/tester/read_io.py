@@ -92,13 +92,15 @@ if __name__=='__main__':
         # ->> testing CIC <<- #
         npart=pos.shape[0]
 	nbin=npt
+        print 'npart=', npart, 'nbin=', nbin, pos.shape
+
         d=mcic.cic(npart, nbin, pos, pmass=1.e5)
 	print 'd shape:', d.shape
 
         fn_out='0.000xv0.dat.den.npz'
 	np.savez(fn_out, d=d)
          
-        if False:
+        if True:
             fig=pl.figure(figsize=(20, 20))
             ax=fig.add_subplot(111)
 
