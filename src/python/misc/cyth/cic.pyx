@@ -52,5 +52,43 @@ cpdef cic_sum(int npart, int nbin, np.ndarray[np.double_t, ndim=3]d, \
         d[i,j1,k1]+=tx*dy*dz
         d[i1,j1,k1]+=dx*dy*dz
 
-    return 
+    return
 
+
+
+
+
+
+cpdef density(long long npart, int nbin, np.ndarray[np.double_t, ndim=2]pos, double mass): 
+
+    cdef:
+        int i
+        long long Ngrid[3]
+        double masstot
+
+    # ->> initialization <<- #
+    delta=np.zeros((nbin, nbin, nbin))
+
+    for i in range(3):
+        Ngrid[i]=<long long>nbin 
+
+    # ->> call density <<- #
+    masstot=density(<float *>pos.data, <float *>delta.data, <long long> npart, \
+                    <long long> Ngrid[3], <double> mass)
+
+    # ->>
+    '''
+    aa=0;
+    x1=(xmax-xmin)/Ngridx/HubbleParam
+    y1=(ymax-ymin)/Ngridy/HubbleParam
+    z1=(zmax-zmin)/Ngridz/HubbleParam
+    for(i=0;i<=Ngridx-1;i++)
+       for(j=0;j<=Ngridy-1;j++)
+          for(k=0;k<=Ngridz-1;k++){
+             delta[i][j][k]=delta[i][j][k]/(x1*y1*z1)/rhom*1e10/HubbleParam-1.
+             aa+=delta[i][j][k]
+             }
+    printf("mean density %lg\n",aa/Ngridx/Ngridy/Ngridz);
+    '''
+
+    return delta

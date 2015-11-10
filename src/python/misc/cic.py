@@ -4,7 +4,7 @@ import cyth.cic as ccic
 
 
 
-def cic(npart, nbin, position, pmass=1e9):
+def cic(cp, npart, nbin, boxsize, position, pmass=1e9):
     ''' ->> return the cloud-in-cell density <<- '''
 
     # ->> regulate particle positions <<- #
@@ -14,13 +14,14 @@ def cic(npart, nbin, position, pmass=1e9):
 
     for i in range(3):
         xmax[i], xmin[i] = np.max(position[...,i]), np.min(position[...,i])
+        #xmax, xmin = np.max(xmax_, boxsize), np.min(xmin, )
+
         dl[i]=(xmax[i]-xmin[i])/float(nbin)
         pos[...,i]= (position[...,i]-xmin[i])/dl[i]
 
     #print 'dl=', dl
 
     ''' ->> CIC density estimation <<- '''
-    mass=pmass
     d=np.zeros((nbin, nbin, nbin))
 
     # ->> summation over all particles <<- #
@@ -31,4 +32,16 @@ def cic(npart, nbin, position, pmass=1e9):
     #print d[np.where(d!=0)]
 
 
-    return d*mass
+    rhom=(2.7752e11)*cp.h**2.*cp.omem 
+
+    dd=ccic.density( , rhom)
+
+    delta=delta/cp.h**2./rhom*1e10/cp.h-1.
+
+
+
+
+
+
+
+    return d

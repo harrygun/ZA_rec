@@ -100,7 +100,7 @@ if __name__=='__main__':
     npt=pos.shape[0]
     print 'npart=', npt, 'nbin=', p.nbin, 
 
-    d=mcic.cic(npt, p.nbin, pos, pmass=1.e5)
+    d=mcic.cic(npt, p.nbin, p.boxsize, pos, pmass=1.e5)
     print 'd shape:', d.shape
 
     np.savez(fn_rec_write, d=d)
