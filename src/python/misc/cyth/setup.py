@@ -35,6 +35,7 @@ elif machine=='gwln':
 
 
 elif machine=='cita':
+
     module = [
     Extension("cgalio", ["cgalio.pyx", "../c/cgalio.c"], 
     libraries=cython_gsl.get_libraries(),
@@ -42,14 +43,14 @@ elif machine=='cita':
                   np.get_include(), cython_gsl.get_cython_include_dir(), 
 		  "../c/"], 
     library_dirs=[cython_gsl.get_library_dir(), './', "../c/"]    ) , 
+
+    Extension("cic", ["cic.pyx", "../c/ccic.c"], 
+    libraries=cython_gsl.get_libraries(),
+    include_dirs=[ np.get_include(), cython_gsl.get_cython_include_dir(), '../c/'], 
+    library_dirs=[cython_gsl.get_library_dir(), './', '../c/']   ) , 
+
     ]
 
-    module = [
-    Extension("cic", ["cic.pyx"], 
-    libraries=cython_gsl.get_libraries(),
-    include_dirs=[ np.get_include(), cython_gsl.get_cython_include_dir()], 
-    library_dirs=[cython_gsl.get_library_dir(), './']   ) , 
-    ]
 
 setup( name = 'misc cython routine', cmdclass = {'build_ext': build_ext},
        ext_modules = module)

@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
+#matplotlib.use('Agg')  # Must be before importing matplotlib.pyplot or pylab!
 import matplotlib.pyplot as pl
 import matplotlib.colors as colors
 
@@ -91,7 +91,8 @@ if __name__=='__main__':
 
         #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
 	pos= np.load(fn_write)['pos_displaced'].reshape(p.nbin**3, 3)
-	print 'pos.shape', pos.shape
+	print 'pos.shape', pos.shape, type(pos[0,0])
+
 
 
     '''----------------------------------------------------------------------------- '''
@@ -100,7 +101,7 @@ if __name__=='__main__':
     npt=pos.shape[0]
     print 'npart=', npt, 'nbin=', p.nbin, 
 
-    d=mcic.cic(npt, p.nbin, p.boxsize, pos, pmass=1.e5)
+    d=mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos, pmass=1.e5)
     print 'd shape:', d.shape
 
     np.savez(fn_rec_write, d=d)
@@ -110,7 +111,7 @@ if __name__=='__main__':
         fig=pl.figure(figsize=(20, 20))
         ax=fig.add_subplot(111)
     
-        data=d[...,100]+1e-3
+        data=d[...,100]+1.+1e-3
         ax.imshow(np.flipud(data), norm=colors.LogNorm(vmin=data.min(),vmax=data.max()) )
     
         #fig.savefig('cita_test.png')

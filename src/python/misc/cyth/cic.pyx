@@ -1,6 +1,6 @@
-cimport numpy as np
 import numpy as np
-
+cimport numpy as np
+cimport ccic as ccic
 
 
 cpdef cic_sum(int npart, int nbin, np.ndarray[np.double_t, ndim=3]d, \
@@ -59,36 +59,22 @@ cpdef cic_sum(int npart, int nbin, np.ndarray[np.double_t, ndim=3]d, \
 
 
 
-cpdef density(long long npart, int nbin, np.ndarray[np.double_t, ndim=2]pos, double mass): 
+cpdef density_cyth(npart, nbin, position, mass): 
 
     cdef:
         int i
-        long long Ngrid[3]
         double masstot
+        np.ndarray[np.float32_t, ndim=2] pos
+        np.ndarray[np.float32_t, ndim=3] delta
 
     # ->> initialization <<- #
-    delta=np.zeros((nbin, nbin, nbin))
+    delta=np.ascontiguousarray(np.zeros((nbin, nbin, nbin)), dtype=np.float32)
+    pos=np.ascontiguousarray(position.astype(np.float32), dtype=np.float32)
 
-    for i in range(3):
-        Ngrid[i]=<long long>nbin 
 
     # ->> call density <<- #
-    masstot=density(<float *>pos.data, <float *>delta.data, <long long> npart, \
-                    <long long> Ngrid[3], <double> mass)
+    masstot=ccic.density(<float *>pos.data, <float *>delta.data, <long long> npart, \
+                    <long long> nbin, <double> mass)
 
-    # ->>
-    '''
-    aa=0;
-    x1=(xmax-xmin)/Ngridx/HubbleParam
-    y1=(ymax-ymin)/Ngridy/HubbleParam
-    z1=(zmax-zmin)/Ngridz/HubbleParam
-    for(i=0;i<=Ngridx-1;i++)
-       for(j=0;j<=Ngridy-1;j++)
-          for(k=0;k<=Ngridz-1;k++){
-             delta[i][j][k]=delta[i][j][k]/(x1*y1*z1)/rhom*1e10/HubbleParam-1.
-             aa+=delta[i][j][k]
-             }
-    printf("mean density %lg\n",aa/Ngridx/Ngridy/Ngridz);
-    '''
 
     return delta

@@ -40,9 +40,18 @@ def get_displacement(p, m, boxsize, smooth_R=None, smooth_type=None):
     return phi, si
 
 
+def get_shifted():
+
+    return
 
 
-def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None): 
+
+
+
+_rect_type_list_=['', ]
+
+
+def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='displaced'): 
     # -> reconstruction <<- #
 
     phi, si=get_displacement(p, map, p.boxsize, smooth_R=smooth_R, smooth_type=smooth_type)

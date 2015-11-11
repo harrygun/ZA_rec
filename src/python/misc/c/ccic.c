@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-//include "./nrsrc/nrutil.h"
 
 
 
@@ -20,7 +19,7 @@
 
 
 
-double density(float *Pos, float *delta, long long NDM, long long Ngrid[3], double mass) 
+double density(float *Pos, float *delta, long long NDM, long long Ngrid, double mass) 
 {
 
         long long ip, Ngridx, Ngridy, Ngridz;
@@ -28,9 +27,9 @@ double density(float *Pos, float *delta, long long NDM, long long Ngrid[3], doub
         float xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
         double aa,masstot;
 
-        Ngridx=Ngrid[0];
-        Ngridy=Ngrid[1];
-        Ngridz=Ngrid[2];
+        Ngridx=Ngrid;
+        Ngridy=Ngrid;
+        Ngridz=Ngrid;
 
 
         masstot=0.0;
@@ -38,9 +37,9 @@ double density(float *Pos, float *delta, long long NDM, long long Ngrid[3], doub
 
         for (ip=1;ip<=NDM;ip++) 
             {
-            i=(int)Pos[ip*ncol+0]; xc=(float)i;
-            j=(int)Pos[ip*ncol+1]; yc=(float)j;
-            k=(int)Pos[ip*ncol+2]; zc=(float)k;
+            i=(int)Pos[ip*p_ncol+0]; xc=(float)i;
+            j=(int)Pos[ip*p_ncol+1]; yc=(float)j;
+            k=(int)Pos[ip*p_ncol+2]; zc=(float)k;
 
             if(i<0) i=i+Ngridx;
             if(j<0) j=j+Ngridy;
@@ -50,9 +49,9 @@ double density(float *Pos, float *delta, long long NDM, long long Ngrid[3], doub
             if(j>=Ngridy) j=j-Ngridy;
             if(k>=Ngridz) k=k-Ngridz;
 
-            dx=fabs(Pos[ip*ncol+0]-xc); tx=fabs(1.0-dx);
-            dy=fabs(Pos[ip*ncol+1]-yc); ty=fabs(1.0-dy);
-            dz=fabs(Pos[ip*ncol+2]-zc); tz=fabs(1.0-dz);
+            dx=fabs(Pos[ip*p_ncol+0]-xc); tx=fabs(1.0-dx);
+            dy=fabs(Pos[ip*p_ncol+1]-yc); ty=fabs(1.0-dy);
+            dz=fabs(Pos[ip*p_ncol+2]-zc); tz=fabs(1.0-dz);
 
             i1=i+1;  
             j1=j+1; 
