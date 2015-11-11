@@ -40,7 +40,28 @@ def get_displacement(p, m, boxsize, smooth_R=None, smooth_type=None):
     return phi, si
 
 
-def get_shifted():
+
+def get_shifted(p, si, boxsize, ):
+    ''' ->> shift uniform grid after obtaining '''
+
+    lgrid=np.linspace(0, boxsize, p.nbin, endpoint=False)
+    print 'lgrid shape:', lgrid.shape
+
+    # ->>  <<- #
+    grid=mar.meshgrid(lgrid, lgrid, lgrid)
+    print 'meshgrid shape:', grid.shape, si.shape
+
+
+    shifted=np.zeros((3, p.nbin, p.nbin, p.nbin))
+    for i in range(3):
+        shift_=grid[i]+si[i]
+    
+        # ->> periodic boundary <<- #
+        shift_[np.where(shift_<0.)] = p.boxsize+shift_[np.where(shift_<0.)]
+        shift_[np.where(shift_>p.boxsize)] = shift_[np.where(shift_>p.boxsize)]-p.boxsize
+        shifted[i]=np.copy(shift_)
+    
+        print 'shifting axis-', i, 'is done.'
 
     return
 
@@ -48,10 +69,10 @@ def get_shifted():
 
 
 
-_rect_type_list_=['', ]
+_rect_type_list_=['ZA_displaced', 'ZA_displaced_shifted']
 
 
-def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='displaced'): 
+def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='ZA_displaced'): 
     # -> reconstruction <<- #
 
     phi, si=get_displacement(p, map, p.boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
@@ -71,7 +92,7 @@ def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='displaced
 	    dis_[np.where(dis_>p.boxsize)] = dis_[np.where(dis_>p.boxsize)]-p.boxsize
 	    moved[i] = np.copy(dis_)
 
-    	    print 'axis-', i, 'is done.'
+    	    print 'displacing axis-', i, 'is done.'
 
 
     elif displace_interpolation==True:
@@ -101,6 +122,7 @@ def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='displaced
 	    moved[i] = np.copy(dis_)
 
     	    print 'axis-', i, 'is done.'
+
 
 
     return moved
