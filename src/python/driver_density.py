@@ -33,6 +33,7 @@ param_dict={
     #'import_format':   'gadget_DTFE',
     'import_format':   'cita_simulation',
     'save_displaced_particles':    True,
+    'particle_mass':    1.e5
     }
 
 prog_control={

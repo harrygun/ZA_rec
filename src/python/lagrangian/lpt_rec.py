@@ -13,17 +13,20 @@ import genscript.myutlis as mut
 import genscript.myarray as mar
 
 import fourier.potential as ptt
+import misc.cic as mcic
 
 
 
+def get_ZA_displacement(p, m, smooth_R=None, smooth_type=None):
+    # ->> Poisson solver <<- #
 
-def get_displacement(p, m, boxsize, smooth_R=None, smooth_type=None):
-    # ->> 
-    phi=ptt.Poisson3d(m, boxsize=boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
+    phi=ptt.Poisson3d(m, boxsize=p.boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
 
-    #pl.imshow(phi[:,:,100])
-    #pl.show()
-    #quit()
+    if False:
+        # ->> making plots <<- #
+        pl.imshow(phi[:,:,100])
+        pl.show()
+        quit()
 
     # ->> inverse of ZA: Psi_i = -partial_i * Laplacian^{-1} delta(tau) <<- #
     dl=p.boxsize/np.float(p.nbin)
@@ -41,10 +44,10 @@ def get_displacement(p, m, boxsize, smooth_R=None, smooth_type=None):
 
 
 
-def get_shifted(p, si, boxsize, ):
+def shifted_ZA(p, si):
     ''' ->> shift uniform grid after obtaining '''
 
-    lgrid=np.linspace(0, boxsize, p.nbin, endpoint=False)
+    lgrid=np.linspace(0, p.boxsize, p.nbin, endpoint=False)
     print 'lgrid shape:', lgrid.shape
 
     # ->>  <<- #
@@ -63,25 +66,17 @@ def get_shifted(p, si, boxsize, ):
     
         print 'shifting axis-', i, 'is done.'
 
-    return
+    return shifted
 
 
 
 
-
-_rect_type_list_=['ZA_displaced', 'ZA_displaced_shifted']
-
-
-def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='ZA_displaced'): 
+def displaced_ZA(p, si, mpart):
     # -> reconstruction <<- #
 
-    phi, si=get_displacement(p, map, p.boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
-    print '->> phi, si shape:', phi.shape, si.shape
+    displaced=np.zeros((3, p.nbin, p.nbin, p.nbin))
 
-    # ->>
-    moved=np.zeros((3, p.nbin, p.nbin, p.nbin))
     displace_interpolation=False
-
     if displace_interpolation==False:
 
         for i in range(3):
@@ -90,7 +85,7 @@ def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='ZA_displa
             # ->> periodic boundary <<- #
 	    dis_[np.where(dis_<0.)] = p.boxsize+dis_[np.where(dis_<0.)]
 	    dis_[np.where(dis_>p.boxsize)] = dis_[np.where(dis_>p.boxsize)]-p.boxsize
-	    moved[i] = np.copy(dis_)
+	    displaced[i] = np.copy(dis_)
 
     	    print 'displacing axis-', i, 'is done.'
 
@@ -119,21 +114,57 @@ def lag_rec(p, mpart, map, smooth_R=None, smooth_type=None, rect_type='ZA_displa
             # ->> periodic boundary <<- #
 	    dis_[np.where(dis_<0.)] = p.boxsize+dis_[np.where(dis_<0.)]
 	    dis_[np.where(dis_>p.boxsize)] = dis_[np.where(dis_>p.boxsize)]-p.boxsize
-	    moved[i] = np.copy(dis_)
+	    displaced[i] = np.copy(dis_)
 
     	    print 'axis-', i, 'is done.'
 
-
-
-    return moved
-
+    return displaced
 
 
 
 
 
+''' ->> Density Reconstruction Wrapper <<- '''
+_rect_type_list_=['ZA_displaced', 'ZA_displaced_shifted']
 
-def ZA_denrec():
-    ''' ->> ZA density reconstruction <<- '''
+def lag_rec_ZA(p, mpart, dmap, smooth_R=None, smooth_type=None, rect_type='ZA_displaced'): 
+    # -> reconstruction of initial state, return density map <<- #
 
-    return
+    # ->> get displacement field <<- #
+    phi, si=get_ZA_displacement(p, dmap, smooth_R=smooth_R, smooth_type=smooth_type)
+    print '->> phi, si shape:', phi.shape, si.shape
+
+    npt=p.nbin**3.
+
+    if rect_type=='ZA_displaced_shifted':
+        #->> get particles <<- #
+        pos_disp = np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1)
+	pos_shift = np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1)
+
+	print 'particle shape:', mpart.shape, pos_disp.shape, pos_shift.shape
+
+        #->> converting density map <<- #
+	d_disp = mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos_disp, pmass=p.particle_mass)
+	d_shift= mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos_shift, pmass=p.particle_mass)
+
+	d_rec=d_disp-d_shift
+
+        return d_rec, d_disp, d_shift, pos_disp, pos_shift
+
+
+    elif rect_type=='ZA_displaced':
+
+        return 
+
+
+    else:
+        raise Exception
+
+
+
+
+
+
+
+
+

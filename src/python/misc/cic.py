@@ -3,11 +3,11 @@ import cyth.cic as cicyth
 
 
 
-_cic_type_ = 'C version'
-#_cic_type_ = 'Cython version'
+_cic_type_ = 'C_version'
+#_cic_type_ = 'Cython_version'
 
 
-def cic(cp, npart, nbin, boxsize, position, pmass=1e9):
+def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
     ''' ->> return the cloud-in-cell density <<- '''
 
     # ->> regulate particle positions <<- #
@@ -29,7 +29,7 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9):
     # ->> summation over all particles <<- #
     d=np.zeros((nbin, nbin, nbin))
 
-    if _cic_type_ == 'Cython version':
+    if cic_type == 'Cython_version':
 
         d=np.zeros((nbin, nbin, nbin))
         cicyth.cic_sum(npart, nbin, d, pos)
@@ -39,7 +39,7 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9):
         #print d[np.where(d!=0)]
 
 
-    elif _cic_type_ == 'C version':
+    elif cic_type == 'C_version':
 
         d=cicyth.density_cyth(npart, nbin, pos, pmass)
 
@@ -50,6 +50,18 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9):
 
         print 'get density:', d.shape, rhom
 
+    else:
+        raise Exception
 
 
     return d
+
+
+
+def mass_resolution():
+
+    # ->> estimate mass resolution <<- #
+
+
+
+    return
