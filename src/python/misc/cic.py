@@ -58,7 +58,7 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
 
 
 
-def mass_resolution():
+def mass_resolution(p, z=0.):
 
     # ->> estimate mass resolution <<- #
 

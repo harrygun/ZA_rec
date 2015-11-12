@@ -54,6 +54,8 @@ def shifted_ZA(p, si):
     grid=mar.meshgrid(lgrid, lgrid, lgrid)
     print 'meshgrid shape:', grid.shape, si.shape
 
+    quit()
+
 
     shifted=np.zeros((3, p.nbin, p.nbin, p.nbin))
     for i in range(3):
