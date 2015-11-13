@@ -51,10 +51,8 @@ def shifted_ZA(p, si):
     print 'lgrid shape:', lgrid.shape
 
     # ->>  <<- #
-    grid=mar.meshgrid(lgrid, lgrid, lgrid)
+    grid=mar.meshgrid(lgrid, lgrid, lgrid)[::-1,...]
     print 'meshgrid shape:', grid.shape, si.shape
-
-    quit()
 
 
     shifted=np.zeros((3, p.nbin, p.nbin, p.nbin))
@@ -140,8 +138,15 @@ def lag_rec_ZA(p, mpart, dmap, smooth_R=None, smooth_type=None, rect_type='ZA_di
 
     if rect_type=='ZA_displaced_shifted':
         #->> get particles <<- #
-        pos_disp = np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1)
-	pos_shift = np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1)
+        pos_disp = np.copy(np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1))
+	pos_shift = np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1))
+
+        _test_draw_ = True
+	if _test_draw_:
+            #pl.plot( )
+	    pass
+
+
 
 	print 'particle shape:', mpart.shape, pos_disp.shape, pos_shift.shape
 

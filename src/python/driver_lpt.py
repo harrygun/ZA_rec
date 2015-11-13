@@ -21,6 +21,7 @@ import misc.io as mio
 import fourier.potential as ptt
 import misc.file_import as fimp
 import misc.ps as ps
+import misc.cic as mcic
 
 
 
@@ -127,11 +128,13 @@ param_dict={
     #'import_format':   'gadget_DTFE',
     'import_format':   'cita_simulation',
     'save_data':    True,
+    'redshift':     0.,
     }
 
 prog_control={
     #-------------------------------#
-    'do_LPT_rec': True,
+    'do_LPT_rec':        True,
+    'import_reced_data':   False,
     #-------------------------------#
     'do_testing': False, 
     }
@@ -190,6 +193,26 @@ if __name__=='__main__':
 
 	# ->> estimate mass resolution <<- #
 
+        p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
+	print 'particle mass:', p.particle_mass
+
+    if p.import_format=='cita_simulation_highres':
+        p.nbin=256
+	p.boxsize=1000.
+        droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
+        droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
+
+	fn_part=droot_part+'0.000xv0.dat'
+	fn_field=droot_field+'0.000xv0.dat.den.npz'
+	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
+
+        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+
+	# ->> estimate mass resolution <<- #
+
+        p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
+	print 'particle mass:', p.particle_mass
+
 
 
     ''' -------------------------------------------------
@@ -202,21 +225,26 @@ if __name__=='__main__':
 
     ''' ->> Performing Lagrangian reconstruction <<- '''
     if p.do_LPT_rec==True:
-        pos, den=dd
-        dmean=np.mean(den)
-        delta = den/dmean -1.
-	print 'data shape:', pos.shape, den.shape, delta.shape
+        pos, delta =dd
+	print 'data shape:', pos.shape, delta.shape, delta.min(), delta.max(), delta.mean()
 
 
 
         ''' ->> perform Lagrangian Reconstruction <<-  '''
-        rect_type='ZA_displaced_shifted'
 
-        dd_ = lrec.lag_rec_ZA(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type, rect_type=rect_type)
-	#print 'displacement max/min:', np.max(disp), np.min(disp)
+        rect_type='ZA_displaced_shifted'
+        _dd_ = lrec.lag_rec_ZA(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type, rect_type=rect_type)
 
         # ->> unwrap density <<- #
-        d_rec, d_disp, d_shift, pos_disp, pos_shift = dd_
+        d_rec, d_disp, d_shift, pos_disp, pos_shift = _dd_
+
+        print 'rec density:', d_rec.min(), d_rec.max(), d_rec.mean()
+        print 'shift density:', d_shift.min(), d_shift.max(), d_shift.mean()
+        print 'displaced density:', d_disp.min(), d_rec.max(), d_rec.mean()
+
+	dt_rec=d_rec
+	print 'rec delta:', dt_rec.min(), dt_rec.max(), dt_rec.mean()
+
 
 
         if p.save_data:
@@ -229,60 +257,79 @@ if __name__=='__main__':
 	             pos_disp=pos_disp, pos_shift=pos_shift )
 
 
-        do_powerspectrum=False
-        if do_powerspectrum==True:
-
-            k_rec, pk_rec=ps.pk(d_rec, boxsize=p.boxsize)
-            k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
-
-            if True:
-                nplt, ncol = 2, 2
-                fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
-            
-                ax[0].loglog(k_ori, pk_ori, 'r--')
-                ax[0].loglog(k_rec, pk_rec, 'k-')
-
-                ax[1].plot(k_ori, pk_rec/pk_ori) 
-                ax[1].set_xscale("log")
-
-                fig.savefig(root+'figure/ps_disp_shift_comp.png')
-	        pl.show()
+    elif p.import_reced_data==True:
+        #->> 
+	f=np.load(fn_write)
+        d_rec, d_disp, d_shift = f['d_rec'], f['d_disp'], f['d_shift']
 
 
 
+
+    ''' ->> analysis the data <<- '''
+    do_powerspectrum = True
+
+
+    if do_powerspectrum==True:
+    
+        k_rec, pk_rec=ps.pk(dt_rec, boxsize=p.boxsize)
+        k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
+
+        k_disp, pk_disp=ps.pk(d_disp, boxsize=p.boxsize)
+    
         if True:
-	    # ->> comparison plot <<- #
-
-            nplt = 2
-            ncol = 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=10.,gap_size=0.5,return_figure=True)
-
-            #ax[0].imshow(np.flipud(phi[100,:,:]))
-	    #ax[0].plot(pos[1,:,:,100], pos[2,:,:,100], 'k.', alpha=0.3)
-	    #ax[1].plot(disp[1,:,:,100], disp[2,:,:,100], 'r.', alpha=0.3)
-
-            dat_rec=d_rec[:,:,100]-1.01*np.min(d_rec[:,:,100])
-            dat_ori=delta[:,:,100]-1.01*np.min(delta[:,:,100])
-	    ax[0].imshow(np.flipud(dat_rec), norm=colors.LogNorm(vmin=dat_rec.min(),vmax=dat_rec.max()))
-	    ax[1].imshow(np.flipud(dat_ori), norm=colors.LogNorm(vmin=dat_ori.min(),vmax=dat_ori.max()))
-
-	    pl.show()
-            #fig.savefig('rect.png')
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
+        
+            ax[0].loglog(k_ori, pk_ori, 'r--')
+            ax[0].loglog(k_rec, pk_rec, 'k-')
+            ax[0].loglog(k_disp, pk_disp, 'b-')
+    
+            ax[1].plot(k_ori, pk_rec/pk_ori, 'k-') 
+            ax[1].plot(k_ori, pk_disp/pk_ori, 'r-') 
+            ax[1].set_xscale("log")
+    
+            fig.savefig(root+'figure/ps_disp_shift_comp.png')
+            pl.show()
 
 
-
-        # ->> if making plots <<- #
-        if False:
-            nplt = 4
-            ncol = 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=2.,gap_size=0.15,return_figure=True)
-            ax[0].imshow(np.flipud(phi[100,:,:]))
-
-	    for i in range(3):
-                ax[i+1].imshow(np.flipud(si[i,100,:,:]))
-
-
-	    pl.show()
+	# ->> correlation function <<- #
+        r_ori, xi_ori= 
+    
+    
+    
+    if True:
+        # ->> comparison plot <<- #
+    
+        nplt = 2
+        ncol = 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=10.,gap_size=0.5,return_figure=True)
+    
+        #ax[0].imshow(np.flipud(phi[100,:,:]))
+        #ax[0].plot(pos[1,:,:,100], pos[2,:,:,100], 'k.', alpha=0.3)
+        #ax[1].plot(disp[1,:,:,100], disp[2,:,:,100], 'r.', alpha=0.3)
+    
+        dat_rec=dt_rec[:,:,100]-1.01*np.min(dt_rec[:,:,100])
+        dat_ori=delta[:,:,100]-1.01*np.min(delta[:,:,100])
+        ax[0].imshow(np.flipud(dat_rec), norm=colors.LogNorm(vmin=dat_rec.min(),vmax=dat_rec.max()))
+        ax[1].imshow(np.flipud(dat_ori), norm=colors.LogNorm(vmin=dat_ori.min(),vmax=dat_ori.max()))
+    
+        pl.show()
+        #fig.savefig('rect.png')
+    
+    
+    
+    # ->> if making plots <<- #
+    if False:
+        nplt = 4
+        ncol = 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=2.,gap_size=0.15,return_figure=True)
+        ax[0].imshow(np.flipud(phi[100,:,:]))
+    
+        for i in range(3):
+            ax[i+1].imshow(np.flipud(si[i,100,:,:]))
+    
+    
+        pl.show()
 
 
 

@@ -3,11 +3,25 @@ import cyth.cic as cicyth
 
 
 
+
+def rhom(cp, z=0):
+    return (2.7752e11)*cp.omem/cp.h*(1.+z)**3.   # M_star*(h/Mpc)^3
+
+
+def mass_resolution(p, z=0., boxsize_unit='Mpc/h'):
+    # ->> estimate mass resolution <<- #
+    _rhom=rhom(p.cp, z=z)
+    return _rhom*p.boxsize**3./float(p.nbin)**3.
+
+
+
+
+
 _cic_type_ = 'C_version'
 #_cic_type_ = 'Cython_version'
 
 
-def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
+def cic(cp, npart, nbin, boxsize, position, redshift=0., pmass=1e12, cic_type='C_version'):
     ''' ->> return the cloud-in-cell density <<- '''
 
     # ->> regulate particle positions <<- #
@@ -21,6 +35,9 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
 
         dl[i]=(xmax[i]-xmin[i])/float(nbin)
         pos[...,i]= (position[...,i]-xmin[i])/dl[i]
+
+        print 'pos:', i, pos[...,i].min(), pos[...,i].max()
+
 
     #print 'dl=', dl
 
@@ -41,14 +58,17 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
 
     elif cic_type == 'C_version':
 
+        print 'npart=', npart, nbin, pos.shape, 'pmass=', pmass
         d=cicyth.density_cyth(npart, nbin, pos, pmass)
 
-        rhom=(2.7752e11)*cp.h**2.*cp.omem 
-        x1=np.array([(xmax[i]-xmin[i])/np.float(nbin)/cp.h  for i in range(3) ])
+	print 'here.'
 
-        d=d/np.prod(x1)/cp.h**2./rhom*1e10/cp.h-1.
+        _rhom=rhom(cp, z=redshift)
+        #x1=np.array([(xmax[i]-xmin[i])/np.float(nbin)/cp.h  for i in range(3) ])
+        x1=np.array([(xmax[i]-xmin[i])/np.float(nbin)  for i in range(3) ])
 
-        print 'get density:', d.shape, rhom
+        d=d/np.prod(x1)/_rhom-1.
+        print 'get density:', d.shape, _rhom
 
     else:
         raise Exception
@@ -58,10 +78,4 @@ def cic(cp, npart, nbin, boxsize, position, pmass=1e9, cic_type='C_version'):
 
 
 
-def mass_resolution(p, z=0.):
 
-    # ->> estimate mass resolution <<- #
-
-
-
-    return

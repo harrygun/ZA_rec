@@ -96,6 +96,10 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         if filename != '':
             N.savetxt(filename, N.transpose([kmean,pk,numinbin]))
 
+    if getxi:
+        #r, xi= 
+	pass
+
     if (getnuminbin):
         return kmean,pk,numinbin
     else:

@@ -35,7 +35,7 @@ double density(float *Pos, float *delta, long long NDM, long long Ngrid, double 
         masstot=0.0;
 	p_ncol=3;
 
-        for (ip=1;ip<=NDM;ip++) 
+        for (ip=0;ip<NDM;ip++) 
             {
             i=(int)Pos[ip*p_ncol+0]; xc=(float)i;
             j=(int)Pos[ip*p_ncol+1]; yc=(float)j;
@@ -64,6 +64,16 @@ double density(float *Pos, float *delta, long long NDM, long long Ngrid, double 
             if(i1>=Ngridx) i1=i1-Ngridx;
             if(j1>=Ngridy) j1=j1-Ngridy;
             if(k1>=Ngridz) k1=k1-Ngridz;
+
+
+            /*
+            if (ip%1000==0)
+	        printf("ip=%d,  (%d %d %d)\n", ip, i, j, k);
+
+	    if (ip>16777200)
+	        printf("ip=%d,  (%d %d %d) (%lg %lg %lg)\n",ip,i,j,k,Pos[ip*p_ncol+0],Pos[ip*p_ncol+1],Pos[ip*p_ncol+2]);
+	    */
+
 
             delta[(i *Ngridy + j )*Ngridz + k ]+=mass*tx*ty*tz;
             delta[(i1*Ngridy + j )*Ngridz + k ]+=mass*dx*ty*tz;
