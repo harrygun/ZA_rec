@@ -1,5 +1,5 @@
 import numpy as np
-#import scipy.fftpack as sfft
+import scipy.fftpack as sfft
 
 import genscript.myarray as ar
 import genscript.fft as fft
@@ -12,7 +12,7 @@ def pk(d, boxsize=1000.):
     # ->> obtain the angular averaged power spectrum <<- #
 
     # ->> FFT first <<- #
-    dk = np.rfftn(d)
+    dk = sfft.rfftn(d)
     s = d.shape
     sk = dk.shape
 
@@ -30,7 +30,8 @@ def pk(d, boxsize=1000.):
 
     print k2.shape
 
-      
+    quit()  
+
 
 
     return

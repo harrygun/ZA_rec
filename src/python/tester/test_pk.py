@@ -97,10 +97,9 @@ if __name__=='__main__':
 
 
 
+    #->> density contrast <<- #
     delta =dd[1]
     print 'delta:', delta.shape
-
-    quit()
 
 
     ''' ->> analysis the data <<- '''
@@ -108,24 +107,15 @@ if __name__=='__main__':
 
     if do_powerspectrum==True:
     
+	k, pk=psxi.pk(delta, boxsize=p.boxsize)
         k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
-
-        k_disp, pk_disp=ps.pk(d_disp, boxsize=p.boxsize)
     
 
-        if True:
-            nplt, ncol = 2, 2
+        if False:
+            nplt, ncol = 1, 1
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
-        
             ax[0].loglog(k_ori, pk_ori, 'r--')
-            ax[0].loglog(k_rec, pk_rec, 'k-')
-            ax[0].loglog(k_disp, pk_disp, 'b-')
     
-            ax[1].plot(k_ori, pk_rec/pk_ori, 'k-') 
-            ax[1].plot(k_ori, pk_disp/pk_ori, 'r-') 
-            ax[1].set_xscale("log")
-    
-            fig.savefig(root+'figure/ps_disp_shift_comp.png')
             pl.show()
 
 
