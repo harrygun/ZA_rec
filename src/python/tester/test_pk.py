@@ -16,12 +16,10 @@ import genscript.read as read
 import genscript.myplot as mpl
 import genscript.read as rd
 
-import lagrangian.lpt_rec as lrec
-import misc.io as mio
+#import misc.io as mio
 import fourier.potential as ptt
-import misc.file_import as fimp
+#import misc.file_import as fimp
 import misc.ps as ps
-import misc.cic as mcic
 
 import fourier.psxi as psxi 
 
@@ -85,27 +83,32 @@ if __name__=='__main__':
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
 	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
 
-        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+        #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+        dd=0.
 
 	# ->> estimate mass resolution <<- #
 
-        p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
-	print 'particle mass:', p.particle_mass
+        #p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
+	#print 'particle mass:', p.particle_mass
 
     else:
-        raise Exception
+        #raise Exception
+        pass
 
 
 
     #->> density contrast <<- #
-    delta =dd[1]
+    #delta =dd[1]
+    delta =np.ones((p.nbin,p.nbin,p.nbin))
     print 'delta:', delta.shape
+
 
 
     ''' ->> analysis the data <<- '''
     do_powerspectrum = True
 
     if do_powerspectrum==True:
+        print 'boxsize=', p.boxsize
     
 	k, pk=psxi.pk(delta, boxsize=p.boxsize)
         k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
