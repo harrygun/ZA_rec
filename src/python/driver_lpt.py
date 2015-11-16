@@ -293,7 +293,7 @@ if __name__=='__main__':
 
 
 	# ->> correlation function <<- #
-        r_ori, xi_ori= 
+        #r_ori, xi_ori= 
     
     
     

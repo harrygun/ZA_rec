@@ -33,6 +33,8 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         dk2 = (dk*N.conjugate(dk)).astype(N.float32)
         #M.pcolor(N.abs(dk[:,:,0]))
 
+	print 'dk.shape', dk.shape
+
         dk2 = dk2.flatten()
         
 
@@ -42,11 +44,11 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
 
         if (len(s) == 3):
             a = N.fromfunction(lambda x,y,z:x, sk).astype(N.float32)
-            a[N.where(a > s[0]/2)] -= s[0]
+            a[N.where(a >= s[0]/2)] -= s[0]
             b = N.fromfunction(lambda x,y,z:y, sk).astype(N.float32)
-            b[N.where(b > s[1]/2)] -= s[1]
+            b[N.where(b >= s[1]/2)] -= s[1]
             c = N.fromfunction(lambda x,y,z:z, sk).astype(N.float32)
-            c[N.where(c > s[2]/2)] -= s[2]
+            c[N.where(c >= s[2]/2)] -= s[2]
             # half-count cells on the z-axis
 
             k = kmin*N.sqrt((a**2+b**2+c**2).flatten()).astype(N.float32)
@@ -62,6 +64,9 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         
 
         index = N.argsort(k)
+	print 'kx:', (a.flatten()[index][-1])*kmin
+	print 'ky:', (b.flatten()[index][-1])*kmin
+	print 'kz:', (c.flatten()[index][-1])*kmin
 
         k = k[index]
         dk2 = dk2[index]
@@ -80,18 +85,27 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         kmean = 0.*binedges
         nbins = len(binedges)
 
+        print 'k-space edges', len(binedges), kmin, bin2fact, k[-1]
+	#quit()
+
         for i in N.arange(0,nbins-1):
             if (cuts[i+1] > cuts[i]):
                 numinbin[i] = N.sum(c0[cuts[i]:cuts[i+1]])
                 pk[i] = N.sum(c0[cuts[i]:cuts[i+1]]*dk2[cuts[i]:cuts[i+1]])
                 kmean[i] = N.sum(c0[cuts[i]:cuts[i+1]]*k[cuts[i]:cuts[i+1]])
 
+        #print 'numinbin:', numinbin, len(numinbin)
+	#quit()
+    
         wn0 = N.where(numinbin > 0.)[0]
         pk = pk[wn0]; kmean = kmean[wn0]; numinbin = numinbin[wn0]
         pk /= numinbin
         kmean /= numinbin
 
         pk *= boxsize**3/N.prod(N.array(s).astype(float))**2
+
+        #print 'marks wn0:', wn0
+	#quit()
 
         if filename != '':
             N.savetxt(filename, N.transpose([kmean,pk,numinbin]))

@@ -16,10 +16,11 @@ import genscript.read as read
 import genscript.myplot as mpl
 import genscript.read as rd
 
-#import misc.io as mio
+import misc.io as mio
 import fourier.potential as ptt
-#import misc.file_import as fimp
+import misc.file_import as fimp
 import misc.ps as ps
+import misc.cic as mcic
 
 import fourier.psxi as psxi 
 
@@ -83,25 +84,20 @@ if __name__=='__main__':
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
 	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
 
-        #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
-        dd=0.
+        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
 
 	# ->> estimate mass resolution <<- #
 
-        #p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
-	#print 'particle mass:', p.particle_mass
+        p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
+	print 'particle mass:', p.particle_mass
 
     else:
-        #raise Exception
-        pass
+        raise Exception
 
 
 
     #->> density contrast <<- #
-    #delta =dd[1]
-    delta =np.ones((p.nbin,p.nbin,p.nbin))
-    print 'delta:', delta.shape
-
+    delta =dd[1]
 
 
     ''' ->> analysis the data <<- '''
@@ -112,12 +108,21 @@ if __name__=='__main__':
     
 	k, pk=psxi.pk(delta, boxsize=p.boxsize)
         k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
+
+
+	#print 'k, pk:', k, pk
+	#print 'k_ori, pk_ori:', k_ori, pk_ori
     
 
-        if False:
-            nplt, ncol = 1, 1
+        if True:
+            nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
+
             ax[0].loglog(k_ori, pk_ori, 'r--')
+            ax[0].loglog(k, pk, 'k-')
+
+            #ax[1].plot(k, pk_ori/pk, 'k-') 
+            #ax[1].set_xscale("log")
     
             pl.show()
 
