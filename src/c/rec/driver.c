@@ -143,7 +143,7 @@
       init_powerInterp(power, fp);
       cp.power=power;
 
-      cp.zinit = iniparser_getdouble(dict, "EPT_LOG_RESUM:initial_redshift", 35);
+      cp.zinit = iniparser_getdouble(dict, "Reconstruction:initial_redshift", 35);
       cp.a = Dp(&cp, cp.z) / Dp(&cp, cp.zinit);
       printf("zinit=%lg\n", cp.zinit);
 
