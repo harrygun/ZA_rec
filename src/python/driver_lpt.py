@@ -22,8 +22,7 @@ import fourier.potential as ptt
 import misc.file_import as fimp
 import misc.ps as ps
 import misc.cic as mcic
-
-
+import fourier.psxi as psxi
 
 
 
@@ -119,7 +118,7 @@ def Testing_portal(p, data, import_data_type='field'):
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'a_init': 1e-2,
-    'smooth_R': 15.,
+    'smooth_R': 10.,
     'smooth_type': 'Gaussian', 
     'smooth_R_list_type':  'linear', 
     'boxsize': 32.,
@@ -270,11 +269,12 @@ if __name__=='__main__':
 
 
     if do_powerspectrum==True:
+        kspace='log_linear'
     
-        k_rec, pk_rec=ps.pk(dt_rec, boxsize=p.boxsize)
-        k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
-
-        k_disp, pk_disp=ps.pk(d_disp, boxsize=p.boxsize)
+        k_rec, pk_rec=psxi.pk(dt_rec, boxsize=p.boxsize, kspace=kspace)
+        k_ori, pk_ori=psxi.pk(delta, boxsize=p.boxsize, kspace=kspace)
+        k_disp, pk_disp=psxi.pk(d_disp, boxsize=p.boxsize, kspace=kspace)
+        k_shift, pk_shift=psxi.pk(d_shift, boxsize=p.boxsize, kspace=kspace)
     
         if True:
             nplt, ncol = 2, 2
@@ -283,9 +283,11 @@ if __name__=='__main__':
             ax[0].loglog(k_ori, pk_ori, 'r--')
             ax[0].loglog(k_rec, pk_rec, 'k-')
             ax[0].loglog(k_disp, pk_disp, 'b-')
+            ax[0].loglog(k_shift, pk_shift, 'y-')
     
             ax[1].plot(k_ori, pk_rec/pk_ori, 'k-') 
             ax[1].plot(k_ori, pk_disp/pk_ori, 'r-') 
+            ax[1].plot(k_ori, pk_shift/pk_ori, 'b:') 
             ax[1].set_xscale("log")
     
             fig.savefig(root+'figure/ps_disp_shift_comp.png')

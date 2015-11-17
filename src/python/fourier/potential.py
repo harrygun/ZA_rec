@@ -8,19 +8,22 @@ import scipy.ndimage.filters as sft
 from genscript.extendclass import *
 import genscript.myarray as ar
 import genscript.fft as fft
-
+import genscript.myarray as mar
 
 
 
 def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smooth_R=None, smooth_type=None):
     ''' ->> Poisson solver of given field 'd', also return gradient or hessian field <<- 
     '''
+    dk=np.fft.fftn(d)
 
+    sk = dk.shape
     ng = d.shape[0]
     ndim=len(d.shape)
     kmin = 2.*np.pi/float(ng)
 
     # ->> Fourier space arguments <<- #
+    '''
     kx, ky, kz=np.mgrid[0:ng, 0:ng, 0:ng].astype(float)
 
     ki = 2.*np.array([np.sin(kx*kmin/2.), np.sin(ky*kmin/2.), np.sin(kz*kmin/2.)])
@@ -29,8 +32,19 @@ def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smoo
     if boxsize!=None:
         k2*=(float(ng)/float(boxsize))**2.
         ki*=float(ng)/float(boxsize)
-    
+    '''
+
+    ki_list = [sfft.fftfreq(sk[i],d=1./float(sk[i]))*kmin for i in range(ndim)]
+    kx, ky, kz=mar.meshgrid(*ki_list)
+   
+    ki = 2.*np.array([np.sin(kx/2.), np.sin(ky/2.), np.sin(kz/2.)])
+    k2=4.*(np.sin(kx/2.)**2.+np.sin(ky/2.)**2.+np.sin(kz/2.)**2.)
+
+    #k2=ki[0]**2.+ki[1]**2.+ki[2]**2.
     print 'ki shape:', ki.shape
+
+
+
 
 
     # ->> if do_smoothing <<- #
@@ -48,8 +62,7 @@ def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smoo
     print 'do_smooth=', do_smooth
     
     # ->> Fourier transform & phi <<- #
-    dk=np.fft.fftn(d)*W
-    phik=-dk/k2
+    phik=-dk*W/k2
     phik[0,0,0]=0
 
     # ->> get Phi <<- #
