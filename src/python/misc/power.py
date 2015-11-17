@@ -637,8 +637,9 @@ def corfunk(d, d2=None, boxsize=500.,binsize=1, filename='',getnuminbin=False,ov
         return kmean,pk,numinbin
     elif (get2d):
         if getr:
-            x = N.fromfunction(lambda x,y:x, xips.shape).astype(N.float32)
-            y = N.fromfunction(lambda x,y:y, xips.shape).astype(N.float32)
+	    print 'xips shape:', xips.shape
+            x = N.fromfunction(lambda x,y: x, xips.shape).astype(N.float32)
+            y = N.fromfunction(lambda x,y: y, xips.shape).astype(N.float32)
             r = N.sqrt(x**2+y**2)*boxsize/float(s[0])
             return r,xips
         else:

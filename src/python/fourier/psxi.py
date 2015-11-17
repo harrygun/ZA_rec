@@ -192,9 +192,10 @@ def xi(d, boxsize=1000., k=None, ps=None):
 
     #->> Fourier transform <<- #
     ndim=3
-    fourier.FourierTransform(ndim, xlim=)
+    #fourier.FourierTransform(ndim, xlim=)
 
 
-    return xi
+    #return xi
 
+    return
 

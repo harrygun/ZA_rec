@@ -23,6 +23,7 @@ import misc.ps as ps
 import misc.cic as mcic
 
 import fourier.psxi as psxi 
+import misc.power as pk_cor
 
 
 
@@ -129,10 +130,12 @@ if __name__=='__main__':
     if do_correlation_function==True:
 
         #r, xi=psxi.xi(delta, boxsize=p.boxsize)
-        xi=psxi.xi(delta, boxsize=p.boxsize)
+        #xi=psxi.xi(delta, boxsize=p.boxsize)
+
+	r, xi =pk_cor.corfunk(delta, boxsize=p.boxsize )
 
 
-	pl.plot(xi)
+	pl.plot(r, r**2.*xi)
 	pl.show()
 
 
