@@ -33,7 +33,6 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         dk2 = (dk*N.conjugate(dk)).astype(N.float32)
         #M.pcolor(N.abs(dk[:,:,0]))
 
-	print 'dk.shape', dk.shape
 
         dk2 = dk2.flatten()
         
@@ -64,9 +63,6 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         
 
         index = N.argsort(k)
-	print 'kx:', (a.flatten()[index][-1])*kmin
-	print 'ky:', (b.flatten()[index][-1])*kmin
-	print 'kz:', (c.flatten()[index][-1])*kmin
 
         k = k[index]
         dk2 = dk2[index]
@@ -85,8 +81,6 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
         kmean = 0.*binedges
         nbins = len(binedges)
 
-        print 'k-space edges', len(binedges), kmin, bin2fact, k[-1]
-	#quit()
 
         for i in N.arange(0,nbins-1):
             if (cuts[i+1] > cuts[i]):
@@ -94,8 +88,6 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
                 pk[i] = N.sum(c0[cuts[i]:cuts[i+1]]*dk2[cuts[i]:cuts[i+1]])
                 kmean[i] = N.sum(c0[cuts[i]:cuts[i+1]]*k[cuts[i]:cuts[i+1]])
 
-        #print 'numinbin:', numinbin, len(numinbin)
-	#quit()
     
         wn0 = N.where(numinbin > 0.)[0]
         pk = pk[wn0]; kmean = kmean[wn0]; numinbin = numinbin[wn0]
@@ -104,8 +96,6 @@ def pk(d, boxsize=1200.,bin2fact=1./16., filename='',getnuminbin=False,overwrite
 
         pk *= boxsize**3/N.prod(N.array(s).astype(float))**2
 
-        #print 'marks wn0:', wn0
-	#quit()
 
         if filename != '':
             N.savetxt(filename, N.transpose([kmean,pk,numinbin]))

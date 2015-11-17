@@ -101,7 +101,8 @@ if __name__=='__main__':
 
 
     ''' ->> analysis the data <<- '''
-    do_powerspectrum = True
+    do_powerspectrum = False
+    do_correlation_function = True
 
     if do_powerspectrum==True:
         print 'boxsize=', p.boxsize
@@ -109,13 +110,11 @@ if __name__=='__main__':
 	k, pk=psxi.pk(delta, boxsize=p.boxsize)
         k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
 
+	print 'k/k_ori shape:', k.shape, k_ori.shape
 
-	#print 'k, pk:', k, pk
-	#print 'k_ori, pk_ori:', k_ori, pk_ori
-    
 
         if True:
-            nplt, ncol = 2, 2
+            nplt, ncol = 1, 1
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
 
             ax[0].loglog(k_ori, pk_ori, 'r--')
@@ -127,6 +126,14 @@ if __name__=='__main__':
             pl.show()
 
 
+    if do_correlation_function==True:
+
+        #r, xi=psxi.xi(delta, boxsize=p.boxsize)
+        xi=psxi.xi(delta, boxsize=p.boxsize)
+
+
+	pl.plot(xi)
+	pl.show()
 
 
 
