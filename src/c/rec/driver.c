@@ -87,14 +87,14 @@
 
       dictionary * dict;
       dict = iniparser_load(ini_name);
-
     /*-----------------------------------------------
           initialize the cosmological parameters
     -----------------------------------------------*/
+
       Cospar  cp;
       init_cospar(&cp, dict);
 
-      if( debug>=20 ) {
+      if(debug>=20) {
         printf("omem=%lg\n", cp.omem);
         printf("omek=%lg\n", cp.omek);
         printf("omeb=%lg\n", cp.omeb);
