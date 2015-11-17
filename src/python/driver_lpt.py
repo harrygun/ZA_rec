@@ -28,22 +28,25 @@ import fourier.psxi as psxi
 
 def Testing_portal(p, data, import_data_type='field'):
 
-    if False:
+    if True:
         if import_data_type=='field':
             # ->> 
+	    print 'boxsize=', p.boxsize
 	    dmean=np.mean(data)
 	    delta = data/dmean -1.
-            #phi, phi_ij=ptt.Poisson3d(delta, boxsize=p.boxsize, return_hessian=True, \
-            #                          smooth_R=None, smooth_type=None)
             phi, phi_ij=ptt.Poisson3d(delta, boxsize=p.boxsize, return_hessian=True, \
-                                      smooth_R=p.smooth_R, smooth_type=p.smooth_type)
+                                      smooth_R=None, smooth_type=None)
+            #phi, phi_ij=ptt.Poisson3d(delta, boxsize=p.boxsize, return_hessian=True, \
+            #                          smooth_R=p.smooth_R, smooth_type=p.smooth_type)
             # ->> 
             d=dmean*(1+phi_ij[0,0]+phi_ij[1,1]+phi_ij[2,2])
-    	    print 'd shape:', d.shape
+    	    print 'd shape:', d.shape, d.min(), d.max()
+	    print 'd err:', np.max(np.fabs((d-data)/data))
 
 	    # ->> 
 	    da = dmean*(1.+ptt.Laplacian(phi, boxsize=p.boxsize, Lap_type=1))
-	    print 'da shape:', da.shape
+	    print 'da shape:', da.shape, da.min(), da.max()
+	    print 'da err:', np.max(np.fabs((da-data)/data))
     
             if True:
                 nplt = 3
@@ -55,7 +58,9 @@ def Testing_portal(p, data, import_data_type='field'):
     
                 ax[0].imshow(np.flipud(dd1), norm=colors.LogNorm(vmin=dd1.min(), vmax=dd1.max()) )
                 ax[1].imshow(np.flipud(dd2), norm=colors.LogNorm(vmin=dd2.min(), vmax=dd2.max()) )
-                ax[2].imshow(np.flipud(dd3), norm=colors.LogNorm(vmin=dd3.min(), vmax=dd3.max()) )
+
+                #ax[2].imshow(np.flipud(dd3), norm=colors.LogNorm(vmin=dd3.min(), vmax=dd3.max()) )
+                ax[2].imshow(np.flipud(phi[100,:,:]) )
     
     	    pl.show()
 
@@ -67,16 +72,25 @@ def Testing_portal(p, data, import_data_type='field'):
 	    delta = data/dmean -1.
 
             #phi=ptt.Poisson3d(delta, boxsize=p.boxsize, smooth_R=None, smooth_type=None)
-            phi=ptt.Poisson3d(delta, boxsize=p.boxsize, smooth_R=p.smooth_R, smooth_type=p.smooth_type)
+            #phi=ptt.Poisson3d(delta, boxsize=p.boxsize, smooth_R=p.smooth_R, smooth_type=p.smooth_type)
+	    
+            phi, phi_i=ptt.Poisson3d(delta, boxsize=p.boxsize, smooth_R=None, smooth_type=None, return_gradient=True)
+	    print 'phi, phi_i shape:', phi.shape, phi_i.shape
+
+            dl=p.boxsize/float(p.nbin)
+            gd=np.array(np.gradient(phi))/dl
+            print gd.shape
+
+            print 'gradient error 1:', [np.max(np.fabs((phi[i]-gd[i])/phi[i])) for i in range(3)]
+            print 'gradient error 2:', [np.max(np.fabs((phi[i]-gd[i])/gd[i])) for i in range(3)]
+
 
 	    if True:
 	        # ->> testing <<- #
-                gd=np.array(np.gradient(phi))
-	        print gd.shape
 
                 if True:
-                    nplt = 6
-                    ncol = 3
+                    nplt = 10
+                    ncol = 4
                     fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=2.,gap_size=0.15,return_figure=True)
                     ax[0].imshow(np.flipud(phi[100,:,:]))
 
@@ -85,10 +99,20 @@ def Testing_portal(p, data, import_data_type='field'):
                         ax[i+1].imshow(np.flipud(dd_), norm=colors.LogNorm(vmin=dd_.min(), vmax=dd_.max()) )
 
                     _dd = gd[0,100,:,:]**2.+gd[1,100,:,:]**2.+gd[2,100,:,:]**2.
-                    ax[nplt-2].imshow(np.flipud(_dd), norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()) )
+                    ax[4].imshow(np.flipud(_dd), norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()) )
 
                     dd1=data[100,:,:]
-                    ax[nplt-1].imshow(np.flipud(dd1), norm=colors.LogNorm(vmin=dd1.min(), vmax=dd1.max()) )
+                    ax[5].imshow(np.flipud(dd1), norm=colors.LogNorm(vmin=dd1.min(), vmax=dd1.max()) )
+
+                    #->> comparison <<- #
+
+	            for i in range(3):
+		        dd_ = np.fabs(phi_i[i,100,:,:])
+                        ax[i+6].imshow(np.flipud(dd_), norm=colors.LogNorm(vmin=dd_.min(), vmax=dd_.max()) )
+
+                    _dd = phi_i[0,100,:,:]**2.+phi_i[1,100,:,:]**2.+phi_i[2,100,:,:]**2.
+                    ax[9].imshow(np.flipud(_dd), norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()) )
+
 
 	            pl.show()
 
@@ -104,6 +128,8 @@ def Testing_portal(p, data, import_data_type='field'):
         pl.imshow(_dd, norm=colors.LogNorm(vmin=_dd.min(), vmax=_dd.max()), alpha=0.8)
     
         pl.show()
+
+    quit()
     return
 
 
@@ -118,7 +144,7 @@ def Testing_portal(p, data, import_data_type='field'):
 param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'a_init': 1e-2,
-    'smooth_R': 10.,
+    'smooth_R': 15.,
     'smooth_type': 'Gaussian', 
     'smooth_R_list_type':  'linear', 
     'boxsize': 32.,
@@ -135,7 +161,7 @@ prog_control={
     'do_LPT_rec':        True,
     'import_reced_data':   False,
     #-------------------------------#
-    'do_testing': False, 
+    'do_testing': False,
     }
 
 
@@ -154,8 +180,8 @@ if __name__=='__main__':
     ''' -------------------------------------------------
 	-------------------------------------------------     
     '''
-    import_type='all'
-    #import_type='field'
+    #import_type='all'
+    import_type='field'
 
     # ->> imporot data <<- #
     if p.import_format=='MIP':
@@ -219,6 +245,7 @@ if __name__=='__main__':
 	-------------------------------------------------     
     '''
     if p.do_testing==True:
+        print '->> Do testing <<- '
         Testing_portal(p, dd, import_data_type=import_type)
 
 
@@ -269,7 +296,7 @@ if __name__=='__main__':
 
 
     if do_powerspectrum==True:
-        kspace='log_linear'
+        kspace='linear'  #'log_linear'
     
         k_rec, pk_rec=psxi.pk(dt_rec, boxsize=p.boxsize, kspace=kspace)
         k_ori, pk_ori=psxi.pk(delta, boxsize=p.boxsize, kspace=kspace)
@@ -302,8 +329,8 @@ if __name__=='__main__':
     if True:
         # ->> comparison plot <<- #
     
-        nplt = 2
-        ncol = 2
+        nplt = 3
+        ncol = 3
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=10.,gap_size=0.5,return_figure=True)
     
         #ax[0].imshow(np.flipud(phi[100,:,:]))
@@ -312,8 +339,11 @@ if __name__=='__main__':
     
         dat_rec=dt_rec[:,:,100]-1.01*np.min(dt_rec[:,:,100])
         dat_ori=delta[:,:,100]-1.01*np.min(delta[:,:,100])
+        dat_disp=d_disp[:,:,100]-1.01*np.min(d_disp[:,:,100])
+
         ax[0].imshow(np.flipud(dat_rec), norm=colors.LogNorm(vmin=dat_rec.min(),vmax=dat_rec.max()))
         ax[1].imshow(np.flipud(dat_ori), norm=colors.LogNorm(vmin=dat_ori.min(),vmax=dat_ori.max()))
+        ax[2].imshow(np.flipud(dat_disp), norm=colors.LogNorm(vmin=dat_disp.min(),vmax=dat_disp.max()))
     
         pl.show()
         #fig.savefig('rect.png')

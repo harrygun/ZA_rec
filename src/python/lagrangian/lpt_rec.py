@@ -20,27 +20,28 @@ import misc.cic as mcic
 def get_ZA_displacement(p, m, smooth_R=None, smooth_type=None):
     # ->> Poisson solver <<- #
 
-    phi=ptt.Poisson3d(m, boxsize=p.boxsize, smooth_R=smooth_R, smooth_type=smooth_type)
+    phi, phi_i=ptt.Poisson3d(m, boxsize=p.boxsize, smooth_R=smooth_R, \
+                             smooth_type=smooth_type, return_gradient=True)
 
     if False:
         # ->> making plots <<- #
         pl.imshow(phi[:,:,100])
         pl.show()
-        quit()
 
     # ->> inverse of ZA: Psi_i = -partial_i * Laplacian^{-1} delta(tau) <<- #
-    dl=p.boxsize/np.float(p.nbin)
-    si = np.array(np.gradient(phi))/dl
+    #dl=p.boxsize/np.float(p.nbin)
+    #si = np.array(np.gradient(phi))/dl
+    #print 'dl=', dl, '|si|<', np.max(np.fabs(si)), '|phi_i|<', np.max(np.fabs(phi_i))
 
-    print 'dl=', dl, '|si|<', np.max(np.fabs(si))
+    print '|phi_i|<', np.max(np.fabs(phi_i))
 
     if False:
-        pl.hist(si.flatten(), bins=20)
+        #pl.hist(si.flatten(), bins=20)
+        pl.hist(phi_i.flatten(), bins=20, histtype='step')
         pl.show()
-        #print 'histogram:', hist
 
 
-    return phi, si
+    return phi, phi_i
 
 
 

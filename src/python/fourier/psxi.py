@@ -147,7 +147,7 @@ def pk(d, boxsize=1000., kspace='linear'):
     elif kspace=='linear':
         bedges=np.arange(kmin, kmax, kmin)
 
-    print 'k-space edges', len(bedges), kmin, kmax, k[-1]
+    #print 'k-space edges', len(bedges), kmin, kmax, k[-1]
 
     #->> cuts <<- #
     cuts = np.searchsorted(k,bedges)

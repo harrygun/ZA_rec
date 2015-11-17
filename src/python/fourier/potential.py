@@ -15,20 +15,22 @@ import genscript.myarray as mar
 def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smooth_R=None, smooth_type=None):
     ''' ->> Poisson solver of given field 'd', also return gradient or hessian field <<- 
     '''
-    dk=np.fft.fftn(d)
+    #dk=np.fft.fftn(d)
+    dk=sfft.fftn(d)
 
     sk = dk.shape
     ng = d.shape[0]
     ndim=len(d.shape)
-    kmin = 2.*np.pi/float(ng)
+    kmin = 2.*np.pi/float(boxsize)
+    #kmin = 2.*np.pi/float(ng)
+
+    #print 'kmin:', kmin
 
     # ->> Fourier space arguments <<- #
     '''
     kx, ky, kz=np.mgrid[0:ng, 0:ng, 0:ng].astype(float)
-
     ki = 2.*np.array([np.sin(kx*kmin/2.), np.sin(ky*kmin/2.), np.sin(kz*kmin/2.)])
     k2=4.*(np.sin(kx*kmin/2.)**2.+np.sin(ky*kmin/2.)**2.+np.sin(kz*kmin/2.)**2.)
-    
     if boxsize!=None:
         k2*=(float(ng)/float(boxsize))**2.
         ki*=float(ng)/float(boxsize)
@@ -36,14 +38,14 @@ def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smoo
 
     ki_list = [sfft.fftfreq(sk[i],d=1./float(sk[i]))*kmin for i in range(ndim)]
     kx, ky, kz=mar.meshgrid(*ki_list)
-   
-    ki = 2.*np.array([np.sin(kx/2.), np.sin(ky/2.), np.sin(kz/2.)])
-    k2=4.*(np.sin(kx/2.)**2.+np.sin(ky/2.)**2.+np.sin(kz/2.)**2.)
 
-    #k2=ki[0]**2.+ki[1]**2.+ki[2]**2.
+    #ki = 2.*np.array([np.sin(kx/2.), np.sin(ky/2.), np.sin(kz/2.)])
+    #k2=4.*(np.sin(kx/2.)**2.+np.sin(ky/2.)**2.+np.sin(kz/2.)**2.)
+
+    ki = np.array([kx, ky, kz])
+    k2=ki[0]**2.+ki[1]**2.+ki[2]**2.
+
     print 'ki shape:', ki.shape
-
-
 
 
 
@@ -66,7 +68,8 @@ def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smoo
     phik[0,0,0]=0
 
     # ->> get Phi <<- #
-    phi = np.fft.ifftn(phik)
+    #phi = np.fft.ifftn(phik)
+    phi = sfft.ifftn(phik)
 
     # ->> vector & tensors <<- #
     if return_hessian==True:
@@ -74,13 +77,15 @@ def Poisson3d(d, boxsize=None, return_hessian=False, return_gradient=False, smoo
 
         for i in range(ndim):
 	    for j in range(ndim):
-	        phi_ij[i,j] = np.fft.ifftn(-phik*ki[i]*ki[j])
+	        #phi_ij[i,j] = np.fft.ifftn(-phik*ki[i]*ki[j])
+	        phi_ij[i,j] = sfft.ifftn(-phik*ki[i]*ki[j])
 
     if return_gradient==True:
 	phi_i = np.zeros([ndim]+list(d.shape)) 
 
         for i in range(ndim):
-            phi_i[i] = np.fft.ifftn(1.j*phik*ki[i])
+            #phi_i[i] = np.fft.ifftn(1.j*phik*ki[i])
+            phi_i[i] = sfft.ifftn(1.j*phik*ki[i])
 	    #print 'phi_i real part:',np.min(phi_i[i].real) , np.max(phi_i[i].real)
 	    #print 'phi_i imag part:',np.min(phi_i[i].imag) , np.max(phi_i[i].imag)
 

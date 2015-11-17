@@ -49,19 +49,22 @@ def read_cgal(root, fn, npart, import_type='position'):
 
 def read_cita_simulation(fn, npt):
 
+    print 'importing data...'
+
     F=open(fn, 'rb')
-
     head=F.read(48)
-    _d = arr.array('f')
-    _d.fromfile(F, npt**3*6)
+    d = arr.array('f')
+    d.fromfile(F, npt**3*6)
 
-    #d=np.array(_d).reshape(npt,npt,npt,6)
-    d=np.array(_d).reshape(npt**3,6)
-    pos, vel=d[...,:3], d[...,3:6]
+    #d=np.array(d).reshape(npt**3,6)
+    #pos, vel=d[...,:3], d[...,3:6]
 
     F.close()
 
-    return pos, vel
+    print 'file closed.'
+
+    #return pos, vel
+    return np.array(d).reshape(npt**3,6)[...,:3], np.array(d).reshape(npt**3,6)[...,3:6]
 
 
 

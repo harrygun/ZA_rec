@@ -44,8 +44,8 @@ param_dict={
     'nbin':    256, 
     'particle_mass':    1.e5,
     #'import_format':   'gadget_DTFE',
-    #'import_format':   'cita_simulation_highres',
-    'import_format':   'cita_simulation',
+    'import_format':   'cita_simulation_highres',
+    #'import_format':   'cita_simulation',
     'save_data':    True,
     'redshift':     0.,
     }
@@ -94,7 +94,7 @@ if __name__=='__main__':
 	print 'particle mass:', p.particle_mass
 
     elif p.import_format=='cita_simulation_highres':
-        p.nbin=1024
+        p.nbin=576
 	p.boxsize=1000.
         droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm/node0/'
         droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm/node0/'
@@ -103,16 +103,25 @@ if __name__=='__main__':
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
 	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
 
-        #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+	fn_field_write=droot_field+'0.000xv0.dat.den.npz'
 
+        #dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
         pos, v=mio.read_cita_simulation(fn_part, p.nbin)
 	del v
+
+	if True:
+	    pl.plot(pos[:,:,100,1], pos[:,:,100,2], 'k.')
+	    pl.show()
+
 
         for i in range(3):
             xmax[i], xmin[i] = np.max(pos_[...,i]), np.min(pos_[...,i])
             pos[...,i]=(pos[...,i]-xmin[i])*p.boxsize/(xmax[i]-xmin[i]) 
 
+
 	# ->> estimate mass resolution <<- #
+	print 'pos.shape', pos.shape, type(pos[0,0])
+	print 'pos type:', type(pos[0,0])
 
         p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
 	print 'particle mass:', p.particle_mass
@@ -126,46 +135,11 @@ if __name__=='__main__':
 
 
     #->> density contrast <<- #
-    delta =dd[1]
+    npt=pos.shape[0]
+    print 'npart=', npt, 'nbin=', p.nbin, 
+    d=mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos, redshift=p.redshift, pmass=p.particle_mass)
 
-
-    ''' ->> analysis the data <<- '''
-    do_powerspectrum = False
-    do_correlation_function = False
-
-    if do_powerspectrum==True:
-        print 'boxsize=', p.boxsize
-    
-	k, pk=psxi.pk(delta, boxsize=p.boxsize)
-        k_ori, pk_ori=ps.pk(delta, boxsize=p.boxsize)
-
-	print 'k/k_ori shape:', k.shape, k_ori.shape
-
-
-        if True:
-            nplt, ncol = 1, 1
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
-
-            ax[0].loglog(k_ori, pk_ori, 'r--')
-            ax[0].loglog(k, pk, 'k-')
-
-            #ax[1].plot(k, pk_ori/pk, 'k-') 
-            #ax[1].set_xscale("log")
-    
-            pl.show()
-
-
-    if do_correlation_function==True:
-
-        #r, xi=psxi.xi(delta, boxsize=p.boxsize)
-        #xi=psxi.xi(delta, boxsize=p.boxsize)
-
-	r, xi =pk_cor.corfunk(delta, boxsize=p.boxsize )
-
-
-	pl.plot(r, r**2.*xi)
-	pl.show()
-
+    np.savez(fn_field_write, d=d)
 
 
 
