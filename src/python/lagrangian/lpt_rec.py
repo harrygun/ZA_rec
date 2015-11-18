@@ -2,7 +2,9 @@ import os
 import numpy as np
 #import pylab as pl
 import matplotlib.pyplot as pl
+import matplotlib.colors as colors
 #import pynbody as pn
+import genscript.myplot as mpl
 
 import genscript.progcontrol as pc
 from genscript.extendclass import *
@@ -14,6 +16,7 @@ import genscript.myarray as mar
 
 import fourier.potential as ptt
 import misc.cic as mcic
+import fourier.psxi as psxi
 
 
 
@@ -22,6 +25,16 @@ def get_ZA_displacement(p, m, smooth_R=None, smooth_type=None):
 
     phi, phi_i=ptt.Poisson3d(m, boxsize=p.boxsize, smooth_R=smooth_R, \
                              smooth_type=smooth_type, return_gradient=True)
+
+    if False:
+        k_phi, pk_phi=psxi.pk(phi, boxsize=p.boxsize, kspace='linear')
+        k_d, pk_d=psxi.pk(m, boxsize=p.boxsize, kspace='linear')
+
+	pl.loglog(k_d, pk_d, 'r-')
+	pl.loglog(k_phi, k_phi**4.*pk_phi, 'k-')
+	pl.show()
+
+        quit()
 
     if False:
         # ->> making plots <<- #
@@ -66,6 +79,12 @@ def shifted_ZA(p, si):
         shifted[i]=np.copy(shift_)
     
         print 'shifting axis-', i, 'is done.'
+
+    if True:
+        pl.plot(shifted[1,:,:,100], shifted[2,:,:,100], 'k.')
+        #pl.plot(si[1,:,:,100], si[2,:,:,100], 'k.')
+        #pl.plot(grid[1,:,:,100], grid[2,:,:,100], 'r.')
+	pl.show()
 
     return shifted
 
@@ -142,18 +161,26 @@ def lag_rec_ZA(p, mpart, dmap, smooth_R=None, smooth_type=None, rect_type='ZA_di
         pos_disp = np.copy(np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1))
 	pos_shift = np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1))
 
-        _test_draw_ = True
-	if _test_draw_:
-            #pl.plot( )
-	    pass
-
-
-
 	print 'particle shape:', mpart.shape, pos_disp.shape, pos_shift.shape
 
         #->> converting density map <<- #
 	d_disp = mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos_disp, pmass=p.particle_mass)
 	d_shift= mcic.cic(p.cp, npt, p.nbin, p.boxsize, pos_shift, pmass=p.particle_mass)
+
+
+        _test_draw_ = True
+	if _test_draw_:
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=7.,gap_size=1,return_figure=True)
+
+            ax[0].imshow(d_shift[:,:,100])
+	    ax[1].imshow(1.+dmap[:,:,100], norm=colors.LogNorm())
+
+	    pl.show()
+
+	    #quit()
+
+
 
 	d_rec=d_disp-d_shift
 
