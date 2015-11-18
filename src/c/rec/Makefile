@@ -100,7 +100,7 @@ endif
 ifeq ($(MACHINE),cita)
     MYLIBPATH= /home/xwang/workspace/lib/mylib
     INIPATH = /home/xwang/workspace/lib/iniparser
-    MPIPATH = 
+    #MPIPATH = 
 
     INILIB = -L$(INIPATH) -liniparser
     MPIINCLUDE= $(MPIPATH)/include
@@ -110,6 +110,8 @@ ifeq ($(MACHINE),cita)
 
     GSLIB = -L/home/wangxin/lib/gsl/lib -lgsl -lgslcblas -lm
     MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) 
+
+    CFLAGS = -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
 
 endif
 
@@ -143,7 +145,7 @@ LIB  = $(INILIB) $(GSLIB) $(MYLIB)
 
 
 # workspace path
-WORKSPACE = ../../workspace
+WORKSPACE = ../../../workspace
 AR=ar
 ARFLAGS=-r
 RANLIB=ranlib
@@ -154,7 +156,7 @@ default: rect
 
 
 #--------------------------------------------------#
-rect: driver.o
+rect: driver.o io.o
 	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 

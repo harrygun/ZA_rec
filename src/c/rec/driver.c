@@ -17,9 +17,9 @@
   #include "cospara.h"
   #include "myinterpolate.h"
 
-  #include "glbvarb.h"
-
-  #include "cic.h"
+  #include "parvar.h"
+  #include "io.h"
+  //#include "cic.h"
 
 
 #ifdef _MPI_
@@ -103,13 +103,17 @@
         printf("w1=%lg\n", cp.w1);
         }
 
+      char *smooth_type, *particle_fname, *droot, *plin_name;
+      int do_density, do_potential, do_rect;
+      int npart, ngrid;
 
-      char *smooth_type, *prop_file_name, *output_prefix, *plin_name;
-      int  do_propagator;
+      smooth_type = iniparser_getstring(dict, "Rect:smooth_type", "gaussian");
+      cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
+      cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
 
-      smooth_type = iniparser_getstring(dict, "LPT_LOG:smooth_type", "gaussian");
-      cp.R = iniparser_getdouble(dict, "LPT_LOG:smooth_scale", 3.) ;
-      cp.z = iniparser_getdouble(dict, "LPT_LOG:redshift", 0) ;
+      ngrid=iniparser_getint(dict, "Rect:grid_size", 0);
+      npart=pow(ngrid,3);
+      printf("ngrid=%d,  npart=%d\n", ngrid, npart);
 
       if(strcmp( smooth_type, "tophat")==0 ) {
         cp.flg[0]= _TOPHAT_SMOOTH_ ;
@@ -125,47 +129,41 @@
       printf("smooth scale=%lg\n", cp.R);
       printf("z=%lg\n", cp.z);
 
-      do_propagator=iniparser_getboolean
-                      (dict, "EPT_LOG_RESUM:do_propagator", INIFALSE);
-      prop_file_name=iniparser_getstring
-                    (dict,"EPT_LOG_RESUM:propagator_file_name", "fkchart.dat");
-      output_prefix=iniparser_getstring
-                    (dict,"EPT_LOG_RESUM:output_prefix", NULL);
-
-      plin_name =iniparser_getstring
-                    (dict,"EPT_LOG_RESUM:linear_power_name", NULL);
+      droot=iniparser_getstring(dict,"Rect:data_root", "~/");
+      particle_fname=iniparser_getstring(dict,"Rect:particle_file_name", "x.dat");
+      //printf("particle fname: %s\n", particle_fname);
 
       /*-----------------------------------------------------------------------*/
+      do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
+      do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
+      do_potential=iniparser_getboolean(dict, "Rect:do_potential", INIFALSE);
 
+      /*-----------------------------------------------------------------------*/
+      plin_name=iniparser_getstring(dict,"Rect:linear_power_name", NULL);
       Interpar *power = (Interpar *)malloc(sizeof(Interpar));
       FILE *fp = fopen(plin_name, "r"); 
-
       init_powerInterp(power, fp);
       cp.power=power;
+      fclose(fp);
 
-      cp.zinit = iniparser_getdouble(dict, "Reconstruction:initial_redshift", 35);
-      cp.a = Dp(&cp, cp.z) / Dp(&cp, cp.zinit);
-      printf("zinit=%lg\n", cp.zinit);
-
-  /*-----------------------------------------------
-              End of initialization.
-  -----------------------------------------------*/
+    /*-----     End of initialization.    ------*/
 
 
-  /*--------------------------
-    Initialize the data
-  ----------------------------*/
+    //  ->> loading particle data <<- //
+    Pdata *p=(Pdata *)malloc(npart*sizeof(Pdata));
+    load_cita_simulation(particle_fname, p, npart);
+
+
+   // ->> if do CIC density estimation <<- //
 
 
 
 
-
-
-
-/*-----------------------------------------------------
-                   free all
------------------------------------------------------*/
+  /*-----------------------------------------------------
+                     free all
+  -----------------------------------------------------*/
       iniparser_freedict(dict);
+      free(p);
 
 
   #ifdef _MPI_

@@ -48,10 +48,18 @@ def read_cgal(root, fn, npart, import_type='position'):
 
 
 def read_cita_simulation(fn, npt):
-
     print 'importing data...'
-
     F=open(fn, 'rb')
+
+    ''' ->> indicating the header <<- 
+    header=arr.array('i')
+    header.fromfile(F, 1)
+    check=arr.array('f')
+    check.fromfile(F, 11)
+    print 'header:', header, header[0]
+    '''
+
+
     head=F.read(48)
     d = arr.array('f')
     d.fromfile(F, npt**3*6)

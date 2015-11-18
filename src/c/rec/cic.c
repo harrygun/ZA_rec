@@ -2,50 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "./nrsrc/nrutil.h"
 
-
-struct io_header_1
-{
-  int      npart[6];
-  double   mass[6];
-  double   time;
-  double   redshift;
-  int      flag_sfr;
-  int      flag_feedback;
-  int      npartTotal[6];
-  int      flag_cooling;
-  int      num_files;
-  double   BoxSize;
-  double   Omega0;
-  double   OmegaLambda;
-  double   HubbleParam; 
- 
-  int flag_stellarage;
-  int flag_metals;
-  unsigned int npartTotalHighWord[6];  /*!< High word of the total number of particles of each type */
-  int  flag_entropy_instead_u;         /*!< flags that IC-file contains entropy instead of u */
-  char fill[60];
-} header1;
-
-long long    NumPart, Ngas, NDM;
-
-struct particle_data 
-{
-  float  Pos[3];
-} *P;
-
-float Pos[3],Vel[3];
-
-double  Time, Redshift;
-
-float ***delta;
-
-long long Ngridx,Ngridy,Ngridz;
-
-float xmin,xmax,ymin,ymax,zmin,zmax;
-
-float rhoc,rhom;
 
 
 
