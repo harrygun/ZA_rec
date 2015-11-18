@@ -47,45 +47,8 @@ float xmin,xmax,ymin,ymax,zmin,zmax;
 
 float rhoc,rhom;
 
-int snap_number;
 
-/* Here we load a snapshot file. It can be distributed
- * onto several files (for files>1).
- * The particles are brought back into the order
- * implied by their ID's.
- * A unit conversion routine is called to do unit
- * conversion, and to evaluate the gas temperature.
- */
 
-/* modified from read_snapshot.c in the Gadget package*/
-
-int main(int argc, char **argv)
-{
-  char path[200], input_fname[200],basename[200];
-  int  snapshot_number, files;
-  int i,j,k;
-
-  Ngridx=100;
-  Ngridy=100;
-  Ngridz=100;
-
-  delta=f3tensor(0L,Ngridx-1,0L,Ngridy-1,0L,Ngridz-1);
-  for(i=0;i<Ngridx;i++)
-     for(j=0;j<Ngridy;j++)
-        for(k=0;k<Ngridz;k++)
-           delta[i][j][k]=0.0;
-
-  files=1;                             
-
-  //sprintf(input_fname,"%s","../ics_L50_N100_0_0_00.0.data");
-
-  sprintf(input_fname,"%s","/home1/yuebin/Data/FirstStars/coarse512/init_gadget_c.dat");
-  printf("Ngridx %ld Ngridy %ld Ngridz %ld\n",Ngridx,Ngridy,Ngridz);
-
-  load_snapshot(input_fname, files);
-
-  do_what_you_want();
-}
 
 
 /* here the particle data is at your disposal 
