@@ -49,6 +49,10 @@ elif machine=='cita':
     include_dirs=[ np.get_include(), cython_gsl.get_cython_include_dir(), '../c/'], 
     library_dirs=[cython_gsl.get_library_dir(), './', '../c/']   ) , 
 
+    Extension("partmoving", ["partmoving.pyx"], 
+    libraries=cython_gsl.get_libraries(),
+    include_dirs=[ np.get_include(), cython_gsl.get_cython_include_dir(), '../c/'], 
+    library_dirs=[cython_gsl.get_library_dir(), './', '../c/']   ) , 
     ]
 
 

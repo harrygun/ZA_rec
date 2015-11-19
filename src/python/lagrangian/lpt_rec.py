@@ -17,7 +17,11 @@ import genscript.myarray as mar
 import fourier.potential as ptt
 import misc.cic as mcic
 import fourier.psxi as psxi
+import misc.partmoving as pmv
 
+
+
+displace_interpolation=True
 
 
 def get_ZA_displacement(p, m, smooth_R=None, smooth_type=None):
@@ -96,7 +100,6 @@ def displaced_ZA(p, si, mpart):
 
     displaced=np.zeros((3, p.nbin, p.nbin, p.nbin))
 
-    displace_interpolation=False
     if displace_interpolation==False:
 
         for i in range(3):
@@ -112,6 +115,11 @@ def displaced_ZA(p, si, mpart):
 
     elif displace_interpolation==True:
 
+        print 'si shape', si.shape, 'particle pos shape:', mpart.shape
+        displaced=pmv.particle_move(p, mpart, si)
+
+
+        """
         # ->> setup interpolation of si <<- #
         x_= np.linspace(0., p.boxsize, p.nbin, endpoint=False)
         y_= np.linspace(0., p.boxsize, p.nbin, endpoint=False)
@@ -137,6 +145,7 @@ def displaced_ZA(p, si, mpart):
 	    displaced[i] = np.copy(dis_)
 
     	    print 'axis-', i, 'is done.'
+        """
 
     return displaced
 
