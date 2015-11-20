@@ -74,15 +74,24 @@ def shifted_ZA(p, si):
 
 
     shifted=np.zeros((3, p.nbin, p.nbin, p.nbin))
-    for i in range(3):
-        shift_=grid[i]+si[i]
-    
-        # ->> periodic boundary <<- #
-        shift_[np.where(shift_<0.)] = p.boxsize+shift_[np.where(shift_<0.)]
-        shift_[np.where(shift_>p.boxsize)] = shift_[np.where(shift_>p.boxsize)]-p.boxsize
-        shifted[i]=np.copy(shift_)
-    
-        print 'shifting axis-', i, 'is done.'
+
+    if displace_interpolation==False:
+
+        for i in range(3):
+            shift_=grid[i]+si[i]
+        
+            # ->> periodic boundary <<- #
+            shift_[np.where(shift_<0.)] = p.boxsize+shift_[np.where(shift_<0.)]
+            shift_[np.where(shift_>p.boxsize)] = shift_[np.where(shift_>p.boxsize)]-p.boxsize
+            shifted[i]=np.copy(shift_)
+        
+            print 'shifting axis-', i, 'is done.'
+    else:
+
+        print 'si shape', si.shape, 
+        shifted=pmv.particle_move(p, grid.reshape(3,p.nbin**3), si)
+
+
 
     if True:
         pl.plot(shifted[1,:,:,100], shifted[2,:,:,100], 'k.')
@@ -113,7 +122,7 @@ def displaced_ZA(p, si, mpart):
     	    print 'displacing axis-', i, 'is done.'
 
 
-    elif displace_interpolation==True:
+    else:
 
         print 'si shape', si.shape, 'particle pos shape:', mpart.shape
         displaced=pmv.particle_move(p, mpart, si)
