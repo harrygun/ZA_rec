@@ -174,11 +174,11 @@ def lag_rec_ZA(p, mpart, dmap, smooth_R=None, smooth_type=None, rect_type='ZA_di
 
     if rect_type=='ZA_displaced_shifted':
         #->> get particles <<- #
-        #pos_disp = np.copy(np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1))
-	#pos_shift = np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1))
+        #pos_disp=np.copy(np.swapaxes(displaced_ZA(p,si,mpart).reshape(3, p.nbin**3),0,1))
+	#pos_shift=np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3),0,1))
 
-        pos_disp = displaced_ZA(p, si, mpart)
-	pos_shift = shifted_ZA(p, si)
+        pos_disp=displaced_ZA(p,si,mpart)
+	pos_shift=shifted_ZA(p, si)
 
 	print 'particle shape:', mpart.shape, pos_disp.shape, pos_shift.shape
 

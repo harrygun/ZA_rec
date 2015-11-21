@@ -28,7 +28,7 @@ cdef float trilinear(float pos[3], float dp[3], float v[2][2][2]):
 
 cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, \
                                  np.ndarray[np.float32_t, ndim=4, mode='c']si,  \
-                                 np.ndarray[np.float32_t, ndim=3, mode='c']shifted, \
+                                 np.ndarray[np.float32_t, ndim=2, mode='c']shifted, \
 		                 np.ndarray[np.float32_t, ndim=2, mode='c']grid  ):
     ''' ->> pos[npart, 3], grid[3, ngrid], si[3, ngrid, ngrid, ngrid] <<- '''
 
@@ -36,6 +36,7 @@ cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, 
         int n, ip, i, j, k, idx[3], i1, j1, k1, ni, nj, nk
         float delta_grid[3], dp[3], x[3], v[2][2][2], dsi
 
+    print 'grid max:', grid[:,-1], grid.max()
 
 
     for ip in range(npart):
@@ -46,14 +47,22 @@ cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, 
 
         idx[0], idx[1], idx[2]=i, j, k
 
+        print 'ip:', ip, i, j, k
+
         #->> preparing the interpolation <<- #
         for n in range(3):
             # ->> uniform grid <<- #
             delta_grid[n] = grid[n,1]-grid[n,0]
 	    #->> particle position <<- #
             x[n]=pos[ip,n]
+
+            print 'n:', n, 'idx[n]', idx[n]
+
             #->> distance to the grid <<- #
             dp[n]=(x[n]-grid[n,idx[n]])/delta_grid[n]
+
+
+        print '\n'
 
         # ->> set vertices <<- #
         for n in range(3):
@@ -90,6 +99,7 @@ cpdef particle_move(p, pos, si):
     print 'grid shape:', grid.shape
 
     shifted=np.ascontiguousarray(np.zeros(pos.shape), dtype=np.float32)
+    print 'cython partmoving shape:', shifted.shape, grid.shape, pos.shape, si.shape
 
     # ->> call cdef routine <<- #
     pmove(<int>p.nbin**3, <int>p.nbin, np.ascontiguousarray(pos, dtype=np.float32),\

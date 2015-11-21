@@ -76,7 +76,7 @@ def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
         xmax[i], xmin[i] = np.max(pos_[...,i]), np.min(pos_[...,i])
 	pos[...,i]=(pos_[...,i]-xmin[i])*p.boxsize/(xmax[i]-xmin[i]) 
 
-    pos=np.rollaxis(pos, -1).reshape(3, p.nbin, p.nbin, p.nbin)
+    #pos=np.rollaxis(pos, -1).reshape(3, p.nbin, p.nbin, p.nbin)
 
     den=np.load(fn_field)['d']
 
