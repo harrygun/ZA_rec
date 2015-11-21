@@ -86,12 +86,13 @@ cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, 
 cpdef particle_move(p, pos, si):
 
     _grid_=np.linspace(0, p.boxsize, p.nbin, endpoint=False).astype(np.float32)
-    grid=np.vstack(_grid_, _grid_, _grid_)
+    grid=np.ascontiguousarray(np.vstack( (_grid_, _grid_, _grid_) ), dtype=np.float32)
     print 'grid shape:', grid.shape
 
-    shifted=np.zeros(pos.shape).astype(np.float32)
+    shifted=np.ascontiguousarray(np.zeros(pos.shape), dtype=np.float32)
 
     # ->> call cdef routine <<- #
-    pmove(<int>p.npart, <int>p.nbin, pos, si, shifted, grid)
+    pmove(<int>p.nbin**3, <int>p.nbin, np.ascontiguousarray(pos, dtype=np.float32),\
+          np.ascontiguousarray(si, dtype=np.float32), shifted, grid)
 
     return shifted

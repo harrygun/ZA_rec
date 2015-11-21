@@ -17,7 +17,7 @@ import genscript.myarray as mar
 import fourier.potential as ptt
 import misc.cic as mcic
 import fourier.psxi as psxi
-import misc.partmoving as pmv
+import misc.cyth.partmoving as pmv
 
 
 
@@ -89,11 +89,9 @@ def shifted_ZA(p, si):
     else:
 
         print 'si shape', si.shape, 
-        shifted=pmv.particle_move(p, grid.reshape(3,p.nbin**3), si)
+        shifted=pmv.particle_move(p,np.swapaxes(grid.reshape(3,p.nbin**3),0,1),si)
 
-
-
-    if True:
+    if False:
         pl.plot(shifted[1,:,:,100], shifted[2,:,:,100], 'k.')
         #pl.plot(si[1,:,:,100], si[2,:,:,100], 'k.')
         #pl.plot(grid[1,:,:,100], grid[2,:,:,100], 'r.')
@@ -176,8 +174,11 @@ def lag_rec_ZA(p, mpart, dmap, smooth_R=None, smooth_type=None, rect_type='ZA_di
 
     if rect_type=='ZA_displaced_shifted':
         #->> get particles <<- #
-        pos_disp = np.copy(np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1))
-	pos_shift = np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1))
+        #pos_disp = np.copy(np.swapaxes(displaced_ZA(p, si, mpart).reshape(3, p.nbin**3), 0, 1))
+	#pos_shift = np.copy(np.swapaxes(shifted_ZA(p, si).reshape(3, p.nbin**3), 0, 1))
+
+        pos_disp = displaced_ZA(p, si, mpart)
+	pos_shift = shifted_ZA(p, si)
 
 	print 'particle shape:', mpart.shape, pos_disp.shape, pos_shift.shape
 
