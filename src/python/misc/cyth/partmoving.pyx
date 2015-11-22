@@ -36,18 +36,11 @@ cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, 
         int n, ip, i, j, k, idx[3], i1, j1, k1, ni, nj, nk
         float delta_grid[3], dp[3], x[3], v[2][2][2], dsi
 
-    print 'grid max:', grid[:,-1], grid.max()
+    #print 'grid max:', grid[:,-1], grid.max()
 
 
+    #->> loop over all particles <<- #
     for ip in range(npart):
-        #->>  
-        i=np.searchsorted(grid[0], pos[ip,0])
-        j=np.searchsorted(grid[1], pos[ip,1])
-        k=np.searchsorted(grid[2], pos[ip,2])
-
-        idx[0], idx[1], idx[2]=i, j, k
-
-        print 'ip:', ip, i, j, k
 
         #->> preparing the interpolation <<- #
         for n in range(3):
@@ -56,13 +49,19 @@ cdef pmove(int npart, int ngrid, np.ndarray[np.float32_t, ndim=2, mode='c']pos, 
 	    #->> particle position <<- #
             x[n]=pos[ip,n]
 
-            print 'n:', n, 'idx[n]', idx[n]
+            #->> idx:
+            idx[n]=np.searchsorted(grid[n], pos[ip,n])
+            if idx[n]>=ngrid:
+                idx[n]=idx[n]-ngrid
+            if idx[n]<0:
+                print 'idx<0:', ip, idx[n]
+                raise Exception
 
             #->> distance to the grid <<- #
             dp[n]=(x[n]-grid[n,idx[n]])/delta_grid[n]
 
 
-        print '\n'
+        i, j, k = idx
 
         # ->> set vertices <<- #
         for n in range(3):

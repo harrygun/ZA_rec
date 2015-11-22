@@ -90,9 +90,13 @@ def shifted_ZA(p, si):
 
         print 'si shape', si.shape, 
         shifted=pmv.particle_move(p,np.swapaxes(grid.reshape(3,p.nbin**3),0,1),si)
+        shifted[np.where(shifted<0.)] = p.boxsize+shifted[np.where(shifted<0.)]
+        shifted[np.where(shifted>p.boxsize)]=shifted[np.where(shifted>p.boxsize)]-p.boxsize
 
-    if False:
-        pl.plot(shifted[1,:,:,100], shifted[2,:,:,100], 'k.')
+    if True:
+        shift_=shifted.reshape(p.nbin,p.nbin,p.nbin, 3)
+        pl.plot(shift_[:,:,100,1], shift_[:,:,100, 2], 'k.')
+
         #pl.plot(si[1,:,:,100], si[2,:,:,100], 'k.')
         #pl.plot(grid[1,:,:,100], grid[2,:,:,100], 'r.')
 	pl.show()
