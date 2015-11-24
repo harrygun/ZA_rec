@@ -206,7 +206,7 @@ if __name__=='__main__':
 
     if p.import_format=='cita_simulation':
         p.nbin=256
-	p.boxsize=1000.
+	p.boxsize=512.
         droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
         droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
 

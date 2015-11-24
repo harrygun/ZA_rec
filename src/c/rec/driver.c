@@ -157,6 +157,10 @@
     /*-----     End of initialization.    ------*/
 
 
+
+    /*-----------------------------------------------------
+            // ->>     Importing data     <<- //
+    -----------------------------------------------------*/
     //  ->> loading particle data <<- //
     Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, npart);
@@ -164,7 +168,7 @@
 
    // ->> if do CIC density estimation <<- //
    float ***d;
-   double particle_mass, rhom_;
+   double particle_mass, rhom_, dmean;
    int ngrid_xyz[3];
     if (do_density=TRUE) {
       // ->> 
@@ -179,19 +183,30 @@
       printf("\nmean density=%lg (M_star)*(h/Mpc)^3, particle mass resolution=%lg\n\n", rhom_, particle_mass);
 
       // ->> CIC density estimation <<- //
-      cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
+      dmean=cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
+
+      // ->> save density field in file <<- //
+      if(save_odensity==TRUE) { //
+        fp=fopen(oden_fname, "wb");
+        for(i=0; i<ngrid; i++)
+          for(j=0; j<ngrid; j++)
+            for(k=0; k<ngrid; k++)
+              fwrite(&d[i][j][k], sizeof(float), 1, fp);
+        fclose(fp);
+        }
+
       }
+    // ->> otherwise, import density field <<- //
+    else { }
 
-    if(save_odensity==TRUE) { //save density 
-      fp=fopen(oden_fname, "wb");
+    /*-----------------------------------------------------
+         // ->>   performing reconstruction   <<- //
+    -----------------------------------------------------*/
 
-      for(i=0; i<ngrid; i++)
-        for(j=0; j<ngrid; j++)
-          for(k=0; k<ngrid; k++)
-            fwrite(&d[i][j][k], sizeof(float), 1, fp);
+    // ->> Obtain displacement field <<- //
 
-      fclose(fp);
-      }
+
+
 
     /*-----------------------------------------------------
                        free all

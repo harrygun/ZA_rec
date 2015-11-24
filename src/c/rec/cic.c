@@ -31,12 +31,12 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 
-void density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3], 
+double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3], 
              int npart, int ngridx, int ngridy, int ngridz) {
   long long ip;
   long long i,j,k,i1,j1,k1;
   float xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
-  double aa, masstot;
+  double aa, masstot, dmean;
   
   // ->> 
   for(i=0; i<ngridx; i++)
@@ -103,21 +103,24 @@ void density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3]
         d[i][j][k]=d[i][j][k]/(x1*y1*z1);
         aa+=d[i][j][k];
         }
+	
+  dmean=aa/(float)ngridx/(float)ngridy/(float)ngridz;
 
-  printf("mean density %lg\n",aa/(float)ngridx/(float)ngridy/(float)ngridz);
+  printf("mean density %lg\n", dmean);
 
-  return;
+  return dmean;
   }
 
 
 
 
 
-int cic_density(Pdata_pos *p, float ***d, double boxsize, 
-                    double mass, int npart, int ngrid[3]) {
+double cic_density(Pdata_pos *p, float ***d, double boxsize, 
+                      double mass, int npart, int ngrid[3]) {
   long long ip;
   float dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3];
   int i, j, k;
+  double dmean;
 
   // ->> obtain boundary <<- //
   xmin=boxsize/2.0; xmax=boxsize/2.0;
@@ -148,7 +151,7 @@ int cic_density(Pdata_pos *p, float ***d, double boxsize,
   dy=(ymax-ymin)/(float)ngrid[1];
   dz=(zmax-zmin)/(float)ngrid[2];
   
-  printf("cic_density: dx %f dy %f dz %f\n",dx,dy,dz);
+  printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx,dy,dz);
   
   // ->> renormalize particle positions <<- //
   for(ip=0; ip<npart; ip++) {
@@ -156,13 +159,11 @@ int cic_density(Pdata_pos *p, float ***d, double boxsize,
     p[ip].pos[1]=(p[ip].pos[1]-ymin)/dy;
     p[ip].pos[2]=(p[ip].pos[2]-zmin)/dz;
     }
-
-  printf("ngridx %ld ngridy %ld ngridz %ld\n",ngrid[0],ngrid[1],ngrid[2]);
-  printf("calculate density...\n");
+  //printf("ngridx %ld ngridy %ld ngridz %ld\n",ngrid[0],ngrid[1],ngrid[2]);
 
   // ->> CIC density <<- //
-  density(p, d, mass, pmin, pmax, npart, ngrid[0], ngrid[1], ngrid[2]); 
+  dmean=density(p, d, mass, pmin, pmax, npart, ngrid[0], ngrid[1], ngrid[2]); 
 
-  printf("CIC density is done.\n");
+  printf("\n->> CIC density is done.\n");
   return;
   }
