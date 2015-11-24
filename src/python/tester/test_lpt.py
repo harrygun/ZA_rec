@@ -114,32 +114,7 @@ if __name__=='__main__':
         p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
 	print 'particle mass:', p.particle_mass
 
-    if p.import_format=='cita_simulation_highres':
-        p.nbin=256
-	p.boxsize=1000.
-        droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
-        droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
 
-	fn_part=droot_part+'0.000xv0.dat'
-	fn_field=droot_field+'0.000xv0.dat.den.npz'
-	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
-
-        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
-
-	# ->> estimate mass resolution <<- #
-
-        p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
-	print 'particle mass:', p.particle_mass
-
-
-
-    ''' -------------------------------------------------
-               ->>      do some testing      <<- 
-	-------------------------------------------------     
-    '''
-    if p.do_testing==True:
-        print '->> Do testing <<- '
-        Testing_portal(p, dd, import_data_type=import_type)
 
 
     ''' ->> Performing Lagrangian reconstruction <<- '''

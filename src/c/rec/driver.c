@@ -19,7 +19,7 @@
 
   #include "parvar.h"
   #include "io.h"
-  //#include "cic.h"
+  #include "cic.h"
 
 
 #ifdef _MPI_
@@ -103,6 +103,7 @@
         printf("w1=%lg\n", cp.w1);
         }
 
+      double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name;
       int do_density, do_potential, do_rect;
       int npart, ngrid;
@@ -111,9 +112,11 @@
       cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
       cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
 
+
+      boxsize = iniparser_getdouble(dict, "Rect:boxsize", 0) ;
       ngrid=iniparser_getint(dict, "Rect:grid_size", 0);
       npart=pow(ngrid,3);
-      printf("ngrid=%d,  npart=%d\n", ngrid, npart);
+      printf("boxsize=%lg,  ngrid=%d,  npart=%d\n", boxsize, ngrid, npart);
 
       if(strcmp( smooth_type, "tophat")==0 ) {
         cp.flg[0]= _TOPHAT_SMOOTH_ ;
@@ -150,28 +153,43 @@
 
 
     //  ->> loading particle data <<- //
-    Pdata *p=(Pdata *)malloc(npart*sizeof(Pdata));
-    load_cita_simulation(particle_fname, p, npart);
+    Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+    load_cita_simulation_position(particle_fname, p, npart);
 
 
    // ->> if do CIC density estimation <<- //
+   float ***d;
+   double particle_mass;
+   int ngrid_xyz[3];
+    if (do_density=TRUE) {
+      // ->> 
+      for(i=0; i<3; i++)
+        ngrid_xyz[i]=ngrid;
+
+      d=(float ***)anymat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 
+                           sizeof(float),sizeof(float *),sizeof(float **));
+
+      particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
+      cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
+      }
+
+    if(save_density_ori=TRUE) { //save density 
+      fp=fopen();
+      }
+
+    /*-----------------------------------------------------
+                       free all
+    -----------------------------------------------------*/
+    iniparser_freedict(dict);
+    free(p);
+    freemat3((void ***)d, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
 
 
-
-
-  /*-----------------------------------------------------
-                     free all
-  -----------------------------------------------------*/
-      iniparser_freedict(dict);
-      free(p);
-
-
-  #ifdef _MPI_
-//      MPI_Barrier(MPI_COMM_WORLD);
+    #ifdef _MPI_
       MPI_Finalize();
-  #endif
+      //MPI_Barrier(MPI_COMM_WORLD);
+    #endif
 
-      
     }
 
 

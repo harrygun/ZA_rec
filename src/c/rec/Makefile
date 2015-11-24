@@ -156,7 +156,7 @@ default: rect
 
 
 #--------------------------------------------------#
-rect: driver.o io.o
+rect: driver.o io.o cic.o
 	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 

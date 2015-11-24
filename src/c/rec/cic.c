@@ -1,134 +1,166 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <math.h>
+
+  #include "const.h"
+  #include "varb.h"
+  #include "mymath.h"
+  #include "myerr.h"
+  #include "matrix.h"
+  #include "init.h"
+  #include "power.h"
+  #include "cospara.h"
+  #include "myinterpolate.h"
+
+  #include "parvar.h"
+  #include "io.h"
+
+
+
+
+double get_rhom(Cospar *cp, double z){
+  //->>  M_star*(h/Mpc)^3 <<-//
+  return (2.7752e11)*cp->omem/cp->h0*pow(1.+z,3.);
+  }
+
+double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
+  double rhom=get_rhom(cp, z);
+  return rhom*pow(boxsize, 3.)/pow((double)(ngrid), 3.);
+  }
+
+
+
+void density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3], 
+             int npart, int ngridx, int ngridy, int ngridz) {
+  long long ip;
+  long long i,j,k,i1,j1,k1;
+  float xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
+  double aa, masstot;
+  
+  // ->> 
+  for(i=0; i<ngridx; i++)
+    for(j=0; j<ngridy; j++)
+      for(k=0; k<ngridz; k++)
+        d[i][j][k]=0.0;
+  masstot=0.0;
+  
+  for(ip=0; ip<npart; ip++) {
+    i=(int)p[ip].pos[0]; xc=(float)i;
+    j=(int)p[ip].pos[1]; yc=(float)j;
+    k=(int)p[ip].pos[2]; zc=(float)k;
+    
+    if(i<0) i=i+ngridx;
+    if(j<0) j=j+ngridy;
+    if(k<0) k=k+ngridz;
+    
+    if(i>=ngridx) i=i-ngridx;
+    if(j>=ngridy) j=j-ngridy;
+    if(k>=ngridz) k=k-ngridz;
+    
+    dx=fabs(p[ip].pos[0]-xc); tx=fabs(1.0-dx);
+    dy=fabs(p[ip].pos[1]-yc); ty=fabs(1.0-dy);
+    dz=fabs(p[ip].pos[2]-zc); tz=fabs(1.0-dz);
+    
+    i1=i+1;  
+    j1=j+1; 
+    k1=k+1;
+    
+    if(i1<0) i1=i1+ngridx;
+    if(j1<0) j1=j1+ngridy;
+    if(k1<0) k1=k1+ngridz;
+    
+    if(i1>=ngridx) i1=i1-ngridx;
+    if(j1>=ngridy) j1=j1-ngridy;
+    if(k1>=ngridz) k1=k1-ngridz;
+    
+    d[i][j][k]+=mass*tx*ty*tz;
+    d[i1][j][k]+=mass*dx*ty*tz;
+    d[i][j1][k]+=mass*tx*dy*tz;
+    d[i1][j1][k]+=mass*dx*dy*tz;
+    d[i][j][k1]+=mass*tx*ty*dz;
+    d[i1][j][k1]+=mass*dx*ty*dz;
+    d[i][j1][k1]+=mass*tx*dy*dz;
+    d[i1][j1][k1]+=mass*dx*dy*dz;
+    masstot+=mass*tx*ty*tz;
+    masstot+=mass*dx*ty*tz;
+    masstot+=mass*tx*dy*tz;
+    masstot+=mass*dx*dy*tz;
+    masstot+=mass*tx*ty*dz;
+    masstot+=mass*dx*ty*dz;
+    masstot+=mass*tx*dy*dz;
+    masstot+=mass*dx*dy*dz;
+  }
+
+  aa=0;
+  x1=(pmax[0]-pmin[0])/(float)ngridx;
+  y1=(pmax[1]-pmin[1])/(float)ngridy;
+  z1=(pmax[2]-pmin[2])/(float)ngridz;
+
+  for(i=0; i<ngridx; i++)
+    for(j=0; j<ngridy; j++)
+      for(k=0; k<ngridz; k++) {
+        d[i][j][k]=d[i][j][k]/(x1*y1*z1)-1.;
+        aa+=d[i][j][k];
+        }
+
+  printf("mean density %lg\n",aa/(float)ngridx/(float)ngridy/(float)ngridz);
+
+  return;
+  }
 
 
 
 
 
+int cic_density(Pdata_pos *p, float ***d, double boxsize, 
+                    double mass, int npart, int ngrid[3]) {
+  long long ip;
+  float dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3];
+  int i, j, k;
 
-/* here the particle data is at your disposal 
- */
-int do_what_you_want(void)
-{
-   long long ip;
-   float dx,dy,dz;
-   FILE *fp;
-   int i,j,k;
-   char fname[200];
+  // ->> obtain boundary <<- //
+  xmin=boxsize/2.0; xmax=boxsize/2.0;
+  ymin=boxsize/2.0; ymax=boxsize/2.0;
+  zmin=boxsize/2.0; zmax=boxsize/2.0;
 
-   dx=(xmax-xmin)/Ngridx;
-   dy=(ymax-ymin)/Ngridy;
-   dz=(zmax-zmin)/Ngridz;
+  pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
+  pmax[0]=xmax; pmax[1]=ymax; pmax[2]=zmax; 
 
-   printf("dx %f dy %f dz %f\n",dx,dy,dz);
+  for(ip=0; ip<npart; ip++) {
+    if(p[ip].pos[0]<xmin) xmin=p[ip].pos[0];
+    if(p[ip].pos[0]>xmax) xmax=p[ip].pos[0];
+    
+    if(p[ip].pos[1]<ymin) ymin=p[ip].pos[1];
+    if(p[ip].pos[1]>ymax) ymax=p[ip].pos[1];
+    
+    if(p[ip].pos[2]<zmin) zmin=p[ip].pos[2];
+    if(p[ip].pos[2]>zmax) zmax=p[ip].pos[2];
+    }
 
-   for(ip=1;ip <= NDM;ip++)
-     {
-      P[ip].Pos[0]=(P[ip].Pos[0]-xmin)/dx;
-      P[ip].Pos[1]=(P[ip].Pos[1]-ymin)/dy;
-      P[ip].Pos[2]=(P[ip].Pos[2]-zmin)/dz;
-     }
+  printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
+  printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
 
-   printf("Ngridx %ld Ngridy %ld Ngridz %ld\n",Ngridx,Ngridy,Ngridz);
-   
-   printf("density...\n");
-   density();
-/* write a binary file here */
+  // ->> dx, dy, dz <<- //
+  dx=(xmax-xmin)/(float)ngrid[0];
+  dy=(ymax-ymin)/(float)ngrid[1];
+  dz=(zmax-zmin)/(float)ngrid[2];
+  
+  printf("cic_density: dx %f dy %f dz %f\n",dx,dy,dz);
+  
+  // ->> renormalize particle positions <<- //
+  for(ip=0; ip<npart; ip++) {
+    p[ip].pos[0]=(p[ip].pos[0]-xmin)/dx;
+    p[ip].pos[1]=(p[ip].pos[1]-ymin)/dy;
+    p[ip].pos[2]=(p[ip].pos[2]-zmin)/dz;
+    }
 
-   sprintf(fname,"%s","delta.binary");
-   printf("%s%s\n","writing ...",fname);
-   fp=fopen(fname,"wb");
-    for(k=0;k<=Ngridx-1;k++)
-       for(j=0;j<=Ngridy-1;j++)
-          for(i=0;i<=Ngridz-1;i++)
-             fwrite(&delta[i][j][k],sizeof(int),1,fp);
+  printf("ngridx %ld ngridy %ld ngridz %ld\n",ngrid[0],ngrid[1],ngrid[2]);
+  printf("calculate density...\n");
 
-   fclose(fp);
-   printf("binary done\n"); 
-}
+  // ->> CIC density <<- //
+  density(p, d, mass, pmin, pmax, npart, ngrid[0], ngrid[1], ngrid[2]); 
 
-void density(void)
-{
-        long long ip;
-	long long i,j,k,i1,j1,k1;
-        float xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
-        double aa,masstot;
-
-        for (i=0;i<=Ngridx-1;i++)
-            for(j=0;j<=Ngridy-1;j++)
-               for(k=0;k<=Ngridz-1;k++)
-                  delta[i][j][k]=0.0;
-
-        masstot=0.0;
-
-        for (ip=1;ip<=NDM;ip++) 
-            {
-            i=(int)P[ip].Pos[0]; xc=(float)i;
-            j=(int)P[ip].Pos[1]; yc=(float)j;
-            k=(int)P[ip].Pos[2]; zc=(float)k;
-
-            if(i<0) i=i+Ngridx;
-            if(j<0) j=j+Ngridy;
-            if(k<0) k=k+Ngridz;
-      
-            if(i>=Ngridx) i=i-Ngridx;
-            if(j>=Ngridy) j=j-Ngridy;
-            if(k>=Ngridz) k=k-Ngridz;
-
-            dx=fabs(P[ip].Pos[0]-xc); tx=fabs(1.0-dx);
-            dy=fabs(P[ip].Pos[1]-yc); ty=fabs(1.0-dy);
-            dz=fabs(P[ip].Pos[2]-zc); tz=fabs(1.0-dz);
-
-            i1=i+1;  
-            j1=j+1; 
-	    k1=k+1;
-
-            if(i1<0) i1=i1+Ngridx;
-            if(j1<0) j1=j1+Ngridy;
-            if(k1<0) k1=k1+Ngridz;
-
-            if(i1>=Ngridx) i1=i1-Ngridx;
-            if(j1>=Ngridy) j1=j1-Ngridy;
-            if(k1>=Ngridz) k1=k1-Ngridz;
-
-            delta[i][j][k]+=header1.mass[1]*tx*ty*tz;
-            delta[i1][j][k]+=header1.mass[1]*dx*ty*tz;
-            delta[i][j1][k]+=header1.mass[1]*tx*dy*tz;
-            delta[i1][j1][k]+=header1.mass[1]*dx*dy*tz;
-            delta[i][j][k1]+=header1.mass[1]*tx*ty*dz;
-            delta[i1][j][k1]+=header1.mass[1]*dx*ty*dz;
-            delta[i][j1][k1]+=header1.mass[1]*tx*dy*dz;
-            delta[i1][j1][k1]+=header1.mass[1]*dx*dy*dz;
-            masstot+=header1.mass[1]*tx*ty*tz;
-	    masstot+=header1.mass[1]*dx*ty*tz;
-	    masstot+=header1.mass[1]*tx*dy*tz;
-	    masstot+=header1.mass[1]*dx*dy*tz;
-	    masstot+=header1.mass[1]*tx*ty*dz;
-	    masstot+=header1.mass[1]*dx*ty*dz;
-	    masstot+=header1.mass[1]*tx*dy*dz;
-	    masstot+=header1.mass[1]*dx*dy*dz;
-	}	
-
-      printf("masstot summed: %lg masstot all: %lg\n",masstot*1e10/header1.HubbleParam,header1.mass[1]*1e10/header1.HubbleParam*NDM);
-
-       aa=0;
-       x1=(xmax-xmin)/Ngridx/header1.HubbleParam;
-       y1=(ymax-ymin)/Ngridy/header1.HubbleParam;
-       z1=(zmax-zmin)/Ngridz/header1.HubbleParam;
-       for(i=0;i<=Ngridx-1;i++)
-          for(j=0;j<=Ngridy-1;j++)
-             for(k=0;k<=Ngridz-1;k++){
-                delta[i][j][k]=delta[i][j][k]/(x1*y1*z1)/rhom*1e10/header1.HubbleParam-1;
-                aa+=delta[i][j][k];
-                }
-       printf("mean density %lg\n",aa/Ngridx/Ngridy/Ngridz);
-}
-
-
-
-
-
-
-
+  printf("CIC density is done.\n");
+  return;
+  }
