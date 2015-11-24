@@ -33,7 +33,7 @@
 
   int main( int argc, char *argv[])  {
 
-      int debug= 20, i, j, do_MPI=99;
+      int debug= 20, i, j, k, do_MPI=99;
       char *ini_name;
 
       if(argc!=2)  //
@@ -104,8 +104,8 @@
         }
 
       double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name;
-      int do_density, do_potential, do_rect;
+      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname;
+      int do_density, do_potential, do_rect, save_odensity;
       int npart, ngrid;
 
       smooth_type = iniparser_getstring(dict, "Rect:smooth_type", "gaussian");
@@ -137,11 +137,16 @@
       //printf("particle fname: %s\n", particle_fname);
 
       /*-----------------------------------------------------------------------*/
+      // ->> read controller <<- // 
       do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       do_potential=iniparser_getboolean(dict, "Rect:do_potential", INIFALSE);
 
+      save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
+      oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
+
       /*-----------------------------------------------------------------------*/
+      // ->> initialize power spectrum <<- //
       plin_name=iniparser_getstring(dict,"Rect:linear_power_name", NULL);
       Interpar *power = (Interpar *)malloc(sizeof(Interpar));
       FILE *fp = fopen(plin_name, "r"); 
@@ -159,7 +164,7 @@
 
    // ->> if do CIC density estimation <<- //
    float ***d;
-   double particle_mass;
+   double particle_mass, rhom_;
    int ngrid_xyz[3];
     if (do_density=TRUE) {
       // ->> 
@@ -169,12 +174,23 @@
       d=(float ***)anymat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 
                            sizeof(float),sizeof(float *),sizeof(float **));
 
+      rhom_=get_rhom(&cp, cp.z);
       particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
+      printf("\nmean density=%lg (M_star)*(h/Mpc)^3, particle mass resolution=%lg\n\n", rhom_, particle_mass);
+
+      // ->> CIC density estimation <<- //
       cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
       }
 
-    if(save_density_ori=TRUE) { //save density 
-      fp=fopen();
+    if(save_odensity==TRUE) { //save density 
+      fp=fopen(oden_fname, "wb");
+
+      for(i=0; i<ngrid; i++)
+        for(j=0; j<ngrid; j++)
+          for(k=0; k<ngrid; k++)
+            fwrite(&d[i][j][k], sizeof(float), 1, fp);
+
+      fclose(fp);
       }
 
     /*-----------------------------------------------------

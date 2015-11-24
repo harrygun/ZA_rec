@@ -100,7 +100,7 @@ void density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3]
   for(i=0; i<ngridx; i++)
     for(j=0; j<ngridy; j++)
       for(k=0; k<ngridz; k++) {
-        d[i][j][k]=d[i][j][k]/(x1*y1*z1)-1.;
+        d[i][j][k]=d[i][j][k]/(x1*y1*z1);
         aa+=d[i][j][k];
         }
 
@@ -124,9 +124,6 @@ int cic_density(Pdata_pos *p, float ***d, double boxsize,
   ymin=boxsize/2.0; ymax=boxsize/2.0;
   zmin=boxsize/2.0; zmax=boxsize/2.0;
 
-  pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
-  pmax[0]=xmax; pmax[1]=ymax; pmax[2]=zmax; 
-
   for(ip=0; ip<npart; ip++) {
     if(p[ip].pos[0]<xmin) xmin=p[ip].pos[0];
     if(p[ip].pos[0]>xmax) xmax=p[ip].pos[0];
@@ -140,6 +137,11 @@ int cic_density(Pdata_pos *p, float ***d, double boxsize,
 
   printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
   printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
+
+
+  pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
+  pmax[0]=xmax; pmax[1]=ymax; pmax[2]=zmax; 
+
 
   // ->> dx, dy, dz <<- //
   dx=(xmax-xmin)/(float)ngrid[0];
