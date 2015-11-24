@@ -54,4 +54,4 @@ void poisson_solver(double ***d, double ***phi, int ngrid)  {
   fftw_destroy_plan(pbackward);
 
   return;
-}
+  }

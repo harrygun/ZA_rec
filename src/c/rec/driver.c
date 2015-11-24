@@ -166,10 +166,11 @@
     load_cita_simulation_position(particle_fname, p, npart);
 
 
-   // ->> if do CIC density estimation <<- //
-   float ***d;
-   double particle_mass, rhom_, dmean;
-   int ngrid_xyz[3];
+    float ***d, ***phi, ****phi_i;
+    double particle_mass, rhom_, dmean;
+    int ngrid_xyz[3];
+
+    // ->> if do CIC density estimation <<- //
     if (do_density=TRUE) {
       // ->> 
       for(i=0; i<3; i++)
@@ -204,6 +205,8 @@
     -----------------------------------------------------*/
 
     // ->> Obtain displacement field <<- //
+    phi=(float ***)anymat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 
+                           sizeof(float),sizeof(float *),sizeof(float **));
 
 
 
