@@ -20,6 +20,7 @@
   #include "parvar.h"
   #include "io.h"
   #include "cic.h"
+  #include "poisson.h"
 
 
 #ifdef _MPI_
@@ -104,7 +105,7 @@
         }
 
       double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname;
+      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname;
       int do_density, do_potential, do_rect, save_odensity;
       int npart, ngrid;
 
@@ -145,6 +146,8 @@
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
 
+      test_fname=iniparser_getstring(dict,"Rect:test_fname", "y.dat");
+
       /*-----------------------------------------------------------------------*/
       // ->> initialize power spectrum <<- //
       plin_name=iniparser_getstring(dict,"Rect:linear_power_name", NULL);
@@ -166,7 +169,7 @@
     load_cita_simulation_position(particle_fname, p, npart);
 
 
-    float ***d, ***phi, ****phi_i;
+    double ***d, ***phi, ****phi_i;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
@@ -176,8 +179,7 @@
       for(i=0; i<3; i++)
         ngrid_xyz[i]=ngrid;
 
-      d=(float ***)anymat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 
-                           sizeof(float),sizeof(float *),sizeof(float **));
+      d=dmat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
 
       rhom_=get_rhom(&cp, cp.z);
       particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
@@ -192,7 +194,7 @@
         for(i=0; i<ngrid; i++)
           for(j=0; j<ngrid; j++)
             for(k=0; k<ngrid; k++)
-              fwrite(&d[i][j][k], sizeof(float), 1, fp);
+              fwrite(&d[i][j][k], sizeof(double), 1, fp);
         fclose(fp);
         }
 
@@ -205,9 +207,22 @@
     -----------------------------------------------------*/
 
     // ->> Obtain displacement field <<- //
-    phi=(float ***)anymat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 
-                           sizeof(float),sizeof(float *),sizeof(float **));
+    phi=dmat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
+    //phi_i=dmat4( ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 3);
 
+
+    poisson_solver(d, phi, ngrid);
+    int _write_testfile_=TRUE;
+
+    if(_write_testfile_){
+      fp=fopen(test_fname, "wb");
+
+      for(i=0; i<ngrid; i++)
+        for(j=0; j<ngrid; j++)
+          for(k=0; k<ngrid; k++)
+            fwrite(&phi[i][j][k], sizeof(double), 1, fp);
+      fclose(fp);
+      }
 
 
 
@@ -217,6 +232,8 @@
     iniparser_freedict(dict);
     free(p);
     freemat3((void ***)d, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
+    freemat3((void ***)phi, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
+    //freemat4((void ****)phi_i, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 3);
 
 
     #ifdef _MPI_

@@ -101,15 +101,19 @@ ifeq ($(MACHINE),cita)
     MYLIBPATH= /home/xwang/workspace/lib/mylib
     INIPATH = /home/xwang/workspace/lib/iniparser
     #MPIPATH = 
+    #FFTWPATH = 
 
     INILIB = -L$(INIPATH) -liniparser
     MPIINCLUDE= $(MPIPATH)/include
+    #FFTWINCLUDE = $(FFTWPATH)/
 
     GENLIB   = lmylib
     FISHLIB  = lfish
 
+    FFTWLIB = -lfftw3 -lm
+
     GSLIB = -L/home/wangxin/lib/gsl/lib -lgsl -lgslcblas -lm
-    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) 
+    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)
 
     CFLAGS = -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
 
@@ -156,7 +160,7 @@ default: rect
 
 
 #--------------------------------------------------#
-rect: driver.o io.o cic.o
+rect: driver.o io.o cic.o poisson.o
 	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 

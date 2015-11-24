@@ -31,11 +31,11 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 
-double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[3], 
+double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pmax[3], 
              int npart, int ngridx, int ngridy, int ngridz) {
   long long ip;
   long long i,j,k,i1,j1,k1;
-  float xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
+  double xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
   double aa, masstot, dmean;
   
   // ->> 
@@ -46,9 +46,9 @@ double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[
   masstot=0.0;
   
   for(ip=0; ip<npart; ip++) {
-    i=(int)p[ip].pos[0]; xc=(float)i;
-    j=(int)p[ip].pos[1]; yc=(float)j;
-    k=(int)p[ip].pos[2]; zc=(float)k;
+    i=(int)p[ip].pos[0]; xc=(double)i;
+    j=(int)p[ip].pos[1]; yc=(double)j;
+    k=(int)p[ip].pos[2]; zc=(double)k;
     
     if(i<0) i=i+ngridx;
     if(j<0) j=j+ngridy;
@@ -93,9 +93,9 @@ double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[
   }
 
   aa=0;
-  x1=(pmax[0]-pmin[0])/(float)ngridx;
-  y1=(pmax[1]-pmin[1])/(float)ngridy;
-  z1=(pmax[2]-pmin[2])/(float)ngridz;
+  x1=(pmax[0]-pmin[0])/(double)ngridx;
+  y1=(pmax[1]-pmin[1])/(double)ngridy;
+  z1=(pmax[2]-pmin[2])/(double)ngridz;
 
   for(i=0; i<ngridx; i++)
     for(j=0; j<ngridy; j++)
@@ -104,9 +104,15 @@ double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[
         aa+=d[i][j][k];
         }
 	
-  dmean=aa/(float)ngridx/(float)ngridy/(float)ngridz;
-
+  dmean=aa/(double)ngridx/(double)ngridy/(double)ngridz;
   printf("mean density %lg\n", dmean);
+
+  //->>
+  for(i=0; i<ngridx; i++)
+    for(j=0; j<ngridy; j++)
+      for(k=0; k<ngridz; k++) {
+        d[i][j][k]=d[i][j][k]/dmean-1.;
+        }
 
   return dmean;
   }
@@ -115,12 +121,11 @@ double density(Pdata_pos *p, float ***d, double mass, float pmin[3], float pmax[
 
 
 
-double cic_density(Pdata_pos *p, float ***d, double boxsize, 
+double cic_density(Pdata_pos *p, double ***d, double boxsize, 
                       double mass, int npart, int ngrid[3]) {
   long long ip;
-  float dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3];
+  double dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dmean;
   int i, j, k;
-  double dmean;
 
   // ->> obtain boundary <<- //
   xmin=boxsize/2.0; xmax=boxsize/2.0;
@@ -147,9 +152,9 @@ double cic_density(Pdata_pos *p, float ***d, double boxsize,
 
 
   // ->> dx, dy, dz <<- //
-  dx=(xmax-xmin)/(float)ngrid[0];
-  dy=(ymax-ymin)/(float)ngrid[1];
-  dz=(zmax-zmin)/(float)ngrid[2];
+  dx=(xmax-xmin)/(double)ngrid[0];
+  dy=(ymax-ymin)/(double)ngrid[1];
+  dz=(zmax-zmin)/(double)ngrid[2];
   
   printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx,dy,dz);
   

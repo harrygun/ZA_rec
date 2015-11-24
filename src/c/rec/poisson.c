@@ -2,14 +2,15 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include<fftw3.h>
+  #include <fftw3.h>
 
+  #include "parvar.h"
 
   #define pi M_PI
 
 
 
-void poisson_solver(double ***d, double ***phi, int ngrid)  {
+void poisson_solver(double ***d, double ***phi, int ngrid, int smooth_type, double smooth_R)  {
   /* ->> Poisson Solver with FFT <<- */
 
   int l, m, n;
@@ -35,7 +36,7 @@ void poisson_solver(double ***d, double ***phi, int ngrid)  {
         sin2z = sin(kz/2.)*sin(kz/2.);
         
         if ((l==0) && (m==0) && (n==0)) greens = 0.;
-        else greens = - (double)3./8./a/(sin2x+sin2y+sin2z);
+        else greens = -1./(sin2x+sin2y+sin2z);
       	    
         dk[l][m][n][0] *= greens;
         dk[l][m][n][1] *= greens;
