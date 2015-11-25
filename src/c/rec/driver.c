@@ -169,7 +169,7 @@
     load_cita_simulation_position(particle_fname, p, npart);
 
 
-    float *d, *phi, *phi_i;
+    float *d, *phi, *phi_i, *phi_ij;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
@@ -212,7 +212,7 @@
     phi=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
     //phi_i=vec( ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
 
-    poisson_solver_float(d, phi, ngrid, cp.flg[0], cp.R);
+    poisson_solver_float(d, phi, boxsize, ngrid, cp.flg[0], cp.R);
     int _write_testfile_=TRUE;
 
     if(_write_testfile_){
