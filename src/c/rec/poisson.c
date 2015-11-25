@@ -10,17 +10,18 @@
 
 
 
-void poisson_solver(double ***d, double ***phi, int ngrid, int smooth_type, double smooth_R)  {
+void poisson_solver(double ***d, double ***phi, int ngrid, 
+                            int smooth_type, double smooth_R)  {
   /* ->> Poisson Solver with FFT <<- */
 
   int l, m, n;
-  double kx, ky, kz, sin2x, sin2y, sin2z, greens;
+  double kx, ky, kz, sin2x, sin2y, sin2z, greens, W;
   double fac=1.0/(double)(ngrid*ngrid*ngrid);
 
   fftw_complex dk[ngrid][ngrid][ngrid/2+1];
   fftw_plan pforward, pbackward;
   
-  pforward = fftw_plan_dft_r2c_3d(ngrid, ngrid, ngrid, &d[0][0][0], &dk[0][0][0], FFTW_ESTIMATE);
+  pforward=fftw_plan_dft_r2c_3d(ngrid, ngrid, ngrid, &d[0][0][0], &dk[0][0][0], FFTW_ESTIMATE);
   fftw_execute(pforward);  
   
   /* work out the green's function and the FFT of phi*/

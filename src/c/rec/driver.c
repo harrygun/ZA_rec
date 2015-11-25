@@ -183,7 +183,7 @@
 
       rhom_=get_rhom(&cp, cp.z);
       particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
-      printf("\nmean density=%lg (M_star)*(h/Mpc)^3, particle mass resolution=%lg\n\n", rhom_, particle_mass);
+      printf("\nmean density=%lg (M_star)*(h/Mpc)^3\nparticle mass resolution=%lg\n\n", rhom_, particle_mass);
 
       // ->> CIC density estimation <<- //
       dmean=cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
@@ -211,7 +211,7 @@
     //phi_i=dmat4( ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 3);
 
 
-    poisson_solver(d, phi, ngrid);
+    poisson_solver(d, phi, ngrid, cp.flg[0], cp.R);
     int _write_testfile_=TRUE;
 
     if(_write_testfile_){
