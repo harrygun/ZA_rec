@@ -31,10 +31,9 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 
-double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pmax[3], 
+double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], 
              int npart, int ngridx, int ngridy, int ngridz) {
-  long long ip;
-  long long i,j,k,i1,j1,k1;
+  long long ip, i,j,k,i1,j1,k1;
   double xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
   double aa, masstot, dmean;
   
@@ -42,7 +41,8 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
   for(i=0; i<ngridx; i++)
     for(j=0; j<ngridy; j++)
       for(k=0; k<ngridz; k++)
-        d[i][j][k]=0.0;
+        //d[i][j][k]=0.0;
+        ArrayAccess3D(d, ngridx, i, j, k)=0.0;
   masstot=0.0;
   
   for(ip=0; ip<npart; ip++) {
@@ -73,7 +73,8 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
     if(i1>=ngridx) i1=i1-ngridx;
     if(j1>=ngridy) j1=j1-ngridy;
     if(k1>=ngridz) k1=k1-ngridz;
-    
+
+    /*
     d[i][j][k]+=mass*tx*ty*tz;
     d[i1][j][k]+=mass*dx*ty*tz;
     d[i][j1][k]+=mass*tx*dy*tz;
@@ -82,6 +83,18 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
     d[i1][j][k1]+=mass*dx*ty*dz;
     d[i][j1][k1]+=mass*tx*dy*dz;
     d[i1][j1][k1]+=mass*dx*dy*dz;
+    */
+
+    ArrayAccess3D(d, ngridx, i, j, k) +=mass*tx*ty*tz;
+    ArrayAccess3D(d, ngridx, i1, j, k)+=mass*dx*ty*tz;
+    ArrayAccess3D(d, ngridx, i, j1, k) +=mass*tx*dy*tz;
+    ArrayAccess3D(d, ngridx, i1, j1, k) +=mass*dx*dy*tz;
+    ArrayAccess3D(d, ngridx, i, j, k1) +=mass*tx*ty*dz;
+    ArrayAccess3D(d, ngridx, i1, j, k1) +=mass*dx*ty*dz;
+    ArrayAccess3D(d, ngridx, i, j1, k1) +=mass*tx*dy*dz;
+    ArrayAccess3D(d, ngridx, i1, j1, k1)+=mass*dx*dy*dz;
+
+
     masstot+=mass*tx*ty*tz;
     masstot+=mass*dx*ty*tz;
     masstot+=mass*tx*dy*tz;
@@ -100,8 +113,11 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
   for(i=0; i<ngridx; i++)
     for(j=0; j<ngridy; j++)
       for(k=0; k<ngridz; k++) {
-        d[i][j][k]=d[i][j][k]/(x1*y1*z1);
-        aa+=d[i][j][k];
+        //d[i][j][k]=d[i][j][k]/(x1*y1*z1);
+        //aa+=d[i][j][k];
+
+        ArrayAccess3D(d, ngridx, i, j, k)=ArrayAccess3D(d, ngridx, i, j, k)/(x1*y1*z1);
+        aa+=ArrayAccess3D(d, ngridx, i, j, k);
         }
 	
   dmean=aa/(double)ngridx/(double)ngridy/(double)ngridz;
@@ -111,7 +127,8 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
   for(i=0; i<ngridx; i++)
     for(j=0; j<ngridy; j++)
       for(k=0; k<ngridz; k++) {
-        d[i][j][k]=d[i][j][k]/dmean-1.;
+        //d[i][j][k]=d[i][j][k]/dmean-1.;
+        ArrayAccess3D(d, ngridx, i, j, k)=ArrayAccess3D(d, ngridx, i, j, k)/dmean-1.;
         }
 
   return dmean;
@@ -121,7 +138,7 @@ double density(Pdata_pos *p, double ***d, double mass, double pmin[3], double pm
 
 
 
-double cic_density(Pdata_pos *p, double ***d, double boxsize, 
+double cic_density(Pdata_pos *p, float *d, double boxsize, 
                       double mass, int npart, int ngrid[3]) {
   long long ip;
   double dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dmean;

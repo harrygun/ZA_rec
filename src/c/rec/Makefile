@@ -110,7 +110,8 @@ ifeq ($(MACHINE),cita)
     GENLIB   = lmylib
     FISHLIB  = lfish
 
-    FFTWLIB = -lfftw3 -lm
+    #FFTWLIB = -lfftw3 -lm
+    FFTWLIB = -lfftw3f -lfftw3 -lm
 
     GSLIB = -L/home/wangxin/lib/gsl/lib -lgsl -lgslcblas -lm
     MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)

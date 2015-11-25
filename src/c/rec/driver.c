@@ -169,7 +169,7 @@
     load_cita_simulation_position(particle_fname, p, npart);
 
 
-    double ***d, ***phi, ****phi_i;
+    float *d, *phi, *phi_i;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
@@ -179,7 +179,7 @@
       for(i=0; i<3; i++)
         ngrid_xyz[i]=ngrid;
 
-      d=dmat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
+      d=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
 
       rhom_=get_rhom(&cp, cp.z);
       particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
@@ -194,7 +194,7 @@
         for(i=0; i<ngrid; i++)
           for(j=0; j<ngrid; j++)
             for(k=0; k<ngrid; k++)
-              fwrite(&d[i][j][k], sizeof(double), 1, fp);
+              fwrite(&ArrayAccess3D(d, ngrid, i, j, k), sizeof(float), 1, fp);
         fclose(fp);
         }
 
@@ -202,16 +202,17 @@
     // ->> otherwise, import density field <<- //
     else { }
 
+
+
     /*-----------------------------------------------------
          // ->>   performing reconstruction   <<- //
     -----------------------------------------------------*/
 
     // ->> Obtain displacement field <<- //
-    phi=dmat3(ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
-    //phi_i=dmat4( ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 3);
+    phi=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
+    //phi_i=vec( ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
 
-
-    poisson_solver(d, phi, ngrid, cp.flg[0], cp.R);
+    poisson_solver_float(d, phi, ngrid, cp.flg[0], cp.R);
     int _write_testfile_=TRUE;
 
     if(_write_testfile_){
@@ -220,20 +221,17 @@
       for(i=0; i<ngrid; i++)
         for(j=0; j<ngrid; j++)
           for(k=0; k<ngrid; k++)
-            fwrite(&phi[i][j][k], sizeof(double), 1, fp);
+            fwrite(&ArrayAccess3D(phi, ngrid, i, j, k), sizeof(float), 1, fp);
       fclose(fp);
       }
-
 
 
     /*-----------------------------------------------------
                        free all
     -----------------------------------------------------*/
     iniparser_freedict(dict);
-    free(p);
-    freemat3((void ***)d, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
-    freemat3((void ***)phi, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2]);
-    //freemat4((void ****)phi_i, ngrid_xyz[0], ngrid_xyz[1], ngrid_xyz[2], 3);
+    free(p); free(d);
+    free(phi);
 
 
     #ifdef _MPI_
