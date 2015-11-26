@@ -77,7 +77,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
                            int smooth_type, double smooth_R, int return_type)  {
   /* ->> Poisson Solver with FFT <<- */
 
-  int l, m, n, i, j, cc, do_grad, do_hess;
+  int l, m, n, i, j, cc, do_grad, do_hess, dksize;
   double kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
   double fac=1.0/(double)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
@@ -93,13 +93,15 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
     do_hess=FALSE;
 
   // ->> initialization <<- //
+  dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
   fftwf_complex *dk, *dki, *dkij;
-  dk=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex));
+
+  dk=(fftwf_complex *)fftwf_malloc(dksize);
 
   if(do_grad==TRUE)
-    dki=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*sizeof(fftwf_complex));
+    dki=(fftwf_complex *)fftwf_malloc(3*dksize);
   if(do_hess==TRUE)
-    dkij=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*3*sizeof(fftwf_complex));
+    dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
 
   fftwf_plan pforward, pbackward;
   
@@ -158,7 +160,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
     for (i=0; i<3; i++)
       for (j=0; j<3; j++)  {
           pbackward=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
-                           ArrayAccess2D_n2(dkij, ), ArrayAccess2D_n2(phi_ij), FFTW_ESTIMATE);
+                     &ArrayAccess2D_n2_list(dkij, 3, 3, dksize, i, j),
+                     &ArrayAccess2D_n2_list(phi_ij, 3, 3, ngrid*ngrid*ngrid*sizeof(float), i, j), FFTW_ESTIMATE);
           fftwf_execute(pbackward);
 	  }
     }
