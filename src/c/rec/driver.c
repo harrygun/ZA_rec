@@ -210,12 +210,26 @@
     -----------------------------------------------------*/
 
     // ->> Obtain displacement field <<- //
+    int fft_return_type, do_grad, do_hess;
+    fft_return_type=_RETURN_HESSIAN_;
+
+    // ->> only useful for testing <<- //
+    if((fft_return_type==_RETURN_GRADIENT_)&&(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+      do_grad=TRUE;
+    else 
+      do_grad=FALSE;
+    if((fft_return_type==_RETURN_HESSIAN_)&&(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+      do_hess=TRUE;
+    else 
+      do_hess=FALSE;
+
+    // ->> allocate memory <<- //
     phi=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    //phi_i=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-    //phi_ij=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
+    if(do_grad) phi_i=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
+    if(do_hess) phi_ij=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
 
     printf("\n->> Solve Poisson equation with FFT.\n");
-    poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, _RETURN_PHI_ONLY_);
+    poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
     printf("Done.\n");
 
     int _write_testfile_=TRUE;
@@ -236,6 +250,9 @@
     iniparser_freedict(dict);
     free(p); free(d);
     free(phi);
+
+    if(do_grad) free(phi_i);
+    if(do_hess) free(phi_ij);
 
 
     #ifdef _MPI_

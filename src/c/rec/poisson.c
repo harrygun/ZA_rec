@@ -77,8 +77,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
                            int smooth_type, double smooth_R, int return_type)  {
   /* ->> Poisson Solver with FFT <<- */
 
-  int l, m, n, i, j, do_grad, do_hess;
-  double kx, ky, kz, _kx, _ky, _kz, sin2x, sin2y, sin2z, greens, W, kmin;
+  int l, m, n, i, j, cc, do_grad, do_hess;
+  double kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
   double fac=1.0/(double)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
@@ -139,6 +139,12 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 	  }
 
         if(do_hess) {
+	  for (i=0; i<3; i++)
+	    for (j=0; j<3; j++) 
+	      for (cc=0; cc<2; cc++) { // 2 complex components //
+                ArrayAccess5D_n5(dkij, 3, 3, ngrid, ngrid, (ngrid/2+1), i, j, l, m, n)[cc]=
+	              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[cc]*ki[i]*ki[j]*-1.;
+	        }
 	  }
 
         }
@@ -146,6 +152,17 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   /* find the inverse FFT of phi */
   pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
   fftwf_execute(pbackward);
+
+  if (do_hess) {
+
+    for (i=0; i<3; i++)
+      for (j=0; j<3; j++)  {
+          pbackward=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
+                           ArrayAccess2D_n2(dkij, ), ArrayAccess2D_n2(phi_ij), FFTW_ESTIMATE);
+          fftwf_execute(pbackward);
+	  }
+    }
+
   
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
