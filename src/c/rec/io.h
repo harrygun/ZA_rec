@@ -18,4 +18,5 @@ typedef struct particle_pos_data {
 void load_cita_simulation(char *fname, Pdata *p, int npart);
 void load_cita_simulation_position(char *fname, Pdata_pos *p, int npart);
 
+void load_scalar_map(char *fname, float *m, int ngrid, char *dtype);
 #endif

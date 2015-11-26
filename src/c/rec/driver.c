@@ -105,7 +105,7 @@
         }
 
       double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname;
+      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname, *main_dtype;
       int do_density, do_potential, do_rect, save_odensity;
       int npart, ngrid;
 
@@ -168,19 +168,16 @@
     Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, npart);
 
-
     float *d, *phi, *phi_i, *phi_ij;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
+    for(i=0; i<3; i++)
+      ngrid_xyz[i]=ngrid;
+    d=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
+
     // ->> if do CIC density estimation <<- //
-    if (do_density=TRUE) {
-      // ->> 
-      for(i=0; i<3; i++)
-        ngrid_xyz[i]=ngrid;
-
-      d=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-
+    if (do_density==TRUE) {
       rhom_=get_rhom(&cp, cp.z);
       particle_mass=part_mass(&cp, cp.z, boxsize, ngrid);
       printf("\nmean density=%lg (M_star)*(h/Mpc)^3\nparticle mass resolution=%lg\n\n", rhom_, particle_mass);
@@ -199,8 +196,12 @@
         }
 
       }
-    // ->> otherwise, import density field <<- //
-    else { }
+    else { 
+      // ->> otherwise, import density field <<- //
+      main_dtype="float";
+      printf("Importing the original density map directly, dtype=%s\n", main_dtype);
+      load_scalar_map(oden_fname, d, ngrid, main_dtype);
+      }
 
 
 
@@ -210,11 +211,14 @@
 
     // ->> Obtain displacement field <<- //
     phi=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    //phi_i=vec( ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
+    //phi_i=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
+    //phi_ij=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
 
-    poisson_solver_float(d, phi, boxsize, ngrid, cp.flg[0], cp.R);
+    printf("\n->> Solve Poisson equation with FFT.\n");
+    poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, _RETURN_PHI_ONLY_);
+    printf("Done.\n");
+
     int _write_testfile_=TRUE;
-
     if(_write_testfile_){
       fp=fopen(test_fname, "wb");
 

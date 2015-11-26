@@ -99,7 +99,7 @@ if __name__=='__main__':
 
     if p.import_format=='cita_simulation':
         p.nbin=256
-	p.boxsize=1000.
+	p.boxsize=512.
         droot_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
         droot_field='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/'
 
@@ -118,37 +118,23 @@ if __name__=='__main__':
 
 
     ''' ->> Performing Lagrangian reconstruction <<- '''
-    if p.do_LPT_rec==True:
+    do_poisson=True
+    if do_poisson==True:
         pos, delta =dd
 	print 'data shape:', pos.shape, delta.shape, delta.min(), delta.max(), delta.mean()
 
 
-
-        ''' ->> perform Lagrangian Reconstruction <<-  '''
-
-        rect_type='ZA_displaced_shifted'
-        _dd_ = lrec.lag_rec_ZA(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type, rect_type=rect_type)
-
-        # ->> unwrap density <<- #
-        d_rec, d_disp, d_shift, pos_disp, pos_shift = _dd_
-
-        print 'rec density:', d_rec.min(), d_rec.max(), d_rec.mean()
-        print 'shift density:', d_shift.min(), d_shift.max(), d_shift.mean()
-        print 'displaced density:', d_disp.min(), d_rec.max(), d_rec.mean()
-
-	dt_rec=d_rec
-	print 'rec delta:', dt_rec.min(), dt_rec.max(), dt_rec.mean()
-
+        phi=ptt.Poisson3d(delta, boxsize=p.boxsize, smooth_R=0., smooth_type=p.smooth_type)
+	print 'phi shape', phi.shape,  phi.min(), phi.max(), phi.mean()
 
 
         if p.save_data:
 
+	    fn_write=droot_part+'0.000xv0.phi.npz'
 	    try: fn_write
 	    except: pass
 
-	    #np.savez(fn_write, pos_displaced=np.rollaxis(disp, 0, len(disp.shape)) )
-	    np.savez(fn_write, d_rec=d_rec, d_disp=d_disp, d_shift=d_shift, \
-	             pos_disp=pos_disp, pos_shift=pos_shift )
+	    np.savez(fn_write, phi=phi)
 
 
     elif p.import_reced_data==True:

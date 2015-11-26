@@ -4,7 +4,9 @@
   #include <string.h>
   #include <fftw3.h>
 
+  #include "const.h"
   #include "parvar.h"
+  #include "poisson.h"
 
   #define pi M_PI
 
@@ -84,18 +86,20 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   if((return_type==_RETURN_GRADIENT_)&&(return_type==_RETURN_GRADIENT_HESSIAN_))
     do_grad=TRUE;
   else 
-    do_grad=FALSE
+    do_grad=FALSE;
   if((return_type==_RETURN_HESSIAN_)&&(return_type==_RETURN_GRADIENT_HESSIAN_))
     do_hess=TRUE;
   else 
-    do_hess=FALSE
+    do_hess=FALSE;
 
   // ->> initialization <<- //
-  fftwf_complex *dk=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex));
+  fftwf_complex *dk, *dki, *dkij;
+  dk=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex));
+
   if(do_grad==TRUE)
-    fftwf_complex *dki=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*sizeof(fftwf_complex));
+    dki=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*sizeof(fftwf_complex));
   if(do_hess==TRUE)
-    fftwf_complex *dkij=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*3*sizeof(fftwf_complex));
+    dkij=(fftwf_complex *)fftwf_malloc(ngrid*ngrid*(ngrid/2+1)*3*3*sizeof(fftwf_complex));
 
   fftwf_plan pforward, pbackward;
   
@@ -131,7 +135,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens;
 
         if(do_grad) {
-	  for (i=0; i<3; i++)
+	  //for (i=0; i<3; i++)
 	  }
 
         if(do_hess) {

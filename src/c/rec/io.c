@@ -70,3 +70,21 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, int npart) {
 
   return;
   }
+
+
+
+void load_scalar_map(char *fname, float *m, int ngrid, char *dtype){
+  int size;
+  FILE *fp=fopen(fname, "r");
+
+  if(strcmp(dtype, "float")==0 ) 
+    size=sizeof(float);
+  else if(strcmp(dtype, "double")==0 ) 
+    size=sizeof(double);
+  else
+    abort();
+
+  fread(m, size, ngrid*ngrid*ngrid, fp);
+  fclose(fp);
+  return;
+  }

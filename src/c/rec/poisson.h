@@ -2,6 +2,7 @@
 #define _H_POISSON_
 
 
+  #define _RETURN_PHI_ONLY_  2121
   #define _RETURN_GRADIENT_  2121
   #define _RETURN_HESSIAN_   2122
   #define _RETURN_GRADIENT_HESSIAN_  2123
