@@ -14,7 +14,8 @@
   #define ArrayAccess5D_n5(a, n1, n2, n3, n4, n5, i1, i2, i3, i4, i5) ((a)[ i5+n5*(i4+n4*(i3+n3*(i2+n2*i1))) ])
   #define ArrayAccess4D_n4(a, n1, n2, n3, n4, i1, i2, i3, i4) ((a)[ i4+n4*(i3+n3*(i2+n2*i1)) ])
    
-  #define ArrayAccess2D_n2_list(a, n1, n2, nlist, i1, i2) ((a)[ (i2+n2*i1)*nlist ])
+  //#define ArrayAccess2D_n2_list(a, n1, n2, nlist, i1, i2) ((a)[ (i2+n2*i1)*nlist ])
+  #define ArrayAccess2D_n2_list(a, n1, n2, nlist, i1, i2) (a)[ (i2+n2*i1)*nlist ]
    
 
 #endif
