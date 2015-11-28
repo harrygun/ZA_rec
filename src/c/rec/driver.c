@@ -2,6 +2,7 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
+  #include <fftw3.h>
 
   #include <gsl/gsl_integration.h>
   #include <gsl/gsl_sf.h>
@@ -21,6 +22,7 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
+
 
 
 #ifdef _MPI_
