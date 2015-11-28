@@ -104,7 +104,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   if(do_hess==TRUE)
     dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
 
-  fftwf_plan pforward, pbackward, pbackward_hess[3][3];
+  fftwf_plan pforward, pbackward, pbackward_hess;
   
   pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
@@ -167,10 +167,13 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
     for (i=0; i<3; i++)
       for (j=0; j<3; j++)  {
 
-          pbackward_hess[i][j]=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
+          pbackward_hess=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
                      &ArrayAccess2D_n2_list(dkij, 3, 3, dksize, i, j),
                      &ArrayAccess2D_n2_list(phi_ij, 3, 3, dsize, i, j), FFTW_ESTIMATE);
-          fftwf_execute(pbackward_hess[i][j]);
+
+          fftwf_execute(pbackward_hess);
+          fftwf_destroy_plan(pbackward_hess);
+
           printf("%d-%d is done.\n", i, j);
 	  }
     }
@@ -197,10 +200,11 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   fftwf_destroy_plan(pforward);
   fftwf_destroy_plan(pbackward);
 
+/*
   for(i=0; i<3; i++)
     for(j=0; j<3; j++)
       fftwf_destroy_plan(pbackward_hess[i][j]);
-
+*/
   return;
   }
 
