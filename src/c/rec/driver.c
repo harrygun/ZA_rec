@@ -214,11 +214,11 @@
     fft_return_type=_RETURN_HESSIAN_;
 
     // ->> only useful for testing <<- //
-    if((fft_return_type==_RETURN_GRADIENT_)&&(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+    if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
       do_grad=TRUE;
     else 
       do_grad=FALSE;
-    if((fft_return_type==_RETURN_HESSIAN_)&&(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+    if((fft_return_type==_RETURN_HESSIAN_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
       do_hess=TRUE;
     else 
       do_hess=FALSE;
@@ -235,11 +235,16 @@
     int _write_testfile_=TRUE;
     if(_write_testfile_){
       fp=fopen(test_fname, "wb");
-
+      /*
       for(i=0; i<ngrid; i++)
         for(j=0; j<ngrid; j++)
           for(k=0; k<ngrid; k++)
             fwrite(&ArrayAccess3D(phi, ngrid, i, j, k), sizeof(float), 1, fp);
+      */
+
+      //fwrite(phi, sizeof(float), sizeof(float)*ngrid*ngrid*ngrid, fp);
+      fwrite(phi_ij, sizeof(float), sizeof(float)*ngrid*ngrid*ngrid*9, fp);
+
       fclose(fp);
       }
 

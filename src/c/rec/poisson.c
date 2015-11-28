@@ -83,11 +83,11 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   kmin=2.*pi/boxsize;
 
   // ->> return type <<- //
-  if((return_type==_RETURN_GRADIENT_)&&(return_type==_RETURN_GRADIENT_HESSIAN_))
+  if((return_type==_RETURN_GRADIENT_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
     do_grad=TRUE;
   else 
     do_grad=FALSE;
-  if((return_type==_RETURN_HESSIAN_)&&(return_type==_RETURN_GRADIENT_HESSIAN_))
+  if((return_type==_RETURN_HESSIAN_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
     do_hess=TRUE;
   else 
     do_hess=FALSE;
@@ -157,6 +157,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
   if (do_hess) {
 
+    printf("do Hessian matrix of phi.\n");
+
     for (i=0; i<3; i++)
       for (j=0; j<3; j++)  {
           pbackward=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
@@ -170,8 +172,15 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
-      for (n=0; n<ngrid; n++)
+      for (n=0; n<ngrid; n++) {
         ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
+  
+        if (do_hess) {
+	  for(i=0; i<3; i++)
+	    for(j=0; j<3; j++)
+              ArrayAccess5D_n5(phi_ij, 3, 3, ngrid, ngrid, ngrid, i, j, l, m, n)*=fac;
+	  }
+	}
 
 
   fftwf_free(dk);
