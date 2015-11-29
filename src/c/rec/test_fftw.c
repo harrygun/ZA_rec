@@ -23,6 +23,7 @@
   #include "cic.h"
   #include "poisson.h"
 
+  #define pi M_PI
 
 
 
