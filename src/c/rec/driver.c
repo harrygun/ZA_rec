@@ -226,9 +226,9 @@
       do_hess=FALSE;
 
     // ->> allocate memory <<- //
-    phi=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    if(do_grad) phi_i=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-    if(do_hess) phi_ij=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
+    phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
+    if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
+    if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
 
     printf("\n->> Solve Poisson equation with FFT.\n");
     poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
@@ -256,10 +256,10 @@
     -----------------------------------------------------*/
     iniparser_freedict(dict);
     free(p); free(d);
-    free(phi);
+    fftwf_free(phi);
 
-    if(do_grad) free(phi_i);
-    if(do_hess) free(phi_ij);
+    if(do_grad) fftwf_free(phi_i);
+    if(do_hess) fftwf_free(phi_ij);
 
 
     #ifdef _MPI_
