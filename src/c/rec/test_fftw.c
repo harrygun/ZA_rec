@@ -25,13 +25,6 @@
 
 
 
-#ifdef _MPI_
-  #include "mpi.h"
-#endif
-
-#ifdef _OPEN_MP_
-  #include "omp.h"
-#endif
 
 
   int main( int argc, char *argv[])  {
@@ -44,46 +37,7 @@
 
         ini_name=argv[1];
 
-
-/*------------------------------------------------
-            MPI initialization.
-------------------------------------------------*/
-    #ifdef _MPI_
-      do_MPI = TRUE;
-
-      int mpi_ntask, mpi_rank, mpi_rc;
-      mpi_rc = MPI_Init(&argc, &argv);
-
-      if (mpi_rc != MPI_SUCCESS) {
-           printf ("Error starting MPI program. Terminating.\n");
-           MPI_Abort(MPI_COMM_WORLD, mpi_rc);
-           }
-
-      MPI_Comm_size(MPI_COMM_WORLD,&mpi_ntask);
-      MPI_Comm_rank(MPI_COMM_WORLD,&mpi_rank);
-
-      printf ("Number of tasks= %d My rank= %d\n", mpi_ntask, mpi_rank);
-
-  /* MPI initialization ends. */
-      if(mpi_rank==0) 
-        printf("%d Sending parameter filename %s to other processes.\n", mpi_rank, ini_name);
-
-      MPI_Bcast( ini_name, 100, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-      if(mpi_rank!=0) 
-        printf("%d Received parameter filename %s.\n", mpi_rank, ini_name);
-
-    #endif
-
-    #ifndef _MPI_
       do_MPI = FALSE;
-    #endif
-
-  /*--------------------------------------
-         End of MPI initialization.
-  --------------------------------------*/
-
-
 
   /*--------------------------------------------------*/
       printf("Opening File '%s'.\n", ini_name);
@@ -170,7 +124,7 @@
     Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, npart);
 
-    float *d, *phi, *phi_i, *phi_ij;
+    float *d, *phi, *phi_ij;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
@@ -208,42 +162,46 @@
 
 
     /*-----------------------------------------------------
-         // ->>   performing reconstruction   <<- //
+            // ->>     Testing FFTW     <<- //
     -----------------------------------------------------*/
 
-    // ->> Obtain displacement field <<- //
-    int fft_return_type, do_grad, do_hess;
-    fft_return_type=_RETURN_HESSIAN_;
-
-    // ->> only useful for testing <<- //
-    if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
-      do_grad=TRUE;
-    else 
-      do_grad=FALSE;
-    if((fft_return_type==_RETURN_HESSIAN_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
-      do_hess=TRUE;
-    else 
-      do_hess=FALSE;
 
     // ->> allocate memory <<- //
     phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-    //if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
-    if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*10);
+    phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*10);
 
-    printf("\n->> Solve Poisson equation with FFT.\n");
     poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
+
+
+
+
+
+
+
+
+
+
     printf("Done.\n");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     int _write_testfile_=TRUE;
     if(_write_testfile_){
       fp=fopen(test_fname, "wb");
       
       fwrite(phi, sizeof(float), ngrid*ngrid*ngrid, fp);
-
-      if(do_hess)
-        //fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*9, fp);
-        fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*10, fp);
+      fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*10, fp);
 
       fclose(fp);
       }
@@ -258,12 +216,6 @@
 
     if(do_grad) fftwf_free(phi_i);
     if(do_hess) fftwf_free(phi_ij);
-
-
-    #ifdef _MPI_
-      MPI_Finalize();
-      //MPI_Barrier(MPI_COMM_WORLD);
-    #endif
 
     }
 
