@@ -152,7 +152,7 @@
         }
 
       }
-    else { 
+    else {
       // ->> otherwise, import density field <<- //
       main_dtype="float";
       printf("Importing the original density map directly, dtype=%s\n", main_dtype);
