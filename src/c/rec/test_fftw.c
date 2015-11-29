@@ -229,23 +229,35 @@
 	  }
 
 
+    /* ->> find the inverse FFT of phi <<- */
+    pbackward_1 = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk1, phi1, FFTW_ESTIMATE);
+    fftwf_execute(pbackward_1);
+
+    //->> advanced FFTW <<- //
+
+    int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
+    ndim=(int *)malloc(3*sizeof(int));
+    ndim[0]=ngrid; ndim[1]=ngrid; ndim[2]=ngrid;
+
+    rank=3;
+    howmany=2;
+    idist=ngrid*ngrid*(ngrid/2+1);
+    odist=ngrid*ngrid*ngrid;
+    istride=1; ostride=1;
+    inembed=ndim; onembed=ndim;
+
+    pbackward_2=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dk2, inembed, istride, idist, phi2, onembed, ostride, odist, FFTW_ESTIMATE);
+    
+    fftwf_execute(pbackward_2);
+
+
 
     // ->> destroy fftw_plan <<- //
     fftwf_destroy_plan(pforward);
     fftwf_destroy_plan(pbackward_1);
     fftwf_destroy_plan(pbackward_2);
 
-    printf("Done.\n");
-
-
-
-
-
-
-
-
-
-
+    printf("->> FFTW Done.\n");
 
 
 
