@@ -124,7 +124,7 @@
     Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, npart);
 
-    float *d, *phi, *phi_ij;
+    float *d, *phi1, *phi2;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
@@ -162,24 +162,78 @@
 
 
     /*-----------------------------------------------------
-            // ->>     Testing FFTW     <<- //
+        // ->>           Testing FFTW           <<- //
     -----------------------------------------------------*/
 
-
     // ->> allocate memory <<- //
-    phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*10);
+    phi1=(float *)fftwf_malloc(sizeof(float)*ngrid*ngrid*ngrid);
+    phi2=(float *)fftwf_malloc(sizeof(float)*ngrid*ngrid*ngrid*2);
 
-    poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
+    //->> 
+    int dsize, dksize, l, m, n;
+    float kmin, kx, ky, kz, sin2x, sin2y, sin2z; 
+    kmin=2.*pi/boxsize;
+
+    dsize=ngrid*ngrid*ngrid*sizeof(float);
+    dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
+
+    fftwf_complex *dk1, *dk2;
+
+    dk1=(fftwf_complex *)fftwf_malloc(dksize);
+    dk2=(fftwf_complex *)fftwf_malloc(2*dksize);
+
+
+    fftwf_plan pforward, pbackward_1, pbackward_2;
+
+    pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk1, FFTW_ESTIMATE);
+    fftwf_execute(pforward);  
+
+    for(l=0; l<ngrid; l++)
+      for(m=0; m<ngrid; m++)
+        for(n=0; n<(ngrid/2+1); n++) {
+
+          if(l<ngrid/2) kx=l*kmin;
+	  else kx=(l-ngrid)*kmin;
+
+          if(m<ngrid/2) ky=m*kmin;
+	  else ky=(m-ngrid)*kmin;
+
+          if(n<ngrid/2) kz=n*kmin;
+	  else kz=(n-ngrid)*kmin;
+
+          sin2x = 4.*sin(kx/2.)*sin(kx/2.);
+          sin2y = 4.*sin(ky/2.)*sin(ky/2.);
+          sin2z = 4.*sin(kz/2.)*sin(kz/2.);
+
+
+          if ((l==0) && (m==0) && (n==0)) greens = 0.;
+          else greens = -1./(sin2x+sin2y+sin2z);
+
+          // ->>  assign dk1, dk2 <<- //
+          ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens;
+          ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens;
+
+
+          ArrayAccess3D_n3(dk2, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
+	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+
+          ArrayAccess3D_n3(dk2, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]=
+	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+
+          ArrayAccess4D_n4(dk2, 2, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[0]=
+	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+
+          ArrayAccess4D_n4(dk2, 2, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[1]=
+	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+
+	  }
 
 
 
-
-
-
-
-
-
+    // ->> destroy fftw_plan <<- //
+    fftwf_destroy_plan(pforward);
+    fftwf_destroy_plan(pbackward_1);
+    fftwf_destroy_plan(pbackward_2);
 
     printf("Done.\n");
 
@@ -200,8 +254,8 @@
     if(_write_testfile_){
       fp=fopen(test_fname, "wb");
       
-      fwrite(phi, sizeof(float), ngrid*ngrid*ngrid, fp);
-      fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*10, fp);
+      fwrite(phi1, sizeof(float), ngrid*ngrid*ngrid, fp);
+      fwrite(phi2, sizeof(float), ngrid*ngrid*ngrid*2, fp);
 
       fclose(fp);
       }
@@ -212,10 +266,10 @@
     -----------------------------------------------------*/
     iniparser_freedict(dict);
     free(p); free(d);
-    fftwf_free(phi);
 
-    if(do_grad) fftwf_free(phi_i);
-    if(do_hess) fftwf_free(phi_ij);
+    fftwf_free(phi1);
+    fftwf_free(phi2);
+
 
     }
 
