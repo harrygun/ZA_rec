@@ -123,17 +123,15 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         if(n<ngrid/2) kz=n*kmin;
 	else kz=(n-ngrid)*kmin;
 
-        //sin2x = 4.*sin(kx/2.)*sin(kx/2.);
-        //sin2y = 4.*sin(ky/2.)*sin(ky/2.);
-        //sin2z = 4.*sin(kz/2.)*sin(kz/2.);
-	//ki[0]=2.*sin(kx/2.);
-	//ki[1]=2.*sin(ky/2.);
-	//ki[2]=2.*sin(kz/2.);
+        sin2x = 4.*sin(kx/2.)*sin(kx/2.);
+        sin2y = 4.*sin(ky/2.)*sin(ky/2.);
+        sin2z = 4.*sin(kz/2.)*sin(kz/2.);
+	ki[0]=2.*sin(kx/2.);
+	ki[1]=2.*sin(ky/2.);
+	ki[2]=2.*sin(kz/2.);
 	
-
-        sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
-	ki[0]=kx; ki[1]=ky; ki[2]=kz;
-        
+        //sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
+	//ki[0]=kx; ki[1]=ky; ki[2]=kz;
 
         if ((l==0) && (m==0) && (n==0)) greens = 0.;
         else greens = -1./(sin2x+sin2y+sin2z);
@@ -141,10 +139,17 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens;
         ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens;
 
+        // ->> do gradient <<- //
         if(do_grad) {
-	  //for (i=0; i<3; i++)
+	  for (i=0; i<3; i++)
+            for (cc=0; cc<2; cc++) { 
+                ArrayAccess4D_n4(dkij, 3, ngrid, ngrid, (ngrid/2+1), i, j, l, m, n)[cc]=
+	              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[cc]*ki[i]*ki[j]*(-1.);
+
+	      }
 	  }
 
+        // ->>  do Hessian matrix <<- //
         if(do_hess) {
 	  for (i=0; i<3; i++)
 	    for (j=0; j<3; j++) 
@@ -188,11 +193,14 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
   
         if (do_hess) {
-
 	  for(i=0; i<3; i++)
 	    for(j=0; j<3; j++)
               ArrayAccess5D_n5(phi_ij, 3, 3, ngrid, ngrid, ngrid, i, j, l, m, n)*=fac;
 	  }
+
+	if (do_grad) {
+	  }
+
 	}
 
 

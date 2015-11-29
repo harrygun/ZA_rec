@@ -234,6 +234,9 @@
     poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
     printf("->> FFT is Done.\n");
 
+
+
+    // ->> write test file <<- //
     int _write_testfile_=TRUE;
     if(_write_testfile_){
       fp=fopen(test_fname, "wb");
