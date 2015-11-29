@@ -228,8 +228,7 @@
     // ->> allocate memory <<- //
     phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
     if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-    //if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
-    if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*10);
+    if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
 
     printf("\n->> Solve Poisson equation with FFT.\n");
     poisson_solver_float(d, phi, phi_i, phi_ij, boxsize, ngrid, cp.flg[0], cp.R, fft_return_type);
@@ -242,8 +241,7 @@
       fwrite(phi, sizeof(float), ngrid*ngrid*ngrid, fp);
 
       if(do_hess)
-        //fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*9, fp);
-        fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*10, fp);
+        fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*9, fp);
 
       fclose(fp);
       }

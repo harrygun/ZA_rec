@@ -102,8 +102,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   if(do_grad==TRUE)
     dki=(fftwf_complex *)fftwf_malloc(3*dksize);
   if(do_hess==TRUE)
-    //dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
-    dkij=(fftwf_complex *)fftwf_malloc(10*dksize);
+    dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
 
   fftwf_plan pforward, pbackward, pbackward_hess;
   
@@ -124,16 +123,16 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         if(n<ngrid/2) kz=n*kmin;
 	else kz=(n-ngrid)*kmin;
 
-        sin2x = 4.*sin(kx/2.)*sin(kx/2.);
-        sin2y = 4.*sin(ky/2.)*sin(ky/2.);
-        sin2z = 4.*sin(kz/2.)*sin(kz/2.);
-	ki[0]=2.*sin(kx/2.);
-	ki[1]=2.*sin(ky/2.);
-	ki[2]=2.*sin(kz/2.);
+        //sin2x = 4.*sin(kx/2.)*sin(kx/2.);
+        //sin2y = 4.*sin(ky/2.)*sin(ky/2.);
+        //sin2z = 4.*sin(kz/2.)*sin(kz/2.);
+	//ki[0]=2.*sin(kx/2.);
+	//ki[1]=2.*sin(ky/2.);
+	//ki[2]=2.*sin(kz/2.);
 	
 
-        //sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
-	//ki[0]=kx; ki[1]=ky; ki[2]=kz;
+        sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
+	ki[0]=kx; ki[1]=ky; ki[2]=kz;
         
 
         if ((l==0) && (m==0) && (n==0)) greens = 0.;
@@ -153,9 +152,6 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
                 ArrayAccess5D_n5(dkij, 3, 3, ngrid, ngrid, (ngrid/2+1), i, j, l, m, n)[cc]=
 	              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[cc]*ki[i]*ki[j]*(-1.);
 	        }
-	  // ->> testing <<- //
-	  for(cc=0; cc<2; cc++)
-            ArrayAccess4D_n4(dkij, 10, ngrid, ngrid, (ngrid/2+1), 9, l, m, n)[cc]=ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[cc];
 	  }
 
         }
@@ -163,7 +159,6 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   /* find the inverse FFT of phi */
   pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
   fftwf_execute(pbackward);
-  //fftwf_cleanup();
 
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   ndim=(int *)malloc(3*sizeof(int));
@@ -171,28 +166,13 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
   if (do_hess) {
     printf("do Hessian matrix of phi.\n");
-    /*
-    for (i=0; i<3; i++)
-      for (j=0; j<3; j++)  {
 
-          pbackward_hess=fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, 
-                     &ArrayAccess2D_n2_list(dkij, 3, 3, dksize, i, j),
-                     &ArrayAccess2D_n2_list(phi_ij, 3, 3, dsize, i, j), FFTW_ESTIMATE);
-
-          fftwf_execute(pbackward_hess);
-          fftwf_destroy_plan(pbackward_hess);
-          //fftwf_cleanup();
-
-          printf("%d-%d is done.\n", i, j);
-	  }
-    */
     rank=3;
-    //howmany=9;
-    howmany=10;
+    howmany=9;
     idist=ngrid*ngrid*(ngrid/2+1);
     odist=ngrid*ngrid*ngrid;
     istride=1; ostride=1;
-    inembed=ndim; onembed=ndim;
+    inembed=NULL; onembed=NULL;
 
     pbackward_hess=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dkij, inembed, istride, idist, phi_ij, onembed, ostride, odist, FFTW_ESTIMATE);
     
@@ -208,13 +188,10 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
         ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
   
         if (do_hess) {
-	  /*
+
 	  for(i=0; i<3; i++)
 	    for(j=0; j<3; j++)
               ArrayAccess5D_n5(phi_ij, 3, 3, ngrid, ngrid, ngrid, i, j, l, m, n)*=fac;
-	  */
-	  for(i=0; i<10; i++)
-            ArrayAccess4D_n4(phi_ij, 10, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
 	  }
 	}
 
@@ -226,13 +203,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   fftwf_destroy_plan(pforward);
   fftwf_destroy_plan(pbackward);
 
-  fftwf_cleanup();
+  //fftwf_cleanup();
 
-/*
-  for(i=0; i<3; i++)
-    for(j=0; j<3; j++)
-      fftwf_destroy_plan(pbackward_hess[i][j]);
-*/
   return;
   }
 

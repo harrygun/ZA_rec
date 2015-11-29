@@ -172,7 +172,7 @@
 
     //->> 
     int dsize, dksize, l, m, n;
-    float kmin, kx, ky, kz, sin2x, sin2y, sin2z; 
+    float kmin, kx, ky, kz, sin2x, sin2y, sin2z, greens; 
     kmin=2.*pi/boxsize;
 
     dsize=ngrid*ngrid*ngrid*sizeof(float);
@@ -210,15 +210,15 @@
           if ((l==0) && (m==0) && (n==0)) greens = 0.;
           else greens = -1./(sin2x+sin2y+sin2z);
 
-          // ->>  assign dk1, dk2 <<- //
+          // ->>  assign dk1 <<- //
           ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens;
           ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens;
 
-
-          ArrayAccess3D_n3(dk2, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
+          // ->> asign dk2 <<- //
+          ArrayAccess4D_n4(dk2, 2, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[0]=
 	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
 
-          ArrayAccess3D_n3(dk2, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]=
+          ArrayAccess4D_n4(dk2, 2, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[1]=
 	    ArrayAccess3D_n3(dk1, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
 
           ArrayAccess4D_n4(dk2, 2, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[0]=
@@ -245,10 +245,12 @@
     idist=ngrid*ngrid*(ngrid/2+1);
     odist=ngrid*ngrid*ngrid;
     istride=1; ostride=1;
-    inembed=ndim; onembed=ndim;
+    //inembed=ndim; onembed=ndim;
+    inembed=NULL; onembed=NULL;
 
     pbackward_2=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dk2, inembed, istride, idist, phi2, onembed, ostride, odist, FFTW_ESTIMATE);
-    
+    //pbackward_2 = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk2, phi2, FFTW_ESTIMATE);
+
     fftwf_execute(pbackward_2);
 
 
@@ -261,11 +263,23 @@
     printf("->> FFTW Done.\n");
 
 
+    // ->> renormalize <<- //
+    float fac=1.0/(float)(ngrid*ngrid*ngrid);
 
+    for (l=0; l<ngrid; l++)
+      for (m=0; m<ngrid; m++)
+        for (n=0; n<ngrid; n++) {
+          ArrayAccess3D(phi1, ngrid, l, m, n)*=fac;
+
+  	  for(i=0; i<2; i++)
+              ArrayAccess4D_n4(phi2, 2, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
+  	  }
+  
 
     int _write_testfile_=TRUE;
+    char *fname_tt="/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml/node0/0.000xv0.fftw_testing.dat";
     if(_write_testfile_){
-      fp=fopen(test_fname, "wb");
+      fp=fopen(fname_tt, "wb");
       
       fwrite(phi1, sizeof(float), ngrid*ngrid*ngrid, fp);
       fwrite(phi2, sizeof(float), ngrid*ngrid*ngrid*2, fp);

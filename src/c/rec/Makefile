@@ -156,7 +156,7 @@ ARFLAGS=-r
 RANLIB=ranlib
 
 
-default: rect, test_fftw
+default: rect test_fftw
 #default: rect
 
 
