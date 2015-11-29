@@ -104,7 +104,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   if(do_hess==TRUE)
     dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
 
-  fftwf_plan pforward, pbackward, pbackward_hess;
+  fftwf_plan pforward, pbackward, pbackward_hess, pbackward_grad;
   
   pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
@@ -141,12 +141,13 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
         // ->> do gradient <<- //
         if(do_grad) {
-	  for (i=0; i<3; i++)
-            for (cc=0; cc<2; cc++) { 
-                ArrayAccess4D_n4(dkij, 3, ngrid, ngrid, (ngrid/2+1), i, j, l, m, n)[cc]=
-	              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[cc]*ki[i]*ki[j]*(-1.);
+	  for (i=0; i<3; i++) {
+            ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[0]=
+             ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*(-ki[i]);
 
-	      }
+            ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[1]=
+             ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*ki[i];
+            }
 	  }
 
         // ->>  do Hessian matrix <<- //
@@ -185,6 +186,23 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
     fftwf_destroy_plan(pbackward_hess);
     }
 
+
+  //->> 
+  if (do_grad) {
+    printf("do Gradient vector of phi.\n");
+
+    rank=3;
+    howmany=3;
+    idist=ngrid*ngrid*(ngrid/2+1);
+    odist=ngrid*ngrid*ngrid;
+    istride=1; ostride=1;
+    inembed=NULL; onembed=NULL;
+
+    pbackward_grad=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dki, inembed, istride, idist, phi_i, onembed, ostride, odist, FFTW_ESTIMATE);
+    
+    fftwf_execute(pbackward_grad);
+    fftwf_destroy_plan(pbackward_grad);
+    }
   
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
@@ -199,6 +217,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 	  }
 
 	if (do_grad) {
+	  for(i=0; i<3; i++)
+            ArrayAccess4D_n4(phi_i, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
 	  }
 
 	}

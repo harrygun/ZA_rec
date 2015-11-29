@@ -213,7 +213,10 @@
 
     // ->> Obtain displacement field <<- //
     int fft_return_type, do_grad, do_hess;
-    fft_return_type=_RETURN_HESSIAN_;
+    //fft_return_type=_RETURN_HESSIAN_;
+    //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
+    fft_return_type=_RETURN_GRADIENT_;
+
 
     // ->> only useful for testing <<- //
     if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
@@ -235,7 +238,6 @@
     printf("->> FFT is Done.\n");
 
 
-
     // ->> write test file <<- //
     int _write_testfile_=TRUE;
     if(_write_testfile_){
@@ -243,11 +245,15 @@
       
       fwrite(phi, sizeof(float), ngrid*ngrid*ngrid, fp);
 
+      if(do_grad)
+        fwrite(phi_i, sizeof(float), ngrid*ngrid*ngrid*3, fp);
+
       if(do_hess)
         fwrite(phi_ij, sizeof(float), ngrid*ngrid*ngrid*9, fp);
 
       fclose(fp);
       }
+
 
 
     /*-----------------------------------------------------
