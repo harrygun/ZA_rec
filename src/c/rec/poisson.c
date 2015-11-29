@@ -78,8 +78,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   /* ->> Poisson Solver with FFT <<- */
 
   int l, m, n, i, j, cc, do_grad, do_hess, dksize, dsize;
-  double kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
-  double fac=1.0/(double)(ngrid*ngrid*ngrid);
+  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
+  float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
   // ->> return type <<- //

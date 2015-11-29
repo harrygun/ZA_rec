@@ -156,7 +156,8 @@ ARFLAGS=-r
 RANLIB=ranlib
 
 
-default: rect
+default: rect, test_fftw
+#default: rect
 
 
 
@@ -164,6 +165,8 @@ default: rect
 rect: driver.o io.o cic.o poisson.o
 	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
+test_fftw: test_fftw.o io.o cic.o
+	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 
 
