@@ -159,6 +159,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
   /* find the inverse FFT of phi */
   pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
   fftwf_execute(pbackward);
+  //fftwf_cleanup();
 
   if (do_hess) {
 
@@ -173,6 +174,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
           fftwf_execute(pbackward_hess);
           fftwf_destroy_plan(pbackward_hess);
+          fftwf_cleanup();
 
           printf("%d-%d is done.\n", i, j);
 	  }
@@ -199,6 +201,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
   fftwf_destroy_plan(pforward);
   fftwf_destroy_plan(pbackward);
+
+  fftwf_cleanup();
 
 /*
   for(i=0; i<3; i++)
