@@ -11,12 +11,12 @@
 
 void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *s, int s_intp){
   //-> move particles <<- //
-  int i, j;
+  int i, j, ip;
 
   if(s_intp!=TRUE){
     // ->> do not interpolate <<- //
 
-    for(i=0; i<s->npart; i++) {
+    for(ip=0; ip<s->npart; ip++) {
        
       }
 
