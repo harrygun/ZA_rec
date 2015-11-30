@@ -5,8 +5,8 @@
   #define _GAUSSIAN_SMOOTH_ 20150228
 
 
-  typedef float fft_real;
-  //typedef double fft_real
+  typedef float itreal;
+  //typedef double itreal;
 
 
   // ->> for equal-length cubic array <<- //

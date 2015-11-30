@@ -170,7 +170,8 @@
     Pdata_pos *p=(Pdata_pos *)malloc(npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, npart);
 
-    float *d, *phi, *phi_i, *phi_ij;
+    float *d;
+    float *phi, *phi_i, *phi_ij;
     double particle_mass, rhom_, dmean;
     int ngrid_xyz[3];
 
