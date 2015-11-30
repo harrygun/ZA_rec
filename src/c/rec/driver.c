@@ -222,9 +222,9 @@
 
     // ->> Obtain displacement field <<- //
     int fft_return_type, do_grad, do_hess;
-    fft_return_type=_RETURN_HESSIAN_;
+    //fft_return_type=_RETURN_HESSIAN_;
     //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
-    //fft_return_type=_RETURN_GRADIENT_;
+    fft_return_type=_RETURN_GRADIENT_;
 
 
     // ->> only useful for testing <<- //

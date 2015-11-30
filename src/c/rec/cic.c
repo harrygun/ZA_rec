@@ -31,11 +31,11 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 
-double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], 
+double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],
              int npart, int ngridx, int ngridy, int ngridz) {
-  long long ip, i,j,k,i1,j1,k1;
+  long long ip, i,j,k,i1,j1,k1, n;
   double xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
-  double aa, masstot, dmean;
+  double aa, masstot, dmean, pos_norm[3];
   
   // ->> 
   for(i=0; i<ngridx; i++)
@@ -46,9 +46,18 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
   masstot=0.0;
   
   for(ip=0; ip<npart; ip++) {
-    i=(int)p[ip].pos[0]; xc=(double)i;
-    j=(int)p[ip].pos[1]; yc=(double)j;
-    k=(int)p[ip].pos[2]; zc=(double)k;
+
+    // ->> renormalize 
+    for(n=0; n<3; n++)
+      pos_norm[n]=(p[ip].pos[n]-pmin[n])/dg[n];
+
+    //i=(int)p[ip].pos[0]; xc=(double)i;
+    //j=(int)p[ip].pos[1]; yc=(double)j;
+    //k=(int)p[ip].pos[2]; zc=(double)k;
+
+    i=(int)pos_norm[0]; xc=(double)i;
+    j=(int)pos_norm[1]; yc=(double)j;
+    k=(int)pos_norm[2]; zc=(double)k;
     
     if(i<0) i=i+ngridx;
     if(j<0) j=j+ngridy;
@@ -58,9 +67,14 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
     if(j>=ngridy) j=j-ngridy;
     if(k>=ngridz) k=k-ngridz;
     
-    dx=fabs(p[ip].pos[0]-xc); tx=fabs(1.0-dx);
-    dy=fabs(p[ip].pos[1]-yc); ty=fabs(1.0-dy);
-    dz=fabs(p[ip].pos[2]-zc); tz=fabs(1.0-dz);
+    //dx=fabs(p[ip].pos[0]-xc); tx=fabs(1.0-dx);
+    //dy=fabs(p[ip].pos[1]-yc); ty=fabs(1.0-dy);
+    //dz=fabs(p[ip].pos[2]-zc); tz=fabs(1.0-dz);
+
+
+    dx=fabs(pos_norm[0]-xc); tx=fabs(1.0-dx);
+    dy=fabs(pos_norm[1]-yc); ty=fabs(1.0-dy);
+    dz=fabs(pos_norm[2]-zc); tz=fabs(1.0-dz);
     
     i1=i+1;  
     j1=j+1; 
@@ -141,7 +155,7 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
 double cic_density(Pdata_pos *p, float *d, double boxsize, 
                       double mass, int npart, int ngrid[3]) {
   long long ip;
-  double dx, dy, dz, xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dmean;
+  double xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dx[3], dmean;
   int i, j, k;
 
   // ->> obtain boundary <<- //
@@ -169,22 +183,24 @@ double cic_density(Pdata_pos *p, float *d, double boxsize,
 
 
   // ->> dx, dy, dz <<- //
-  dx=(xmax-xmin)/(double)ngrid[0];
-  dy=(ymax-ymin)/(double)ngrid[1];
-  dz=(zmax-zmin)/(double)ngrid[2];
+  dx[0]=(xmax-xmin)/(double)ngrid[0];
+  dx[1]=(ymax-ymin)/(double)ngrid[1];
+  dx[2]=(zmax-zmin)/(double)ngrid[2];
   
-  printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx,dy,dz);
+  printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx[0], dx[1], dx[2]);
   
   // ->> renormalize particle positions <<- //
+  /*
   for(ip=0; ip<npart; ip++) {
     p[ip].pos[0]=(p[ip].pos[0]-xmin)/dx;
     p[ip].pos[1]=(p[ip].pos[1]-ymin)/dy;
     p[ip].pos[2]=(p[ip].pos[2]-zmin)/dz;
     }
+  */
   //printf("ngridx %ld ngridy %ld ngridz %ld\n",ngrid[0],ngrid[1],ngrid[2]);
 
   // ->> CIC density <<- //
-  dmean=density(p, d, mass, pmin, pmax, npart, ngrid[0], ngrid[1], ngrid[2]); 
+  dmean=density(p, d, mass, pmin, pmax, dx, npart, ngrid[0], ngrid[1], ngrid[2]); 
 
   printf("\n->> CIC density is done.\n");
   return;
