@@ -18,10 +18,9 @@
   #include "cospara.h"
   #include "myinterpolate.h"
 
-  #include "parvar.h"
-  #include "io.h"
-  #include "cic.h"
-  #include "poisson.h"
+  #include "../parvar.h"
+  #include "../io.h"
+  #include "../cic.h"
 
   #define pi M_PI
 
