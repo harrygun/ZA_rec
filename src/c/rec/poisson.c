@@ -79,7 +79,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
         // ->> window function <<- //
         if(smooth_type==_TOPHAT_SMOOTH_) { W=1.; }
-        else if(smooth_type==_TOPHAT_SMOOTH_) {
+        else if(smooth_type==_GAUSSIAN_SMOOTH_) {
           W=exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
 	  }
         else { W=1.; }

@@ -9,6 +9,15 @@
   //typedef double itreal;
 
 
+
+typedef struct simulation_info{
+  double boxsize, smooth_R, particle_mass;
+  int ngrid, npart, ngrid_xyz[3], smooth_type_flag;
+  char *smooth_type;
+  } SimInfo;
+
+
+
   // ->> for equal-length cubic array <<- //
   #define ArrayAccess3D(a, n, i, j, k) ((a)[(i)*(n)*(n)+(j)*(n)+(k)])
 
