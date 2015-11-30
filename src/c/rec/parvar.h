@@ -4,6 +4,11 @@
   #define _TOPHAT_SMOOTH_  20121201
   #define _GAUSSIAN_SMOOTH_ 20150228
 
+
+  typedef float fft_real
+  //typedef double fft_real
+
+
   // ->> for equal-length cubic array <<- //
   #define ArrayAccess3D(a, n, i, j, k) ((a)[(i)*(n)*(n)+(j)*(n)+(k)])
 
