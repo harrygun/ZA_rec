@@ -10,7 +10,9 @@
 
 
 
-void za_displacement(float *) {
+void za_displacement(float *d, ) {
+  // ->> obtain ZA displacement field from density field <<- // 
 
 
+  return;
   }

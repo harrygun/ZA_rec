@@ -13,8 +13,8 @@
 
 
 
-void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, double boxsize, int ngrid,
-                           int smooth_type, double smooth_R, int return_type)  {
+void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
+      double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type)  {
   /* ->> Poisson Solver with FFT <<- */
 
   int l, m, n, i, j, cc, do_grad, do_hess, dksize, dsize;
@@ -31,6 +31,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
     do_hess=TRUE;
   else 
     do_hess=FALSE;
+
 
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
@@ -75,9 +76,16 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, dou
 
         if ((l==0) && (m==0) && (n==0)) greens = 0.;
         else greens = -1./(sin2x+sin2y+sin2z);
-      	    
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens;
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens;
+
+        // ->> window function <<- //
+        if(smooth_type==_TOPHAT_SMOOTH_) { W=1.; }
+        else if(smooth_type==_TOPHAT_SMOOTH_) {
+          W=exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
+	  }
+        else { W=1.; }
+
+        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
+        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;
 
         // ->> do gradient <<- //
         if(do_grad) {
