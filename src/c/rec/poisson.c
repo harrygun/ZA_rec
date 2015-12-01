@@ -24,13 +24,11 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
   // ->> return type <<- //
   if((return_type==_RETURN_GRADIENT_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
-    do_grad=TRUE;
-  else 
-    do_grad=FALSE;
+    {do_grad=TRUE;}
+  else {do_grad=FALSE;}
   if((return_type==_RETURN_HESSIAN_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
-    do_hess=TRUE;
-  else 
-    do_hess=FALSE;
+    {do_hess=TRUE;}
+  else {do_hess=FALSE;}
 
 
   // ->> initialization <<- //

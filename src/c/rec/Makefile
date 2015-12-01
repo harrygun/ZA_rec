@@ -162,7 +162,7 @@ default: rect test_fftw
 
 
 #--------------------------------------------------#
-rect: driver.o io.o cic.o poisson.o
+rect: driver.o io.o cic.o poisson.o za_reconstruction.o partmove.o
 	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 test_fftw: test_fftw.o io.o cic.o

@@ -35,37 +35,51 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
 
 
 
-void za_reconstruction(SimInfo *s, Pdata_pos *p, float *d, float *drec, char *rec_type){
+void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 
+                         float *drec, float *d_disp, float *d_shift)   {
   // ->> Performing ZA reconstruction  <<- //
-  int disp_interp, do_disp, do_shift, do_disp_shift;
+  int do_disp, do_shift, do_disp_shift;
   float *disp;
-  double dmean;
-  Pdata_pos *moved;
+  double dm_disp, dm_shift;
+  Pdata_pos *p_disp, *p_shift;
 
   // ->> reconstruction type <<- //
-  if(strcmp(rec_type, "za_displaced")==0) {
-    do_disp=TRUE;  do_shift=FALSE; do_disp_shift=FALSE;}
-  else if(strcmp(rec_type, "za_displaced_shifted")==0){
-    do_disp=TRUE;  do_shift=TRUE; do_disp_shift=TRUE;}
+  if(strcmp(rc->rec_type, "za_displaced")==0) 
+    {do_disp=TRUE;  do_shift=FALSE;  do_disp_shift=FALSE;}
+  else if(strcmp(rc->rec_type, "za_displaced_shifted")==0)
+    {do_disp=TRUE;  do_shift=TRUE;  do_disp_shift=TRUE;}
   else {abort();}
 
   /* ->> get displacement field first <<- */
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   za_displacement(s, d, disp); 
 
-
   // ->> displace particles <<- //
-  if(do_shift==TRUE){
-    moved=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  if(do_disp==TRUE) {
+    p_disp=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
 
     // ->> moving particles <<- //
-    disp_interp=FALSE;
-    move_particle(s, p, moved, disp, disp_interp);
+    move_particle(s, p, p_disp, disp, rc->displacement_intp);
+
+    // ->> recover density <<- //
+    dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
+    printf("displaced mean density = %lg\n", dm_disp);
     }
 
-  // ->> density <<- //
-  dmean=cic_density(moved, drec, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz); 
-  printf("reconstructed mean density = %lg\n", dmean);
+  // ->> shift particles <<- //
+  if(do_shift==TRUE) {
+    p_shift=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+
+    // ->> moving particles <<- //
+    move_particle(s, p, p_disp, disp, rc->displacement_intp);
+
+    // ->> recover density <<- //
+    dm_shift=cic_density(p_shift,d_shift,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
+    printf("shifted mean density = %lg\n", dm_shift);
+    }
+
+
+  // ->> reconstructed density <<- //
 
 
   fftwf_free(disp);

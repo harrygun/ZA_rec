@@ -22,6 +22,7 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
+  #include "za_reconstruction.h"
 
 
 
@@ -106,12 +107,13 @@
         printf("w1=%lg\n", cp.w1);
         }
 
-      // simulation info //
+      // simulation info & reconstruction constroller //
       SimInfo s;
+      RectCtrl rc;
 
       //double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname, *main_dtype;
-      int do_density, do_potential, do_rect, save_odensity;
+      int do_density, do_potential, save_odensity;
       //int npart, ngrid;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
@@ -147,7 +149,11 @@
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
-      do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
+      rc.do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
+      rc.displacement_intp=iniparser_getboolean(dict, "Rect:displacement_interpolation", INIFALSE);
+      rc.rec_type=iniparser_getstring(dict,"Rect:reconstruction_type", "za");
+
+      // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       do_potential=iniparser_getboolean(dict, "Rect:do_potential", INIFALSE);
 
@@ -214,10 +220,13 @@
       load_scalar_map(oden_fname, d, s.ngrid, main_dtype);
       }
 
-
     /*-----------------------------------------------------
          // ->>   performing reconstruction   <<- //
     -----------------------------------------------------*/
+    if(rc.do_rect!=TRUE) {
+      printf("Do NOT perform reconstruction.\n");
+      fflush(stdout); abort(); }
+
 
     // ->> Obtain displacement field <<- //
     int fft_return_type, do_grad, do_hess;
