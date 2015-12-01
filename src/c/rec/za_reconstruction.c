@@ -70,7 +70,7 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
   if(do_shift==TRUE) {
     p_shift=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
 
-    // ->> moving particles <<- //
+    // ->> shifting particles <<- //
     move_particle(s, p, p_disp, disp, rc->displacement_intp);
 
     // ->> recover density <<- //

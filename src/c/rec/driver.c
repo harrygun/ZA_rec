@@ -112,7 +112,7 @@
       RectCtrl rc;
 
       //double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname, *main_dtype;
+      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *main_dtype;
       int do_density, do_potential, save_odensity;
       //int npart, ngrid;
 
@@ -160,8 +160,6 @@
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
 
-      test_fname=iniparser_getstring(dict,"Rect:test_fname", "y.dat");
-
       /*-----------------------------------------------------------------------*/
       // ->> initialize power spectrum <<- //
       plin_name=iniparser_getstring(dict,"Rect:linear_power_name", NULL);
@@ -171,8 +169,13 @@
       cp.power=power;
       fclose(fp);
 
-    /*-----     End of initialization.    ------*/
+      /*-----------------------------------------------------------------------*/
+      int do_fftw_testing;
+      char *fftw_test_fname;
+      do_fftw_testing=iniparser_getboolean(dict, "Rect:do_fftw_testing", INIFALSE);
+      fftw_test_fname=iniparser_getstring(dict,"Rect:fftw_test_fname", "y.dat");
 
+    /*-----     End of initialization.    ------*/
 
 
     /*-----------------------------------------------------
@@ -183,7 +186,6 @@
     load_cita_simulation_position(particle_fname, p, s.npart);
 
     float *d;
-    float *phi, *phi_i, *phi_ij;
     double rhom_, dmean; //, particle_mass;
     int ngrid_xyz[3];
 
@@ -220,6 +222,12 @@
       load_scalar_map(oden_fname, d, s.ngrid, main_dtype);
       }
 
+    if(do_fftw_testing==TRUE) {
+      printf("Do FFTW Tesint.\n"); fflush(stdout);
+      fftw_tester(d, TRUE, fftw_test_fname);
+      abort();
+      }
+
     /*-----------------------------------------------------
          // ->>   performing reconstruction   <<- //
     -----------------------------------------------------*/
@@ -229,47 +237,11 @@
 
 
     // ->> Obtain displacement field <<- //
-    int fft_return_type, do_grad, do_hess;
-    //fft_return_type=_RETURN_HESSIAN_;
-    //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
-    fft_return_type=_RETURN_GRADIENT_;
 
 
-    // ->> only useful for testing <<- //
-    if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
-      do_grad=TRUE;
-    else 
-      do_grad=FALSE;
-    if((fft_return_type==_RETURN_HESSIAN_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
-      do_hess=TRUE;
-    else 
-      do_hess=FALSE;
-
-    // ->> allocate memory <<- //
-    phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-    if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-    if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
-
-    printf("\n->> Solve Poisson equation with FFT.\n");
-    poisson_solver_float(d, phi, phi_i, phi_ij, s.boxsize, s.ngrid, s.smooth_type_flag, s.smooth_R, fft_return_type);
-    printf("->> FFT is Done.\n");
 
 
-    // ->> write test file <<- //
-    int _write_testfile_=TRUE;
-    if(_write_testfile_){
-      fp=fopen(test_fname, "wb");
-      
-      fwrite(phi, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
-      if(do_grad)
-        fwrite(phi_i, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
-
-      if(do_hess)
-        fwrite(phi_ij, sizeof(float), s.ngrid*s.ngrid*s.ngrid*9, fp);
-
-      fclose(fp);
-      }
 
 
 
@@ -278,10 +250,6 @@
     -----------------------------------------------------*/
     iniparser_freedict(dict);
     free(p); free(d);
-    fftwf_free(phi);
-
-    if(do_grad) fftwf_free(phi_i);
-    if(do_hess) fftwf_free(phi_ij);
 
 
     #ifdef _MPI_

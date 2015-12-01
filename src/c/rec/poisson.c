@@ -185,6 +185,60 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
 
+void fftw_tester(float *d, char *test_fname) {
+
+  float *phi, *phi_i, *phi_ij;
+  int fft_return_type, do_grad, do_hess;
+
+  //fft_return_type=_RETURN_HESSIAN_;
+  //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
+  fft_return_type=_RETURN_GRADIENT_;
+  
+  
+  // ->> only useful for testing <<- //
+  if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+    do_grad=TRUE;
+  else 
+    do_grad=FALSE;
+  if((fft_return_type==_RETURN_HESSIAN_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
+    do_hess=TRUE;
+  else 
+    do_hess=FALSE;
+  
+  // ->> allocate memory <<- //
+  phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
+  if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
+  if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
+  
+  printf("\n->> Solve Poisson equation with FFT.\n");
+  poisson_solver_float(d, phi, phi_i, phi_ij, s.boxsize, s.ngrid, s.smooth_type_flag, s.smooth_R, fft_return_type);
+  printf("->> FFT is Done.\n");
+  
+  
+  // ->> write test file <<- //
+  int write_file=TRUE;
+  if(write_file){
+    fp=fopen(test_fname, "wb");
+    
+    fwrite(phi, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+  
+    if(do_grad)
+      fwrite(phi_i, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
+  
+    if(do_hess)
+      fwrite(phi_ij, sizeof(float), s.ngrid*s.ngrid*s.ngrid*9, fp);
+  
+    fclose(fp);
+    }
+
+
+  fftwf_free(phi);
+  if(do_grad) fftwf_free(phi_i);
+  if(do_hess) fftwf_free(phi_ij);
+
+  return;
+  }
+
 
 
 
