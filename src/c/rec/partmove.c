@@ -13,16 +13,23 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *s, int s_i
   //-> move particles <<- //
   int i, j, ip;
 
-  if(s_intp==FALSE){
-
-    // ->> do not interpolate <<- //
-    for(ip=0; ip<s->npart; ip++) {
        
+  for(ip=0; ip<s->npart; ip++) {
+
+    if(s_intp==FALSE){
+      // ->> do not interpolate <<- //
+      prinf("particle-moving interpolation NOT supported yet.\n");
+      abort();
+      }
+    else{  // neglect position difference
+
+      for(i=0; i<3; i++)
+        p[ip].pos[i]   
+
       }
 
     }
 
-  else{ abort(); }
 
   return;
   }
