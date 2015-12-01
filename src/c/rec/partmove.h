@@ -4,5 +4,6 @@
 
 void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp);
 
+void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp);
 
 #endif

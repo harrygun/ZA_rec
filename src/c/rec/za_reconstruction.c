@@ -47,7 +47,7 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
 void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 
                          float *drec, float *d_disp, float *d_shift)   {
   // ->> Performing ZA reconstruction  <<- //
-  int do_disp, do_shift, do_disp_shift;
+  int do_disp, do_shift, do_disp_shift, i;
   float *disp;
   double dm_disp, dm_shift;
   Pdata_pos *p_disp, *p_shift;
@@ -70,25 +70,31 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     // ->> moving particles <<- //
     move_particle(s, p, p_disp, disp, rc->displacement_intp);
 
-    // ->> recover density <<- //
+    // ->> density field from displaced particles <<- //
     dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
     printf("displaced mean density = %lg\n", dm_disp);
+
+    free(p_disp);
     }
 
   // ->> shift particles <<- //
   if(do_shift==TRUE) {
     p_shift=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
 
-    // ->> shifting particles <<- //
-    move_particle(s, p, p_disp, disp, rc->displacement_intp);
+    // ->> shifting uniform grid <<- //
+    move_grid(s, p_disp, disp, rc->displacement_intp);
 
-    // ->> recover density <<- //
+    // ->> density field from shifted particles <<- //
     dm_shift=cic_density(p_shift,d_shift,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
     printf("shifted mean density = %lg\n", dm_shift);
+
+    free(p_shift);
     }
 
 
   // ->> reconstructed density <<- //
+  for(i=0; i<pow(s->ngrid, 3); i++)
+    drec[i]=d_disp[i]-d_shift[i];
 
 
   fftwf_free(disp);

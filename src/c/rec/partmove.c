@@ -46,3 +46,32 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
   return;
   }
+
+
+
+void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
+  //->> grid moving, no need to generate the grid <<- //
+  int i, ip;
+  float grid[3];
+       
+  for(ip=0; ip<s->npart; ip++) {
+
+    if(s_intp==FALSE){
+      // ->> do not interpolate <<- //
+      for(i=0; i<3; i++) {
+        grid[i]= ;
+        moved[ip].pos[i]=grid[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
+	}
+      }
+    else if(s_intp==TRUE){  
+      // ->> interpolate shift field onto particle position <<- //
+      printf("particle-moving interpolation NOT supported yet.\n");
+      abort();
+      }
+    else{ abort(); }
+
+    }
+
+
+  return;
+  }
