@@ -185,15 +185,18 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
 
-void fftw_tester(float *d, char *test_fname) {
+void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname) {
 
   float *phi, *phi_i, *phi_ij;
   int fft_return_type, do_grad, do_hess;
+  FILE *fp;
 
-  //fft_return_type=_RETURN_HESSIAN_;
-  //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
-  fft_return_type=_RETURN_GRADIENT_;
-  
+  if(strcmp(fftw_return_type, "gradient")==0 )
+    {fft_return_type=_RETURN_GRADIENT_;}
+  else if(strcmp(fftw_return_type, "hessian")==0 )
+    {fft_return_type=_RETURN_HESSIAN_;}
+  else if(strcmp(fftw_return_type, "gradient_hessian")==0 )
+    {fft_return_type=_RETURN_GRADIENT_HESSIAN_;}
   
   // ->> only useful for testing <<- //
   if((fft_return_type==_RETURN_GRADIENT_)||(fft_return_type==_RETURN_GRADIENT_HESSIAN_))
@@ -206,12 +209,12 @@ void fftw_tester(float *d, char *test_fname) {
     do_hess=FALSE;
   
   // ->> allocate memory <<- //
-  phi=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
-  if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3);
-  if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]*3*3);
+  phi=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]);
+  if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3);
+  if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3*3);
   
-  printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, phi_i, phi_ij, s.boxsize, s.ngrid, s.smooth_type_flag, s.smooth_R, fft_return_type);
+  printf("->> Solve Poisson equation with FFT.\n");
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
   printf("->> FFT is Done.\n");
   
   
@@ -220,13 +223,13 @@ void fftw_tester(float *d, char *test_fname) {
   if(write_file){
     fp=fopen(test_fname, "wb");
     
-    fwrite(phi, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+    fwrite(phi, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
   
     if(do_grad)
-      fwrite(phi_i, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
+      fwrite(phi_i, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   
     if(do_hess)
-      fwrite(phi_ij, sizeof(float), s.ngrid*s.ngrid*s.ngrid*9, fp);
+      fwrite(phi_ij, sizeof(float), s->ngrid*s->ngrid*s->ngrid*9, fp);
   
     fclose(fp);
     }

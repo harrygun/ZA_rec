@@ -5,10 +5,20 @@
   #include <fftw3.h>
 
   #include "const.h"
+  #include "varb.h"
+  #include "mymath.h"
+  #include "myerr.h"
+  #include "matrix.h"
+  #include "init.h"
+  #include "power.h"
+  #include "cospara.h"
+  #include "myinterpolate.h"
+
   #include "parvar.h"
-  #include "poisson.h"
+  #include "io.h"
   #include "cic.h"
-  #include "partmove.h"
+  #include "poisson.h"
+  #include "za_reconstruction.h"
 
 
 
@@ -16,15 +26,14 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
   // ->> obtain ZA displacement field from density field <<- // 
 
   int fft_return_type;
-  float *phi, phi_ij;
+  float *phi, *phi_ij;
 
   fft_return_type=_RETURN_GRADIENT_;
   phi=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]);
 
   // ->> solve FFTW  <<- //
   printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, 
-                       s->smooth_type_flag, s->smooth_R, fft_return_type);
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
   printf("->> FFT is Done.\n");
 
   fftwf_free(phi);

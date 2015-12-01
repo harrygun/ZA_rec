@@ -113,8 +113,7 @@
 
       //double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *main_dtype;
-      int do_density, do_potential, save_odensity;
-      //int npart, ngrid;
+      int do_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
       cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
@@ -155,8 +154,6 @@
 
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
-      do_potential=iniparser_getboolean(dict, "Rect:do_potential", INIFALSE);
-
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
 
@@ -171,9 +168,10 @@
 
       /*-----------------------------------------------------------------------*/
       int do_fftw_testing;
-      char *fftw_test_fname;
+      char *fftw_test_fname, *fftw_return_type;
       do_fftw_testing=iniparser_getboolean(dict, "Rect:do_fftw_testing", INIFALSE);
       fftw_test_fname=iniparser_getstring(dict,"Rect:fftw_test_fname", "y.dat");
+      fftw_return_type=iniparser_getstring(dict,"Rect:fftw_test_return_type", "gradient");
 
     /*-----     End of initialization.    ------*/
 
@@ -187,13 +185,9 @@
 
     float *d;
     double rhom_, dmean; //, particle_mass;
-    int ngrid_xyz[3];
 
-    for(i=0; i<3; i++){
-      s.ngrid_xyz[i]=s.ngrid;
-      ngrid_xyz[i]=s.ngrid;
-      }
-    d=(float *)malloc(sizeof(float)*ngrid_xyz[0]*ngrid_xyz[1]*ngrid_xyz[2]);
+    for(i=0; i<3; i++){ s.ngrid_xyz[i]=s.ngrid; }
+    d=(float *)malloc(sizeof(float)*s.ngrid_xyz[0]*s.ngrid_xyz[1]*s.ngrid_xyz[2]);
 
     // ->> if do CIC density estimation <<- //
     if (do_density==TRUE) {
@@ -223,10 +217,11 @@
       }
 
     if(do_fftw_testing==TRUE) {
-      printf("Do FFTW Tesint.\n"); fflush(stdout);
-      fftw_tester(d, TRUE, fftw_test_fname);
+      printf("Do FFTW testing.\n"); fflush(stdout);
+      fftw_tester(&s, d, fftw_return_type, fftw_test_fname);
       abort();
       }
+
 
     /*-----------------------------------------------------
          // ->>   performing reconstruction   <<- //
@@ -237,8 +232,12 @@
 
 
     // ->> Obtain displacement field <<- //
+    float *drec, *d_disp, *d_shift;
 
-
+    if(rc.do_rect==TRUE){
+      // ->> if do reconstruction <<- //
+      za_reconstruction(&rc, &s, p, d, drec, d_disp, d_shift);
+      }
 
 
 

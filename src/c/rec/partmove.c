@@ -5,7 +5,20 @@
   #include <fftw3.h>
 
   #include "const.h"
+  #include "varb.h"
+  #include "mymath.h"
+  #include "myerr.h"
+  #include "matrix.h"
+  #include "init.h"
+  #include "power.h"
+  #include "cospara.h"
+  #include "myinterpolate.h"
+
+  #include "const.h"
   #include "parvar.h"
+  #include "io.h"
+  #include "cic.h"
+  #include "za_reconstruction.h"
 
 
 
@@ -24,7 +37,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
       }
     else if(s_intp==TRUE){  
       // ->> interpolate shift field onto particle position <<- //
-      prinf("particle-moving interpolation NOT supported yet.\n");
+      printf("particle-moving interpolation NOT supported yet.\n");
       abort();
       }
     else{ abort(); }
