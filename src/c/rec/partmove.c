@@ -13,16 +13,16 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *s, int s_i
   //-> move particles <<- //
   int i, j, ip;
 
-  if(s_intp!=TRUE){
-    // ->> do not interpolate <<- //
+  if(s_intp==FALSE){
 
+    // ->> do not interpolate <<- //
     for(ip=0; ip<s->npart; ip++) {
        
       }
 
     }
 
-  else{ }
+  else{ abort(); }
 
   return;
   }

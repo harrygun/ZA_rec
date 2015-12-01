@@ -37,17 +37,17 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
 
 void za_reconstruction(SimInfo *s, Pdata_pos *p, float *d, float *drec, char *rec_type){
   // ->> Performing ZA reconstruction  <<- //
-  int disp_interp;
+  int disp_interp, do_disp, do_shift, do_disp_shift;
   float *disp;
   double dmean;
   Pdata_pos *moved;
 
   // ->> reconstruction type <<- //
   if(strcmp(rec_type, "za_displaced")==0) {
-    }
+    do_disp=TRUE;  do_shift=FALSE; do_disp_shift=FALSE;}
   else if(strcmp(rec_type, "za_displaced_shifted")==0){
-    }
-  else abort();
+    do_disp=TRUE;  do_shift=TRUE; do_disp_shift=TRUE;}
+  else {abort();}
 
   /* ->> get displacement field first <<- */
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
@@ -55,11 +55,13 @@ void za_reconstruction(SimInfo *s, Pdata_pos *p, float *d, float *drec, char *re
 
 
   // ->> displace particles <<- //
-  moved=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  if(do_shift==TRUE){
+    moved=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
 
-  // ->> moving particles <<- //
-  disp_interp=FALSE;
-  move_particle(s, p, moved, disp, disp_interp);
+    // ->> moving particles <<- //
+    disp_interp=FALSE;
+    move_particle(s, p, moved, disp, disp_interp);
+    }
 
   // ->> density <<- //
   dmean=cic_density(moved, drec, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz); 
