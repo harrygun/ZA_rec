@@ -239,9 +239,9 @@
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
    
-      drec=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
-      d_disp=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
-      d_shift=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
+      drec=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+      d_disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+      d_shift=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
       
       za_reconstruction(&rc, &s, p, d, drec, d_disp, d_shift);
 
@@ -250,9 +250,9 @@
       printf("writing files...\n");
       fp=fopen(rc.rec_fname, "wb");
 
-      fwrite(drec, sizeof(float), pow(s.ngrid,3), fp);
-      fwrite(d_disp, sizeof(float), pow(s.ngrid,3), fp);
-      fwrite(d_shift, sizeof(float), pow(s.ngrid,3), fp);
+      fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+      fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+      fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
       fclose(fp);
       printf("done.\n");
@@ -266,6 +266,7 @@
     -----------------------------------------------------*/
     iniparser_freedict(dict);
     free(p); free(d);
+
 
     if(rc.do_rect==TRUE){
       fftwf_free(d_shift);
