@@ -120,18 +120,18 @@
 
       // ->> 
       s.smooth_R=cp.R;
-      s.smooth_type = iniparser_getstring(dict, "Rect:smooth_type", "gaussian");
+      s.smooth_type = iniparser_getstring(dict, "Rect:smooth_type", "Gaussian");
       s.boxsize = iniparser_getdouble(dict, "Rect:boxsize", 0) ;
-      s.ngrid=iniparser_getint(dict, "Rect:grid_size", 0);
+      s.ngrid=iniparser_getint(dict, "Rect:ngrid", 0);
       s.npart=pow(s.ngrid,3);
       printf("boxsize=%lg, ngrid=%d, npart=%d\n",s.boxsize,s.ngrid,s.npart);
 
-      if(strcmp( s.smooth_type, "tophat")==0 ) {
+      if(strcmp( s.smooth_type, "Tophat")==0 ) {
         //cp.flg[0]= _TOPHAT_SMOOTH_ ;
         s.smooth_type_flag= _TOPHAT_SMOOTH_ ;
 	printf("Tophat smoothing.\n");
 	}
-      else if(strcmp( s.smooth_type, "gaussian")==0 ) {
+      else if(strcmp( s.smooth_type, "Gaussian")==0 ) {
         //cp.flg[0]= _GAUSSIAN_SMOOTH_ ;
         s.smooth_type_flag= _GAUSSIAN_SMOOTH_ ;
 	printf("Gussian smoothing.\n");
