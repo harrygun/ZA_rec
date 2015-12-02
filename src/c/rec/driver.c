@@ -115,7 +115,7 @@
       char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *main_dtype;
       int do_density, save_odensity;
 
-      cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
+      cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
       cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
 
       // ->> 
