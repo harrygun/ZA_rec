@@ -174,8 +174,8 @@ double cic_density(Pdata_pos *p, float *d, double boxsize,
     if(p[ip].pos[2]>zmax) zmax=p[ip].pos[2];
     }
 
-  printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
-  printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
+  //printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
+  //printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
 
 
   pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
@@ -187,7 +187,7 @@ double cic_density(Pdata_pos *p, float *d, double boxsize,
   dx[1]=(ymax-ymin)/(double)ngrid[1];
   dx[2]=(zmax-zmin)/(double)ngrid[2];
   
-  printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx[0], dx[1], dx[2]);
+  //printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx[0], dx[1], dx[2]);
   
   // ->> renormalize particle positions <<- //
   /*

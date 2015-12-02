@@ -156,6 +156,7 @@
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
+      rc.rec_fname=iniparser_getstring(dict,"Rect:reconstructed_file_name", "y.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> initialize power spectrum <<- //
@@ -189,12 +190,13 @@
     for(i=0; i<3; i++){ s.ngrid_xyz[i]=s.ngrid; }
     d=(float *)malloc(sizeof(float)*s.ngrid_xyz[0]*s.ngrid_xyz[1]*s.ngrid_xyz[2]);
 
+    // ->> particle mass <<- //
+    rhom_=get_rhom(&cp, cp.z);
+    s.particle_mass=part_mass(&cp, cp.z, s.boxsize, s.ngrid);
+    printf("\nmean density=%lg (M_star)*(h/Mpc)^3\nparticle mass resolution=%lg\n\n", rhom_, s.particle_mass);
+
     // ->> if do CIC density estimation <<- //
     if (do_density==TRUE) {
-      rhom_=get_rhom(&cp, cp.z);
-      s.particle_mass=part_mass(&cp, cp.z, s.boxsize, s.ngrid);
-      printf("\nmean density=%lg (M_star)*(h/Mpc)^3\nparticle mass resolution=%lg\n\n", rhom_, s.particle_mass);
-
       // ->> CIC density estimation <<- //
       dmean=cic_density(p, d, s.boxsize, s.particle_mass, s.npart, s.ngrid_xyz); 
 
@@ -236,10 +238,25 @@
 
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
+   
+      drec=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
+      d_disp=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
+      d_shift=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
+      
       za_reconstruction(&rc, &s, p, d, drec, d_disp, d_shift);
+
+
+      // ->> write files <<- //
+      printf("writing files...\n");
+      fp=fopen(rc.rec_fname, "wb");
+
+      fwrite(drec, sizeof(float), pow(s.ngrid,3), fp);
+      fwrite(d_disp, sizeof(float), pow(s.ngrid,3), fp);
+      fwrite(d_shift, sizeof(float), pow(s.ngrid,3), fp);
+
+      fclose(fp);
+      printf("done.\n");
       }
-
-
 
 
 
@@ -250,6 +267,11 @@
     iniparser_freedict(dict);
     free(p); free(d);
 
+    if(rc.do_rect==TRUE){
+      fftwf_free(drec);
+      fftwf_free(d_shift);
+      fftwf_free(d_disp);
+      }
 
     #ifdef _MPI_
       MPI_Finalize();
