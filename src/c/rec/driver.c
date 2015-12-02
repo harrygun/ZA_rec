@@ -268,9 +268,9 @@
     free(p); free(d);
 
     if(rc.do_rect==TRUE){
-      fftwf_free(drec);
       fftwf_free(d_shift);
       fftwf_free(d_disp);
+      fftwf_free(drec);
       }
 
     #ifdef _MPI_
