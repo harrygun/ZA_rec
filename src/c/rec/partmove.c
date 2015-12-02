@@ -51,27 +51,33 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
 void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
-  int i, j, k, ip;
+  int i, j, k, m, n, ip;
   float grid[3];
        
-  for(i=0; i<s->ngrid[0], i++)
-    for(j=0; i<s->ngrid[0], i++)
 
-    if(s_intp==FALSE){
-      // ->> do not interpolate <<- //
-      for(i=0; i<3; i++) {
-        grid[i]= ;
-        moved[ip].pos[i]=grid[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
-	}
-      }
-    else if(s_intp==TRUE){  
-      // ->> interpolate shift field onto particle position <<- //
-      printf("grid-moving interpolation NOT supported yet.\n");
-      abort();
-      }
-    else{abort();}
+  for(i=0; i<s->ngrid, i++)
+    for(j=0; j<s->ngrid, j++)
+      for(k=0; k<s->ngrid, k++) {
 
-    }
+        // ->> do not interpolate <<- //
+        if(s_intp==FALSE){
+
+          // ->> grid index <<- //
+          ip=MemIdx3D(s->ngrid, i, j, k);
+
+	  grid[0]=;
+	    
+          moved[ip].pos[i]=grid[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
+          }
+
+        // ->> interpolate shift field onto particle position <<- //
+        else if(s_intp==TRUE){  
+          printf("grid-moving interpolation NOT supported yet.\n");
+          abort();
+          }
+        else{abort();}
+
+      }
 
 
   return;

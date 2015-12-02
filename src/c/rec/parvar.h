@@ -12,7 +12,7 @@
 
 typedef struct simulation_info{
   // ->> simulation information <<- //
-  double boxsize, smooth_R, particle_mass;
+  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];
   int ngrid, npart, ngrid_xyz[3], smooth_type_flag;
   char *smooth_type;
   } SimInfo;
@@ -25,7 +25,8 @@ typedef struct rect_controller{
 
 
   // ->>
-  #define Idx1dto3d(n1, n2, n3, i1, i2, i3)  (i3+n3*(i2+n2*i1))
+  #define MemIdx3D(n, i1, i2, i3)  (i3+n*(i2+n*i1))
+  #define MemIdx3D_n3(n1, n2, n3, i1, i2, i3)  (i3+n3*(i2+n2*i1))
 
 
   // ->> for equal-length cubic array <<- //
