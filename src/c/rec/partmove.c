@@ -40,7 +40,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
       printf("particle-moving interpolation NOT supported yet.\n");
       abort();
       }
-    else{ abort(); }
+    else{abort();}
 
     }
 
@@ -65,10 +65,10 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
       }
     else if(s_intp==TRUE){  
       // ->> interpolate shift field onto particle position <<- //
-      printf("particle-moving interpolation NOT supported yet.\n");
+      printf("grid-moving interpolation NOT supported yet.\n");
       abort();
       }
-    else{ abort(); }
+    else{abort();}
 
     }
 
