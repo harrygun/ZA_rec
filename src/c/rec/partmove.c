@@ -51,10 +51,11 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
 void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
-  int i, ip;
+  int i, j, k, ip;
   float grid[3];
        
-  for(ip=0; ip<s->npart; ip++) {
+  for(i=0; i<s->ngrid[0], i++)
+    for(j=0; i<s->ngrid[0], i++)
 
     if(s_intp==FALSE){
       // ->> do not interpolate <<- //

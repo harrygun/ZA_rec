@@ -25,8 +25,8 @@ typedef struct rect_controller{
 
 
   // ->>
-  #define Idx1dto3d(n)
-, 
+  #define Idx1dto3d(n1, n2, n3, i1, i2, i3)  (i3+n3*(i2+n2*i1))
+
 
   // ->> for equal-length cubic array <<- //
   #define ArrayAccess3D(a, n, i, j, k) ((a)[(i)*(n)*(n)+(j)*(n)+(k)])
