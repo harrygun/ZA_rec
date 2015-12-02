@@ -247,8 +247,8 @@
 
 
       // ->> write files <<- //
-      printf("writing files...\n");
       fp=fopen(rc.rec_fname, "wb");
+      printf("writing files...\n");
 
       fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
       fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
