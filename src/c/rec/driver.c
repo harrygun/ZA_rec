@@ -239,23 +239,22 @@
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
    
-      drec=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_shift=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+      drec=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+      d_disp=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+      d_shift=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
       
       za_reconstruction(&rc, &s, p, d, drec, d_disp, d_shift);
 
 
       // ->> write files <<- //
       fp=fopen(rc.rec_fname, "wb");
-      printf("writing files...\n");
+      //printf("writing files...\n");
 
       fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
       fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
       fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
       fclose(fp);
-      printf("done.\n");
       }
 
 
@@ -265,13 +264,12 @@
                        free all
     -----------------------------------------------------*/
     iniparser_freedict(dict);
+    free(power);
     free(p); free(d);
 
 
     if(rc.do_rect==TRUE){
-      fftwf_free(d_shift);
-      fftwf_free(d_disp);
-      fftwf_free(drec);
+      free(d_shift); free(d_disp); free(drec);
       }
 
     #ifdef _MPI_

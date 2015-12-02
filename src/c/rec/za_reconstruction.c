@@ -60,7 +60,7 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
   else {abort();}
 
   /* ->> get displacement field first <<- */
-  disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid);
+  disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   za_displacement(s, d, disp); 
 
   // ->> displace particles <<- //
