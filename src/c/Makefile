@@ -150,7 +150,7 @@ LIB  = $(INILIB) $(GSLIB) $(MYLIB)
 
 
 # workspace path
-WORKSPACE = ../../../workspace
+WORKSPACE = ../../workspace
 AR=ar
 ARFLAGS=-r
 RANLIB=ranlib
