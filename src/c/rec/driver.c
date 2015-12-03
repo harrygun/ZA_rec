@@ -156,7 +156,7 @@
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
-      rc.rec_fname=iniparser_getstring(dict,"Rect:reconstructed_file_name", "y.dat");
+      rc.rec_fname=iniparser_getstring(dict,"Rect:reconstructed_fname", "y.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> initialize power spectrum <<- //
