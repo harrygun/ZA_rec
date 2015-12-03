@@ -130,10 +130,13 @@ if __name__=='__main__':
         print 'checking moved particle position...'
 
 	#->> import particles <<- #
-        pos=rd.rblock(p.other_test_fname, p.ngrid**3*3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid,3)
+        f=rd.rblock(p.other_test_fname, p.ngrid**3*3, dtype='float').reshape(2,p.ngrid**3*3)
+        pos=f[0].reshape(p.ngrid,p.ngrid,p.ngrid,3)
+        si=f[1].reshape(3,p.ngrid,p.ngrid,p.ngrid)
 
         for i in range(3):
 	    print 'pos:', i, pos[...,i].min(), pos[...,i].max()
+	    print 'si:', i, si[i,...].min(), si[i,...].max()
 
         nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=8.,gap_size=0.1,return_figure=True)
