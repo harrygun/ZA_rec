@@ -32,7 +32,7 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],
-             int npart, int ngridx, int ngridy, int ngridz) {
+             long long npart, long long ngridx, long long ngridy, long long ngridz) {
   long long ip, i,j,k,i1,j1,k1, n;
   double xc,yc,zc,dx,dy,dz,tx,ty,tz,x1,y1,z1;
   double aa, masstot, dmean, pos_norm[3];
@@ -55,9 +55,9 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
     //j=(int)p[ip].pos[1]; yc=(double)j;
     //k=(int)p[ip].pos[2]; zc=(double)k;
 
-    i=(int)pos_norm[0]; xc=(double)i;
-    j=(int)pos_norm[1]; yc=(double)j;
-    k=(int)pos_norm[2]; zc=(double)k;
+    i=(long long)pos_norm[0]; xc=(double)i;
+    j=(long long)pos_norm[1]; yc=(double)j;
+    k=(long long)pos_norm[2]; zc=(double)k;
     
     if(i<0) i=i+ngridx;
     if(j<0) j=j+ngridy;
@@ -153,10 +153,9 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
 
 
 double cic_density(Pdata_pos *p, float *d, double boxsize, 
-                      double mass, int npart, int ngrid[3]) {
+                      double mass, long long npart, long long ngrid[3]) {
   long long ip;
   double xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dx[3], dmean;
-  int i, j, k;
 
   // ->> obtain boundary <<- //
   xmin=boxsize/2.0; xmax=boxsize/2.0;

@@ -22,8 +22,6 @@
 
 
 
-
-
 float trilinear(float pos[3], float dp[3], float v[2][2][2]){
 
   float c00, c01, c10, c11, c0, c1, c;
@@ -45,26 +43,29 @@ float trilinear(float pos[3], float dp[3], float v[2][2][2]){
 
 
 
-
 void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp){
   //-> move particles <<- //
-  int i, ip;
-  float moved_pos, xmin, xmax, dx;
+  long long i, ip, m, n, l, m1, n1, l1, idx[3];
+  float moved_pos, xmin, xmax, dx, dsi, dp[3], v[2][2][2];
 
   // ->> box boundary <<- //
   xmin=0.; xmax=s->boxsize;
   dx=(xmax-xmin)/(float)s->ngrid;
        
-  printf("->> displaceing particles...\n");
+  printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
 
   for(ip=0; ip<s->npart; ip++) {
 
+    // ->> position index <<- //
+    for(i=0; i<3; i++)
+      idx[i]=(long long)((p[ip].pos[i]-xmin)/dx); 
+
     // ->> do not interpolate <<- //
     if(s_intp==FALSE){
-      printf("particle-moving DO NOT interpolation.\n");
+      //->> particle-moving DO NOT interpolation.\n");
 
       for(i=0; i<3; i++){
-        moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
+        moved_pos=p[ip].pos[i]+ArrayAccess4D_n4(si, 3, s->ngrid, s->ngrid, s->ngrid, i, idx[0], idx[1], idx[2]);
 
         // ->> periodic boundary condition <<- //
 	if(moved_pos<0){
@@ -78,14 +79,62 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
     // ->> interpolate shift field onto particle position <<- //
     else if(s_intp==TRUE){  
-      printf("particle-moving interpolation.\n");
-      //->>
-      
+      // ->> ("particle-moving interpolation.\n") <<- //
+ 
+      // ->> distance to grid <<- //
+      for(i=0; i<3; i++) {
+        dp[i]=p[ip].pos[i]-idx[i]*dx; }
 
+      for(i=0; i<3; i++)  {
+
+        // ->> define vertices for 3D interpolation <<- //
+        for(l=0; l<2; l++){
+	  l1=l+idx[0]; 
+	  if(l1>s->ngrid)  l1=l1-s->ngrid;
+
+          for(m=0; m<2; m++) {
+	    m1=m+idx[1]; 
+	    if(m1>s->ngrid)  m1=m1-s->ngrid;
+
+            for(n=0; n<2; n++) {
+	      n1=n+idx[2]; 
+	      if(n1>s->ngrid)  n1=n1-s->ngrid;
+
+              v[l][m][n]=ArrayAccess4D_n4(si, 3, s->ngrid, s->ngrid, s->ngrid, i, l1, m1, n1);
+	      }
+	    }
+	  }
+
+        // ->> tri-linear interpolation <<- //
+        dsi=trilinear(p[ip].pos, dp, v);
+        moved_pos=p[ip].pos[i]+dsi;
+
+	if(moved_pos<0){
+          moved[ip].pos[i]=moved_pos+xmax; }
+	else if(moved_pos>=xmax){
+          moved[ip].pos[i]=moved_pos-xmax; }
+	else{
+	  moved[ip].pos[i]=moved_pos; }
+        }
       }
+
     else{abort();}
 
     }
+
+
+  #define _MOVED_PART_OUTPUT_
+  #ifdef _MOVED_PART_OUTPUT_
+  FILE *fp=fopen(s->test_fname, "wb");
+
+  for(ip=0; ip<s->npart; ip++) 
+    fwrite(moved[ip].pos, sizeof(float), 3, fp);
+ 
+  fwrite(si, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+
+  fclose(fp);
+  #endif
+
 
   printf("->> particles displacement is done.\n");
   return;
@@ -95,7 +144,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
 void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
-  int i, j, k, m, ip;
+  long long i, j, k, m, ip;
   float grid[3], xmin, xmax, dx, moved_pos;
        
   // ->> box boundary <<- //

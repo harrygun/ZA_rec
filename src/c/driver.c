@@ -174,6 +174,7 @@
       fftw_test_fname=iniparser_getstring(dict,"Rect:fftw_test_fname", "y.dat");
       fftw_return_type=iniparser_getstring(dict,"Rect:fftw_test_return_type", "gradient");
 
+      s.test_fname=iniparser_getstring(dict,"Rect:other_test_fname", "y.dat");
     /*-----     End of initialization.    ------*/
 
 

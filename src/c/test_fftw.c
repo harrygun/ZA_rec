@@ -63,7 +63,7 @@
       double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *test_fname, *main_dtype;
       int do_density, do_potential, do_rect, save_odensity;
-      int npart, ngrid;
+      long long npart, ngrid;
 
       smooth_type = iniparser_getstring(dict, "Rect:smooth_type", "gaussian");
       cp.R = iniparser_getdouble(dict, "Rect:smooth_scale", 10.);
@@ -126,7 +126,7 @@
 
     float *d, *phi1, *phi2;
     double particle_mass, rhom_, dmean;
-    int ngrid_xyz[3];
+    long long ngrid_xyz[3];
 
     for(i=0; i<3; i++)
       ngrid_xyz[i]=ngrid;

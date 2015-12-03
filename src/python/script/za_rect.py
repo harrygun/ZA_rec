@@ -36,6 +36,8 @@ param_dict={
     'import_format':   'cita_simulation',
     'original_density_fname':  'x.dat',
     'reconstructed_fname': 'y.dat',
+    'other_test_fname':    'z.dat', 
+    'py_import_density_field':   True,
     }
 
 prog_control={
@@ -44,6 +46,7 @@ prog_control={
     #-------------------------------#
     'py_image_comparison':  True,
     'py_pk_comparison':       False,
+    'py_part_position_check':  False,
     #-------------------------------#
     }
 
@@ -59,21 +62,22 @@ if __name__=='__main__':
 
 
     # ->> import data <<- #
-    if p.import_format=='cita_simulation':
+    if (p.py_import_density_field==True):
 
-        print 'reading data ... '
+        if p.import_format=='cita_simulation':
 
-        f_rec=rd.rblock(p.reconstructed_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
-	drec, d_disp, d_shift=f_rec
+            print 'reading data ... '
 
-	d_ori=rd.rblock(p.original_density_fname, p.ngrid**3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid)
+            f_rec=rd.rblock(p.reconstructed_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
+            drec, d_disp, d_shift=f_rec
 
-	print 'density shape:', drec.shape, d_disp.shape, d_shift.shape, d_ori.shape
+            d_ori=rd.rblock(p.original_density_fname, p.ngrid**3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid)
 
-    else:
-        raise Exception
+            print 'density shape:', drec.shape, d_disp.shape, d_shift.shape, d_ori.shape
 
-    
+        else:
+            raise Exception
+
 
 
     # ->> power spectrum measurement <<- #
@@ -97,6 +101,7 @@ if __name__=='__main__':
 	ax[1].semilogx(ki_ori, pki_disp/pki_ori, 'r--')
 	ax[1].semilogx(ki_ori, pki_shift/pki_ori, 'b:')
 
+	pl.tight_layout()
 	pl.show()
 
 
@@ -116,6 +121,26 @@ if __name__=='__main__':
 
 
         #fig.savefig(root+'figure/ps_comp.png')
+	pl.tight_layout()
+	pl.show()
+
+
+    # ->> check particles <<- #
+    if (p.py_part_position_check==True):
+        print 'checking moved particle position...'
+
+	#->> import particles <<- #
+        pos=rd.rblock(p.other_test_fname, p.ngrid**3*3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid,3)
+
+        for i in range(3):
+	    print 'pos:', i, pos[...,i].min(), pos[...,i].max()
+
+        nplt, ncol = 1, 1
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=8.,gap_size=0.1,return_figure=True)
+
+	sl=100
+	ax[0].plot(pos[:,:,sl,2], pos[:,:,sl,1], 'k.')
+
 	pl.tight_layout()
 	pl.show()
 

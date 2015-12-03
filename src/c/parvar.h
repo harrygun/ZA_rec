@@ -13,8 +13,9 @@
 typedef struct simulation_info{
   // ->> simulation information <<- //
   double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];
-  int ngrid, npart, ngrid_xyz[3], smooth_type_flag;
-  char *smooth_type;
+  int smooth_type_flag;
+  long long ngrid, ngrid_xyz[3], npart;
+  char *smooth_type, *test_fname;
   } SimInfo;
 
 typedef struct rect_controller{
