@@ -105,19 +105,18 @@ if __name__=='__main__':
     if (p.py_image_comparison==True):
         print 'making plots ... '
 
-        nplt, ncol = 3, 3
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
+        nplt, ncol = 4, 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.1,return_figure=True)
 
 	sl=100
         cb0=ax[0].imshow(drec[:,:,sl]-drec.min()+1e-3, norm=colors.LogNorm())
         cb1=ax[1].imshow(d_disp[:,:,sl]-d_disp.min()+1e-3, norm=colors.LogNorm())
         cb2=ax[2].imshow(d_shift[:,:,sl]-d_shift.min()+1e-3, norm=colors.LogNorm())
+        cb3=ax[3].imshow(d_ori[:,:,sl]-d_ori.min()+1e-3, norm=colors.LogNorm())
 
-	#pl.colorbar(cb0)
-	#pl.colorbar(cb1)
-	#pl.colorbar(cb2)
 
         #fig.savefig(root+'figure/ps_comp.png')
+	pl.tight_layout()
 	pl.show()
 
 

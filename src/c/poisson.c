@@ -62,15 +62,15 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
         if(n<ngrid/2) kz=n*kmin;
 	else kz=(n-ngrid)*kmin;
 
-        //sin2x = 4.*sin(kx/2.)*sin(kx/2.);
-        //sin2y = 4.*sin(ky/2.)*sin(ky/2.);
-        //sin2z = 4.*sin(kz/2.)*sin(kz/2.);
-	//ki[0]=2.*sin(kx/2.);
-	//ki[1]=2.*sin(ky/2.);
-	//ki[2]=2.*sin(kz/2.);
+        sin2x = 4.*sin(kx/2.)*sin(kx/2.);
+        sin2y = 4.*sin(ky/2.)*sin(ky/2.);
+        sin2z = 4.*sin(kz/2.)*sin(kz/2.);
+	ki[0]=2.*sin(kx/2.);
+	ki[1]=2.*sin(ky/2.);
+	ki[2]=2.*sin(kz/2.);
 	
-        sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
-	ki[0]=kx; ki[1]=ky; ki[2]=kz;
+        //sin2x = kx*kx; sin2y = ky*ky; sin2z = kz*kz;
+	//ki[0]=kx; ki[1]=ky; ki[2]=kz;
 
         if ((l==0) && (m==0) && (n==0)) greens = 0.;
         else greens = -1./(sin2x+sin2y+sin2z);

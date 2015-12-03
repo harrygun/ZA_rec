@@ -38,7 +38,9 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
     // ->> do not interpolate <<- //
     if(s_intp==FALSE){
       for(i=0; i<3; i++){
-        moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
+        //moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
+        moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, 2-i, ip);
+
         // ->> periodic boundary condition <<- //
 	if(moved_pos<0){
           moved[ip].pos[i]=moved_pos+xmax; }
@@ -89,7 +91,9 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 	  grid[2]=xmin+k*dx;
 
 	  for(m=0; m<3; m++)  {
-            moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
+            //moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
+            moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, 2-m, ip);
+
             // ->> periodic boundary condition <<- //
 	    if(moved_pos<0){
               moved[ip].pos[m]=moved_pos+xmax; }
