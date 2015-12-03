@@ -22,6 +22,30 @@
 
 
 
+
+
+float trilinear(float pos[3], float dp[3], float v[2][2][2]){
+
+  float c00, c01, c10, c11, c0, c1, c;
+  
+  c00=v[0][0][0]*(1.-dp[0])+v[1][0][0]*dp[0];
+  c10=v[0][1][0]*(1.-dp[0])+v[1][1][0]*dp[0];
+  c01=v[0][0][1]*(1.-dp[0])+v[1][0][1]*dp[0];
+  c11=v[0][1][1]*(1.-dp[0])+v[1][1][1]*dp[0];
+  
+  c0=c00*(1.-dp[1]) + c10*dp[1];
+  c1=c01*(1.-dp[1]) + c11*dp[1];
+  
+  c=c0*(1.-dp[2])+c1*dp[2];
+  
+  return c;
+  }
+
+
+
+
+
+
 void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp){
   //-> move particles <<- //
   int i, ip;
@@ -37,9 +61,10 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
     // ->> do not interpolate <<- //
     if(s_intp==FALSE){
+      printf("particle-moving DO NOT interpolation.\n");
+
       for(i=0; i<3; i++){
-        //moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
-        moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, 2-i, ip);
+        moved_pos=p[ip].pos[i]+ArrayAccess2D_n2(si, 3, s->npart, i, ip);
 
         // ->> periodic boundary condition <<- //
 	if(moved_pos<0){
@@ -53,8 +78,10 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
     // ->> interpolate shift field onto particle position <<- //
     else if(s_intp==TRUE){  
-      printf("particle-moving interpolation NOT supported yet.\n");
-      abort();
+      printf("particle-moving interpolation.\n");
+      //->>
+      
+
       }
     else{abort();}
 
@@ -91,8 +118,7 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 	  grid[2]=xmin+k*dx;
 
 	  for(m=0; m<3; m++)  {
-            //moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
-            moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, 2-m, ip);
+            moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
 
             // ->> periodic boundary condition <<- //
 	    if(moved_pos<0){
