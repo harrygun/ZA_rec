@@ -17,12 +17,15 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
       double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type)  {
   /* ->> Poisson Solver with FFT <<- */
   long long dksize, dsize, l, m, n, i, j;
-  int cc, do_grad, do_hess;
+  int cc, do_grad, do_hess, do_phi;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
   // ->> return type <<- //
+  if((return_type==_RETURN_PHI_GRADIENT_)||(return_type==_RETURN_PHI_HESSIAN_)||(return_type==_RETURN_PHI_GRADIENT_HESSIAN_)) 
+    {do_phi=TRUE;}
+  else {do_phi=FALSE;}
   if((return_type==_RETURN_GRADIENT_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
     {do_grad=TRUE;}
   else {do_grad=FALSE;}
@@ -109,8 +112,13 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
         }
   
   /* find the inverse FFT of phi */
-  pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
-  fftwf_execute(pbackward);
+
+  if(do_phi==TRUE) {
+    printf("do phi itself.\n");
+    pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
+    fftwf_execute(pbackward);
+    fftwf_destroy_plan(pbackward);
+    }
 
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   ndim=(int *)malloc(3*sizeof(int));
@@ -154,7 +162,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid; n++) {
-        ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
+
+        if (do_phi)
+          ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
   
         if (do_hess) {
 	  for(i=0; i<3; i++)
@@ -175,7 +185,6 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   if(do_hess) fftwf_free(dkij);
 
   fftwf_destroy_plan(pforward);
-  fftwf_destroy_plan(pbackward);
 
   //fftwf_cleanup();
 
