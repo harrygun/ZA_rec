@@ -152,6 +152,7 @@
       rc.do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
       rc.displacement_intp=iniparser_getboolean(dict, "Rect:displacement_interpolation", INIFALSE);
       rc.rec_type=iniparser_getstring(dict,"Rect:reconstruction_type", "za");
+      rc.do_disp_perturb=iniparser_getboolean(dict, "Rect:perturbe_displacement", INIFALSE);
 
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);

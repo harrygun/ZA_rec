@@ -60,7 +60,6 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
   for(ip=0; ip<s->npart; ip++) {
 
     //-> 
- 
     for(i=0; i<3; i++) {
       p_i[i]=ArrayAccess2D_n2(phi_i, 3, s->npart, i, ip);
 
@@ -71,15 +70,13 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
 	else mat[i][j]=p_ij;
         }
       }
-
     // ->> inverse <<- //
     mat_inv_3d_float(mat, imat);
-
+    // ->> multiply <<- //
     mat_multiply_3d_float(imat, p_i, pc_i);
 
     for(i=0; i<3; i++)
       ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=pc_i[i];
-
     }
 
 
@@ -107,7 +104,11 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
 
   /* ->> get displacement field first <<- */
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
-  za_displacement(s, d, disp); 
+
+  if(rc->do_disp_perturb==TRUE)
+    za_displacement_pert(s, d, disp); 
+  else
+    za_displacement(s, d, disp); 
 
   // ->> displace particles <<- //
   if(do_disp==TRUE) {
