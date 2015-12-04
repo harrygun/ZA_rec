@@ -66,7 +66,7 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
       for(j=0; j<3; j++) {
 	p_ij=ArrayAccess3D_n3(phi_ij, 3, 3, s->npart, i, j, ip);
 
-        if(i==j) mat[i][j]=p_ij+1.;
+        if(i==j) mat[i][j]=1.-p_ij;
 	else mat[i][j]=p_ij;
         }
       }
