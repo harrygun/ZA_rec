@@ -22,22 +22,22 @@ import rect.misc.file_import as fimp
 
 
 
-
-
 param_dict={
-    'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
-    'smooth_R': 15.,
-    'smooth_type': 'Gaussian', 
     'smooth_R_list_type':  'linear', 
-    'boxsize': 512.,
-    'ngrid':    256, 
-    'redshift':   0.,
-    'folder':     '~/',
+    'smooth_R':    10,
+    'smooth_r':    10,
+    'smooth_type': 'Gaussian', 
+    'boxsize':     512.,
+    'ngrid':       256, 
+    'redshift':    0.,
+    'folder':      '~/',
     'import_format':   'cita_simulation',
     'original_density_fname':  'x.dat',
     'reconstructed_fname': 'y.dat',
     'other_test_fname':    'z.dat', 
+    'particle_file_name':  'z.dat',
     'py_import_density_field':   True,
+    'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     }
 
 prog_control={
@@ -55,8 +55,9 @@ if __name__=='__main__':
 
     # ->> initialization <<- #
     sec='Rect'
-    init_dict=myDict(prog_control)+myDict(param_dict)
+    init_dict=myDict(param_dict)+myDict(prog_control)
     p=pc.prog_init(section=sec, **init_dict)
+    p.smooth_R = p.smooth_r
 
     root=p.folder
 
@@ -65,15 +66,15 @@ if __name__=='__main__':
     if (p.py_import_density_field==True):
 
         if p.import_format=='cita_simulation':
-
             print 'reading data ... '
-
-            f_rec=rd.rblock(p.reconstructed_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
+            p.rec_fname=p.reconstructed_fname+'_'+p.smooth_type+'_R'+str(p.smooth_R)+'.dat'
+            f_rec=rd.rblock(p.rec_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
             drec, d_disp, d_shift=f_rec
 
             d_ori=rd.rblock(p.original_density_fname, p.ngrid**3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid)
 
             print 'density shape:', drec.shape, d_disp.shape, d_shift.shape, d_ori.shape
+	    print 'density min/max:', drec.min(), drec.max(), d_disp.min(), d_disp.max(), d_shift.min(), d_shift.max()
 
         else:
             raise Exception
@@ -128,6 +129,15 @@ if __name__=='__main__':
     # ->> check particles <<- #
     if (p.py_part_position_check==True):
         print 'checking moved particle position...'
+
+        if False:
+	    #->> check boundary of original particles <<- #
+            pos, vel=mio.read_cita_simulation(p.particle_file_name, p.ngrid)
+	    del vel
+            for i in range(3):
+                print 'pos:', pos[...,i].min(), pos[...,i].max()
+	    quit()
+
 
 	#->> import particles <<- #
         f=rd.rblock(p.other_test_fname, p.ngrid**3*3, dtype='float').reshape(2,p.ngrid**3*3)

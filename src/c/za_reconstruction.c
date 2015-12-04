@@ -42,6 +42,25 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
 
 
 
+void za_displacement_pert(SimInfo *s, float *d, float *disp) {
+  // ->> obtain "perturbative-ZA" displacement field from density field <<- // 
+
+  int fft_return_type;
+  float *phi, *phi_ij;
+
+  fft_return_type=_RETURN_GRADIENT_;
+  phi=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]);
+
+  // ->> solve FFTW  <<- //
+  printf("\n->> Solve Poisson equation with FFT.\n");
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
+  printf("->> FFT is Done <<- \n\n");
+
+  fftwf_free(phi);
+  return;
+  }
+
+
 
 
 void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 

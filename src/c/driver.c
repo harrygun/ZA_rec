@@ -112,7 +112,8 @@
       RectCtrl rc;
 
       //double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name, *oden_fname, *main_dtype;
+      char *smooth_type, *particle_fname, *droot, *plin_name;
+      char *oden_fname, *main_dtype, *rec_name;
       int do_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
@@ -156,7 +157,9 @@
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
-      rc.rec_fname=iniparser_getstring(dict,"Rect:reconstructed_fname", "y.dat");
+      rec_name=iniparser_getstring(dict,"Rect:reconstructed_fname", "y.dat");
+      //->>
+      snprintf(rc.rec_fname, 200, "%s_%s_R%g.dat", rec_name, s.smooth_type, s.smooth_R);
 
       /*-----------------------------------------------------------------------*/
       // ->> initialize power spectrum <<- //

@@ -59,10 +59,13 @@ def read_cita_simulation(fn, npt):
     print 'header:', header, header[0]
     '''
 
+    numpy_type= np.float32
 
     head=F.read(48)
     d = arr.array('f')
-    d.fromfile(F, npt**3*6)
+    #d.fromfile(F, npt**3*6)
+
+    d=np.fromfile(F, dtype=np.dtype(numpy_type)).astype(numpy_type)
 
     #d=np.array(d).reshape(npt**3,6)
     #pos, vel=d[...,:3], d[...,3:6]

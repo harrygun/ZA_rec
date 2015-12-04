@@ -52,7 +52,8 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   xmin=0.; xmax=s->boxsize;
   dx=(xmax-xmin)/(float)s->ngrid;
        
-  printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
+  //printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
+  printf("->> displaceing particles ... \n");
 
   for(ip=0; ip<s->npart; ip++) {
 
@@ -123,7 +124,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
     }
 
 
-  #define _MOVED_PART_OUTPUT_
+  //#define _MOVED_PART_OUTPUT_
   #ifdef _MOVED_PART_OUTPUT_
   FILE *fp=fopen(s->test_fname, "wb");
 
@@ -146,6 +147,9 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
   long long i, j, k, m, ip;
   float grid[3], xmin, xmax, dx, moved_pos;
+
+  //->> do not need to interpolate, on grid already <<- //
+  s_intp=FALSE;
        
   // ->> box boundary <<- //
   xmin=0.; xmax=s->boxsize;
