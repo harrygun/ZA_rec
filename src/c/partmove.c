@@ -2,6 +2,7 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
+  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -55,6 +56,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   //printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
   printf("->> displaceing particles ... \n");
 
+  #pragma omp parallel for private(ip,i,m,n,l,m1,n1,l1,idx,moved_pos,dsi,dp,v)
   for(ip=0; ip<s->npart; ip++) {
 
     // ->> position index <<- //
@@ -157,6 +159,7 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 
   printf("\n->> shifting uniform grid ...\n");
 
+  #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   for(i=0; i<s->ngrid; i++)
     for(j=0; j<s->ngrid; j++)
       for(k=0; k<s->ngrid; k++) {

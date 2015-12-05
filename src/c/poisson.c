@@ -2,6 +2,7 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
+  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -34,6 +35,10 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   else {do_hess=FALSE;}
 
 
+  // ->> initialize OpenMP <<- //
+  if(fftwf_init_threads()==0) abort();
+
+
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
@@ -45,6 +50,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
     dki=(fftwf_complex *)fftwf_malloc(3*dksize);
   if(do_hess==TRUE)
     dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
+
+  // ->> multi-threads initialization <<- //
+  fftwf_plan_with_nthreads(omp_get_max_threads());
 
   fftwf_plan pforward, pbackward, pbackward_hess, pbackward_grad;
   

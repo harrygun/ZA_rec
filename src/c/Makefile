@@ -111,12 +111,13 @@ ifeq ($(MACHINE),cita)
     FISHLIB  = lfish
 
     #FFTWLIB = -lfftw3 -lm
-    FFTWLIB = -lfftw3f -lfftw3 -lm
+    #FFTWLIB = -lfftw3f -lfftw3 -lm
+    FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm
 
     GSLIB = -L/home/wangxin/lib/gsl/lib -lgsl -lgslcblas -lm
     MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)
 
-    CFLAGS = -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+    CFLAGS = -fopenmp -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
 
 endif
 
@@ -163,10 +164,10 @@ default: rect test_fftw
 
 #--------------------------------------------------#
 rect: driver.o io.o cic.o poisson.o partmove.o misc.o za_reconstruction.o
-	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
+	$(CC) $(CFLAGS)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 test_fftw: test_fftw.o io.o cic.o
-	$(CC)  $^ -o $(WORKSPACE)/$@  $(LIB)
+	$(CC) $(CFLAGS)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 
 
