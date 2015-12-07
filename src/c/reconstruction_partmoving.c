@@ -19,8 +19,8 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
-  #include "za_reconstruction.h"
   #include "misc.h"
+  #include "backward_displacement.h"
 
 
 
@@ -30,7 +30,7 @@
 void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 
                                  float *drec, float *d_disp, float *d_shift)   {
   // ->> Performing ZA reconstruction  <<- //
-  int do_disp, do_shift, do_disp_shift, i;
+  int i, do_disp, do_shift, do_disp_shift, lpt_order;
   float *disp;
   double dm_disp, dm_shift;
   Pdata_pos *p_disp, *p_shift;
@@ -42,22 +42,43 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     {do_disp=TRUE;  do_shift=TRUE;  do_disp_shift=TRUE;}
   else {abort();}
 
-  // ->> LPT order for 
-  if()
+  // ->> forward vs. backward displacement <<- //
+  if(strcmp(rc->displacement_type, "backward_displacement")!=0) {
+    printf("only support backward modeling now.\n");
+    fflush(stdout); abort();
+    }
+
+  // ->> LPT order <<- //
+  if(strcmp(rc->displacement_order, "1LPT")==0) 
+    {lpt_order=1;}
+  else if(strcmp(rc->displacement_order, "2LPT")==0) 
+    {lpt_order=2;}
+  else {lpt_order=-1; abort();}
 
 
-
-  /* ->> get displacement field first <<- */
+  /* ->> obtain the displacement field from density field <<- */
+  // ->> memory allocation first <<- //
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
+  if(lpt_order==1){
+    // ->> Zel'dovich Approximation <<- //
+    if(rc->do_disp_perturb==TRUE)
+      za_displacement_pert(s, d, disp); 
+    else
+      za_displacement(s, d, disp); 
+    }
+  else if(lpt_order==2) {
+    // ->> 2-LPT <<- //
+    if(rc->do_disp_perturb==TRUE) {
+      printf("`perturbative' 2LPT NOT supported yet.");
+      fflush(stdout); abort();
+      }
+    else
+      displacement_2lpt(s, d, disp); 
+    }
 
-  if(rc->do_disp_perturb==TRUE)
-    abort();
-    //za_displacement_pert(s, d, disp); 
-  else
-    displacement_2lpt(s, d, disp); 
 
-  // ->> displace particles <<- //
+  /* ->> moving particles <<- */
   if(do_disp==TRUE) {
     p_disp=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
 

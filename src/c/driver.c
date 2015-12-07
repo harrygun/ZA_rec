@@ -22,7 +22,8 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
-  #include "za_reconstruction.h"
+  //#include "za_reconstruction.h"
+  #include "reconstruction_partmoving.h"
 
 
 
@@ -151,8 +152,11 @@
       // ->> read controller <<- // 
       rc.do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
       rc.displacement_intp=iniparser_getboolean(dict, "Rect:displacement_interpolation", INIFALSE);
-      rc.rec_type=iniparser_getstring(dict,"Rect:reconstruction_type", "za");
       rc.do_disp_perturb=iniparser_getboolean(dict, "Rect:perturbe_displacement", INIFALSE);
+      //->> reconstruction type, displacement type etc. <<- //
+      rc.rec_type=iniparser_getstring(dict, "Rect:reconstruction_type", "displaced");
+      rc.displacement_type=iniparser_getstring(dict,"Rect:displacement_type", "backward");
+      rc.displacement_order=iniparser_getstring(dict,"Rect:displacement_order", "1LPT");
 
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
@@ -248,7 +252,7 @@
       d_disp=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
       d_shift=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
       
-      za_reconstruction(&rc, &s, p, d, drec, d_disp, d_shift);
+      reconstruction_partmover(&rc, &s, p, d, drec, d_disp, d_shift);
 
 
       // ->> write files <<- //

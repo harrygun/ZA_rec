@@ -19,7 +19,6 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
-  #include "za_reconstruction.h"
   #include "misc.h"
 
 
