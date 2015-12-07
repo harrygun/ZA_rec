@@ -54,7 +54,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
-  fftwf_complex *dk, *dki, *dkij;
+  fftwf_complex *dk, *dki, *dkij, dksig;
 
   dk=(fftwf_complex *)fftwf_malloc(dksize);
 
@@ -72,10 +72,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   fftwf_execute(pforward);  
 
   // ->> return smoothed input field `d' <<- //
-  if(smooth_input) {
-    if(do_phi==TRUE) {
-
-      }
+  if((smooth_input==TRUE)&&(do_phi==TRUE)) {
+    printf("smooth input & do_phi are NOT supported together.\n");
+    fflush(stdout); abort();
     }
   
   /* work out the green's function and the FFT of phi*/
@@ -112,8 +111,22 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 	  }
         else { W=1.; }
 
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;
+        // ->> How to deal with Phi itself <<- //
+        if(do_phi==TRUE){
+          dksig[0]=greens*W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+          dksig[1]=greens*W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+
+          ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=dksig[0];
+          ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=dksig[1];
+
+          //ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
+          //ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;
+	  }
+        else {
+          dksig[0]=W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+          dksig[1]=W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+	  }
+
 
         // ->> do gradient <<- //
         if(do_grad) {
