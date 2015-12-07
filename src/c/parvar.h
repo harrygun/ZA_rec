@@ -21,7 +21,7 @@ typedef struct simulation_info{
 typedef struct rect_controller{
   //->> reconstruction controller <<- 
   int do_rect, displacement_intp, do_disp_perturb;
-  char *rec_type, rec_fname[200];   //, *rec_fname;
+  char *rec_type, *rec_order, rec_fname[200];   //, *rec_fname;
   }RectCtrl;
 
 

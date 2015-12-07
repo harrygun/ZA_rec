@@ -24,28 +24,11 @@
 
 
 
-void displacement_2lpt(SimInfo *s, float *d, float *disp) {
-  // ->> obtain ZA displacement field from density field <<- // 
-  int fft_return_type;
-  float *phi, *phi_ij;
-
-  fft_return_type=_RETURN_GRADIENT_;
-
-  // ->> solve FFTW  <<- //
-  printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
-  printf("->> FFT is Done <<- \n\n");
-
-  return;
-  }
 
 
 
-
-
-
-void reconstruction_general(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 
-                         float *drec, float *d_disp, float *d_shift)   {
+void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, 
+                                 float *drec, float *d_disp, float *d_shift)   {
   // ->> Performing ZA reconstruction  <<- //
   int do_disp, do_shift, do_disp_shift, i;
   float *disp;
@@ -53,11 +36,16 @@ void reconstruction_general(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
   Pdata_pos *p_disp, *p_shift;
 
   // ->> reconstruction type <<- //
-  if(strcmp(rc->rec_type, "2LPT_displaced")==0) 
+  if(strcmp(rc->rec_type, "displaced")==0) 
     {do_disp=TRUE;  do_shift=FALSE;  do_disp_shift=FALSE;}
-  else if(strcmp(rc->rec_type, "2LPT_displaced_shifted")==0)
+  else if(strcmp(rc->rec_type, "displaced_shifted")==0)
     {do_disp=TRUE;  do_shift=TRUE;  do_disp_shift=TRUE;}
   else {abort();}
+
+  // ->> LPT order for 
+  if()
+
+
 
   /* ->> get displacement field first <<- */
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
