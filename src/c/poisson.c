@@ -15,13 +15,25 @@
 
 
 void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
-      double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type)  {
+                      double boxsize, int ngrid, int smooth_type, double smooth_R, 
+                      int return_type, char *others)  {
   /* ->> Poisson Solver with FFT <<- */
   long long dksize, dsize, l, m, n, i, j;
-  int cc, do_grad, do_hess, do_phi;
+  int cc, do_grad, do_hess, do_phi, smooth_input=FALSE;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
+
+  printf("\n->> Solve Poisson equation with FFT.\n");
+
+  if(others!=NULL) {
+    printf("other requirement for Poisson solver: %s\n", others);
+
+    if(strcmp(others, "return_smoothed_d")==0 )
+      smooth_input=TRUE;
+    else
+      smooth_input=FALSE;
+    }
 
   // ->> return type <<- //
   if((return_type==_RETURN_PHI_GRADIENT_)||(return_type==_RETURN_PHI_HESSIAN_)||(return_type==_RETURN_PHI_GRADIENT_HESSIAN_)) 
@@ -58,6 +70,13 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   
   pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
+
+  // ->> return smoothed input field `d' <<- //
+  if(smooth_input) {
+    if(do_phi==TRUE) {
+
+      }
+    }
   
   /* work out the green's function and the FFT of phi*/
   for (l=0; l<ngrid; l++)
@@ -193,8 +212,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   if(do_hess) fftwf_free(dkij);
 
   fftwf_destroy_plan(pforward);
-
   //fftwf_cleanup();
+ 
+  printf("->> FFT is Done <<- \n\n");
 
   return;
   }
@@ -230,9 +250,7 @@ void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname)
   if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3);
   if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3*3);
   
-  printf("->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
-  printf("->> FFT is Done.\n");
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
   
   
   // ->> write test file <<- //

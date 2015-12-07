@@ -31,9 +31,7 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
   fft_return_type=_RETURN_GRADIENT_;
 
   // ->> solve FFTW  <<- //
-  printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
-  printf("->> FFT is Done <<- \n\n");
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
 
   return;
   }
@@ -52,9 +50,7 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
   phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*9);
 
   // ->> solve FFTW  <<- //
-  printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
-  printf("->> FFT is Done <<- \n\n");
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
 
   //->> inverse <<- //
   #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
@@ -91,16 +87,42 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
 
 /* ->>  2LPT <<- */
 void displacement_2lpt(SimInfo *s, float *d, float *disp) {
-  // ->> obtain ZA displacement field from density field <<- // 
+  /* ->> obtain ZA+2LPT displacement field from density field <<- */ 
+  // ->> Psi_i = - nabla_i phi^(1) - 3/7 nabla phi^(2)   <<- //
   int fft_return_type;
-  float *phi, *phi_ij;
+  long long ip, i, j, ngrid_tot;
+  float *phi1, *phi, *phi1_i, *phi1_ij;
+  //char *other_req="";
 
+  ngrid_tot=s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2];
+
+  // ->> solve FFTW  to get 1st order phi and phi_i <<- //
+  fft_return_type=_RETURN_HESSIAN_;
+  phi1_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
+
+  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, "return_smoothed_d");
+
+  // ->> phi^(2) <<- //
+  phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
+
+  #pragma omp parallel for private(ip, i, j)
+  for(ip=0; ip<ngrid_tot; ip++) {
+    phi[ip]=d[ip];
+
+    for(i=0; i<3; i++)
+      for(j=0; j>i; j++) {
+        phi[ip] += 3./7.*(ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, i, i, ip)
+	           * ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, j, j, ip) 
+                   -pow(ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, i, j, ip), 2));
+        }
+    }
+
+
+  //->> solve Poisson equation again <<- //
   fft_return_type=_RETURN_GRADIENT_;
 
-  // ->> solve FFTW  <<- //
-  printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
-  printf("->> FFT is Done <<- \n\n");
+  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+
 
   return;
   }
