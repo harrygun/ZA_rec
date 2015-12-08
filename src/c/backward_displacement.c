@@ -28,10 +28,13 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
   int fft_return_type;
   float *phi, *phi_ij;
 
+  //fft_return_type=_RETURN_GRADIENT_HESSIAN_;
+  //phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*9);
+
   fft_return_type=_RETURN_GRADIENT_;
 
   // ->> solve FFTW  <<- //
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   return;
   }
@@ -50,7 +53,7 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
   phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*9);
 
   // ->> solve FFTW  <<- //
-  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   //->> inverse <<- //
   #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
@@ -100,7 +103,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   fft_return_type=_RETURN_HESSIAN_;
   phi1_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
 
-  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, "return_smoothed_d");
+  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   // ->> phi^(2) <<- //
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
@@ -121,7 +124,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   //->> solve Poisson equation again <<- //
   fft_return_type=_RETURN_GRADIENT_;
 
-  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
 
   return;

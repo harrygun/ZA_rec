@@ -15,25 +15,15 @@
 
 
 void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
-                      double boxsize, int ngrid, int smooth_type, double smooth_R, 
-                      int return_type, char *others)  {
+      double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type)  {
   /* ->> Poisson Solver with FFT <<- */
   long long dksize, dsize, l, m, n, i, j;
-  int cc, do_grad, do_hess, do_phi, smooth_input=FALSE;
+  int cc, do_grad, do_hess, do_phi;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, greens, W, kmin;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
   printf("\n->> Solve Poisson equation with FFT.\n");
-
-  if(others!=NULL) {
-    printf("other requirement for Poisson solver: %s\n", others);
-
-    if(strcmp(others, "return_smoothed_d")==0 )
-      smooth_input=TRUE;
-    else
-      smooth_input=FALSE;
-    }
 
   // ->> return type <<- //
   if((return_type==_RETURN_PHI_GRADIENT_)||(return_type==_RETURN_PHI_HESSIAN_)||(return_type==_RETURN_PHI_GRADIENT_HESSIAN_)) 
@@ -71,11 +61,6 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
 
-  // ->> return smoothed input field `d' <<- //
-  if((smooth_input==TRUE)&&(do_phi==TRUE)) {
-    printf("smooth input & do_phi are NOT supported together.\n");
-    fflush(stdout); abort();
-    }
   
   /* work out the green's function and the FFT of phi*/
   for (l=0; l<ngrid; l++)
@@ -111,36 +96,21 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 	  }
         else { W=1.; }
 
-        // ->> How to deal with Phi itself <<- //
-        if(do_phi==TRUE){
-          dksig[0]=greens*W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
-          dksig[1]=greens*W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
-
-          ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=dksig[0];
-          ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=dksig[1];
-
-          //ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
-          //ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;
-	  }
-        else {
-          dksig[0]=W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
-          dksig[1]=W*ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
-	  }
-
-
+        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
+        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;
+	  
         // ->> do gradient <<- //
-        if(do_grad) {
+        if(do_grad==TRUE) {
 	  for (i=0; i<3; i++) {
             ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[0]=
              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*(-ki[i]);
-
             ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[1]=
              ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*ki[i];
             }
 	  }
 
         // ->>  do Hessian matrix <<- //
-        if(do_hess) {
+        if(do_hess==TRUE) {
 	  for (i=0; i<3; i++)
 	    for (j=0; j<3; j++) 
 	      for (cc=0; cc<2; cc++) { // 2 complex components //
@@ -153,7 +123,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   
   /* find the inverse FFT of phi */
 
-  if(do_phi==TRUE) {
+  if(do_phi==TRUE){
     printf("do phi itself.\n");
     pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, phi, FFTW_ESTIMATE);
     fftwf_execute(pbackward);
@@ -164,7 +134,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   ndim=(int *)malloc(3*sizeof(int));
   ndim[0]=ngrid; ndim[1]=ngrid; ndim[2]=ngrid;
 
-  if (do_hess) {
+  if (do_hess==TRUE) {
     printf("do Hessian matrix of phi.\n");
 
     rank=3;
@@ -182,7 +152,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
   //->> 
-  if (do_grad) {
+  if (do_grad==TRUE) {
     printf("do Gradient vector of phi.\n");
 
     rank=3;
@@ -203,16 +173,16 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid; n++) {
 
-        if (do_phi)
+        if (do_phi==TRUE)
           ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
   
-        if (do_hess) {
+        if (do_hess==TRUE) {
 	  for(i=0; i<3; i++)
 	    for(j=0; j<3; j++)
               ArrayAccess5D_n5(phi_ij, 3, 3, ngrid, ngrid, ngrid, i, j, l, m, n)*=fac;
 	  }
 
-	if (do_grad) {
+	if (do_grad==TRUE) {
 	  for(i=0; i<3; i++)
             ArrayAccess4D_n4(phi_i, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
 	  }
@@ -221,8 +191,8 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
   fftwf_free(dk);
-  if(do_grad) fftwf_free(dki); 
-  if(do_hess) fftwf_free(dkij);
+  if(do_grad==TRUE) {fftwf_free(dki);}
+  if(do_hess==TRUE) {fftwf_free(dkij);}
 
   fftwf_destroy_plan(pforward);
   //fftwf_cleanup();
@@ -263,7 +233,7 @@ void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname)
   if(do_grad) phi_i=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3);
   if(do_hess) phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2]*3*3);
   
-  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
   
   
   // ->> write test file <<- //

@@ -62,10 +62,15 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
 
   if(lpt_order==1){
     // ->> Zel'dovich Approximation <<- //
-    if(rc->do_disp_perturb==TRUE)
+
+    if(rc->do_disp_perturb==TRUE) {
+      printf("perform perturbed-ZA reconstruction.\n"); fflush(stdout);
       za_displacement_pert(s, d, disp); 
-    else
+      }
+    else{
+      printf("perform unperturbed-ZA reconstruction.\n"); fflush(stdout);
       za_displacement(s, d, disp); 
+      }
     }
   else if(lpt_order==2) {
     // ->> 2-LPT <<- //

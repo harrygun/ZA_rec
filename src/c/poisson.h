@@ -15,12 +15,13 @@
 
 //void poisson_solver(double *d, double *phi, double boxsize, int ngrid, int smooth_type, double smooth_R); 
 //void poisson_solver_float(float *d, float *phi, double boxsize, int ngrid, int smooth_type, double smooth_R);
-//void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type);
 //
+void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, double boxsize, int ngrid, int smooth_type, double smooth_R, int return_type);
 
-void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
-                      double boxsize, int ngrid, int smooth_type, double smooth_R,
-                      int return_type, char *others);
+
+//void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
+//                      double boxsize, int ngrid, int smooth_type, double smooth_R,
+//                      int return_type, char *others);
 
 
 void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname);
