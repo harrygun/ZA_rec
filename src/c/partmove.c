@@ -52,7 +52,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   xmin=0.; xmax=s->boxsize;
   dx=(xmax-xmin)/(float)s->ngrid;
        
-  //printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
+  printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
   printf("->> displaceing particles ... \n");
 
   #pragma omp parallel for private(ip,i,m,n,l,m1,n1,l1,idx,moved_pos,dsi,dp,v)
@@ -125,7 +125,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
     }
 
 
-  //#define _MOVED_PART_OUTPUT_
+  #define _MOVED_PART_OUTPUT_
   #ifdef _MOVED_PART_OUTPUT_
   FILE *fp=fopen(s->test_fname, "wb");
 

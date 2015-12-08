@@ -33,7 +33,7 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
 
   // ->> solve FFTW  <<- //
   printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
   printf("->> FFT is Done <<- \n\n");
 
   return;
@@ -54,7 +54,7 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
 
   // ->> solve FFTW  <<- //
   printf("\n->> Solve Poisson equation with FFT.\n");
-  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type, NULL);
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
   printf("->> FFT is Done <<- \n\n");
 
   //->> inverse <<- //
@@ -98,9 +98,9 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
   Pdata_pos *p_disp, *p_shift;
 
   // ->> reconstruction type <<- //
-  if(strcmp(rc->rec_type, "za_displaced")==0) 
+  if(strcmp(rc->rec_type, "displaced")==0) 
     {do_disp=TRUE;  do_shift=FALSE;  do_disp_shift=FALSE;}
-  else if(strcmp(rc->rec_type, "za_displaced_shifted")==0)
+  else if(strcmp(rc->rec_type, "displaced_shifted")==0)
     {do_disp=TRUE;  do_shift=TRUE;  do_disp_shift=TRUE;}
   else {abort();}
 

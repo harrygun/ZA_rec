@@ -36,6 +36,7 @@ void za_displacement(SimInfo *s, float *d, float *disp) {
   // ->> solve FFTW  <<- //
   poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
+  //fftwf_free(phi_ij);
   return;
   }
 
