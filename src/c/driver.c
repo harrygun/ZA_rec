@@ -31,8 +31,8 @@
   #include "mpi.h"
 #endif
 
-#ifdef _OPEN_MP_
-  #include "omp.h"
+#ifdef _OMP_
+  #include <omp.h>
 #endif
 
 

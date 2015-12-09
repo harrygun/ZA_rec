@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -22,6 +21,9 @@
   #include "za_reconstruction.h"
   #include "misc.h"
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 void za_displacement(SimInfo *s, float *d, float *disp) {
@@ -58,7 +60,9 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
   printf("->> FFT is Done <<- \n\n");
 
   //->> inverse <<- //
+  #ifdef _OMP_
   #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
+  #endif
   for(ip=0; ip<s->npart; ip++) {
 
     //-> 
@@ -142,7 +146,9 @@ void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
 
 
   // ->> reconstructed density <<- //
+  #ifdef _OMP_
   #pragma omp parallel for private(i)
+  #endif
   for(i=0; i<s->npart; i++)
     drec[i]=d_disp[i]-d_shift[i];
 

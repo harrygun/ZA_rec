@@ -2,6 +2,9 @@
 DO_MPI= no
 #DO_MPI= yes
 
+#-->
+#DO_OMP=yes
+DO_OMP=no
 
 ifeq ($(DO_MPI), yes)
   CC= mpicc
@@ -37,7 +40,7 @@ ifeq ($(MACHINE),mylaptop)
     MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) 
 
     ifeq ($(DO_MPI), yes)
-	CFLAGS = -g -arch x86_64 -D_MPI_ -I /Users/harrygun/workspace/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+	CFLAGS = -g -arch x86_64 -D _MPI_ -I /Users/harrygun/workspace/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
     else
 	CFLAGS = -g -arch i386 -arch x86_64 -I /Users/harrygun/workspace/lib/gsl/include \
 		 -I $(MYLIBPATH) -I $(INIPATH)  -I $(MPIINCLUDE)
@@ -112,12 +115,19 @@ ifeq ($(MACHINE),cita)
 
     #FFTWLIB = -lfftw3 -lm
     #FFTWLIB = -lfftw3f -lfftw3 -lm
-    FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm
 
     GSLIB = -L/home/wangxin/lib/gsl/lib -lgsl -lgslcblas -lm
     MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)
 
-    CFLAGS = -fopenmp -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+
+    ifeq ($(DO_OMP),yes)
+        CFLAGS = -fopenmp -g  -D _OMP_ -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+        FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm
+
+    else
+        CFLAGS = -g -I /home/wangxin/lib/gsl/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+        FFTWLIB = -lfftw3f -lfftw3 -lm
+    endif
 
 endif
 

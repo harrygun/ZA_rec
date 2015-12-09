@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <string.h>
   #include <math.h>
-  #include <omp.h>
 
 
   #include "const.h"
@@ -18,6 +17,9 @@
   #include "parvar.h"
   #include "io.h"
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 
@@ -46,8 +48,10 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
         //d[i][j][k]=0.0;
         ArrayAccess3D(d, ngridx, i, j, k)=0.0;
   masstot=0.0;
-  
+
+  #ifdef _OMP_
   #pragma omp parallel for private(ip,i,j,k,i1,j1,k1,n,xc,yc,zc,pos_norm,tx,ty,tz,dx,dy,dz)
+  #endif
   for(ip=0; ip<npart; ip++) {
 
     // ->> renormalize 

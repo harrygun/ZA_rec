@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -22,6 +21,9 @@
   #include "misc.h"
 
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 void za_displacement(SimInfo *s, float *d, float *disp) {
   // ->> obtain ZA displacement field from density field <<- // 
@@ -57,7 +59,9 @@ void za_displacement_pert(SimInfo *s, float *d, float *disp) {
   poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   //->> inverse <<- //
+  #ifdef _OMP_
   #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
+  #endif
   for(ip=0; ip<s->npart; ip++) {
 
     //-> 
@@ -108,8 +112,10 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
 
   // ->> phi^(2) <<- //
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
-
+  
+  #ifdef _OMP_
   #pragma omp parallel for private(ip, i, j)
+  #endif
   for(ip=0; ip<ngrid_tot; ip++) {
     phi[ip]=d[ip];
 

@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -11,7 +10,9 @@
 
   #define pi M_PI
 
-
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, 
@@ -38,7 +39,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
   // ->> initialize OpenMP <<- //
+  #ifdef _OMP_
   if(fftwf_init_threads()==0) abort();
+  #endif
 
 
   // ->> initialization <<- //
@@ -54,7 +57,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
     dkij=(fftwf_complex *)fftwf_malloc(3*3*dksize);
 
   // ->> multi-threads initialization <<- //
+  #ifdef _OMP_
   fftwf_plan_with_nthreads(omp_get_max_threads());
+  #endif
 
   fftwf_plan pforward, pbackward, pbackward_hess, pbackward_grad;
   

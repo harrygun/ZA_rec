@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -20,6 +19,9 @@
   #include "io.h"
   #include "cic.h"
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 float trilinear(float pos[3], float dp[3], float v[2][2][2]){
@@ -55,7 +57,9 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   //printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
   printf("->> displaceing particles ... \n");
 
+  #ifdef _OMP_
   #pragma omp parallel for private(ip,i,m,n,l,m1,n1,l1,idx,moved_pos,dsi,dp,v)
+  #endif
   for(ip=0; ip<s->npart; ip++) {
 
     // ->> position index <<- //
@@ -125,7 +129,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
     }
 
 
-  #define _MOVED_PART_OUTPUT_
+  //#define _MOVED_PART_OUTPUT_
   #ifdef _MOVED_PART_OUTPUT_
   FILE *fp=fopen(s->test_fname, "wb");
 
@@ -158,7 +162,9 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 
   printf("\n->> shifting uniform grid ...\n");
 
+  #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
+  #endif
   for(i=0; i<s->ngrid; i++)
     for(j=0; j<s->ngrid; j++)
       for(k=0; k<s->ngrid; k++) {

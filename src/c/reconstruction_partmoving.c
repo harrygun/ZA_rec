@@ -2,7 +2,6 @@
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
-  #include <omp.h>
   #include <fftw3.h>
 
   #include "const.h"
@@ -22,6 +21,9 @@
   #include "misc.h"
   #include "backward_displacement.h"
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 
@@ -113,7 +115,9 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
 
 
   // ->> reconstructed density <<- //
+  #ifdef _OMP_
   #pragma omp parallel for private(i)
+  #endif
   for(i=0; i<s->npart; i++)
     drec[i]=d_disp[i]-d_shift[i];
 
