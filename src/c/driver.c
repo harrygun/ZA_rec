@@ -193,6 +193,11 @@
     Pdata_pos *p=(Pdata_pos *)malloc(s.npart*sizeof(Pdata));
     load_cita_simulation_position(particle_fname, p, s.npart);
 
+    // ->> initialize the boundary of particles <<- //
+    s.pmin=(double *)malloc(3*sizeof(double));
+    s.pmax=(double *)malloc(3*sizeof(double));
+    s.dpart=(double *)malloc(3*sizeof(double));
+
     float *d;
     double rhom_, dmean; //, particle_mass;
 
@@ -206,8 +211,9 @@
 
     // ->> if do CIC density estimation <<- //
     if (do_density==TRUE) {
-      // ->> CIC density estimation <<- //
-      dmean=cic_density(p, d, s.boxsize, s.particle_mass, s.npart, s.ngrid_xyz); 
+
+      // ->> CIC density estimation, get particle boundary as well <<- //
+      dmean=cic_density(p, d, s.boxsize, s.particle_mass, s.npart, s.ngrid_xyz, &s); 
 
       // ->> save density field in file <<- //
       if(save_odensity==TRUE) { //
@@ -225,6 +231,9 @@
       main_dtype="float";
       printf("Importing the original density map directly, dtype=%s\n", main_dtype);
       load_scalar_map(oden_fname, d, s.ngrid, main_dtype);
+
+      // ->> get particle boundary <<- //
+      get_particle_boundary(p, s.boxsize, s.npart, s.ngrid_xyz, s.pmin, s.pmax, s.dpart);
       }
 
     if(do_fftw_testing==TRUE) {
@@ -273,9 +282,11 @@
                        free all
     -----------------------------------------------------*/
     iniparser_freedict(dict);
-    free(power);
+    myinterp_free(power); free(power);
+
     free(p); free(d);
 
+    free(s.pmin); free(s.pmax); free(s.dpart);
 
     if(rc.do_rect==TRUE){
       free(d_shift); free(d_disp); free(drec);

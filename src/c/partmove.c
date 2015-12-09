@@ -48,7 +48,7 @@ float trilinear(float pos[3], float dp[3], float v[2][2][2]){
 void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp){
   //-> move particles <<- //
   long long i, ip, m, n, l, m1, n1, l1, idx[3];
-  float moved_pos, xmin, xmax, dx, dsi, dp[3], v[2][2][2];
+  float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;
 
   // ->> box boundary <<- //
   xmin=0.; xmax=s->boxsize;
@@ -63,8 +63,16 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   for(ip=0; ip<s->npart; ip++) {
 
     // ->> position index <<- //
-    for(i=0; i<3; i++)
-      idx[i]=(long long)((p[ip].pos[i]-xmin)/dx); 
+    for(i=0; i<3; i++){
+      idx[i]=(long long)((p[ip].pos[i]-(float)s->pmin[i])/(float)s->dpart[i]); 
+      if(idx[i]==s->ngrid) {idx[i]=0;}
+
+      if((idx[i]<0)||(idx[i]>s->ngrid-1)) {
+        printf("move_part idx error: %d (ip=%d, i=%d), ", idx[i], ip, i); 
+	printf(" %f, %f, %f, %f, foat(idx)=%f\n", p[ip].pos[i], (float)s->pmin[i], (float)s->pmax[i], 
+	       (float)s->dpart[i], (p[ip].pos[i]-(float)s->pmin[i])/(float)s->dpart[i]);
+	fflush(stdout);}
+      }
 
     // ->> do not interpolate <<- //
     if(s_intp==FALSE){
@@ -89,7 +97,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
  
       // ->> distance to grid <<- //
       for(i=0; i<3; i++) {
-        dp[i]=p[ip].pos[i]-idx[i]*dx; }
+        dp[i]=p[ip].pos[i]-idx[i]*(float)s->dpart[i]; }
 
       for(i=0; i<3; i++)  {
 

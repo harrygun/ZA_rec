@@ -93,7 +93,7 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     move_particle(s, p, p_disp, disp, rc->displacement_intp);
 
     // ->> density field from displaced particles <<- //
-    dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
+    dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz, NULL); 
     printf("displaced mean density delta = %lg\n", dm_disp);
 
     free(p_disp);
@@ -107,7 +107,7 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     move_grid(s, p_shift, disp, rc->displacement_intp);
 
     // ->> density field from shifted particles <<- //
-    dm_shift=cic_density(p_shift,d_shift,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz); 
+    dm_shift=cic_density(p_shift,d_shift,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz, NULL); 
     printf("shifted mean density delta = %lg\n", dm_shift);
 
     free(p_shift);

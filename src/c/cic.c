@@ -35,6 +35,46 @@ double part_mass(Cospar *cp, double z, double boxsize, int ngrid){
 
 
 
+void get_particle_boundary(Pdata_pos *p, double boxsize, long long npart, 
+                      long long ngrid[3], double *pmin, double *pmax, double *dpart) {
+
+  long long ip;
+  double xmin, ymin, zmin, xmax, ymax, zmax;
+
+  // ->> obtain boundary <<- //
+  xmin=boxsize/2.0; xmax=boxsize/2.0;
+  ymin=boxsize/2.0; ymax=boxsize/2.0;
+  zmin=boxsize/2.0; zmax=boxsize/2.0;
+
+  for(ip=0; ip<npart; ip++) {
+    if(p[ip].pos[0]<xmin) xmin=p[ip].pos[0];
+    if(p[ip].pos[0]>xmax) xmax=p[ip].pos[0];
+    
+    if(p[ip].pos[1]<ymin) ymin=p[ip].pos[1];
+    if(p[ip].pos[1]>ymax) ymax=p[ip].pos[1];
+    
+    if(p[ip].pos[2]<zmin) zmin=p[ip].pos[2];
+    if(p[ip].pos[2]>zmax) zmax=p[ip].pos[2];
+    }
+
+  //printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
+  //printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
+
+
+  pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
+  pmax[0]=xmax; pmax[1]=ymax; pmax[2]=zmax; 
+
+
+  // ->> dx, dy, dz <<- //
+  dpart[0]=(xmax-xmin)/(double)ngrid[0];
+  dpart[1]=(ymax-ymin)/(double)ngrid[1];
+  dpart[2]=(zmax-zmin)/(double)ngrid[2];
+
+  return;
+  }
+
+
+
 double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],
              long long npart, long long ngridx, long long ngridy, long long ngridz) {
   long long ip, i,j,k,i1,j1,k1, n;
@@ -106,6 +146,10 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
     d[i1][j1][k1]+=mass*dx*dy*dz;
     */
 
+    if((i1<0)||(i1>ngridx-1)) printf("i1 error = %d", i1);
+    if((j1<0)||(j1>ngridx-1)) printf("j1 error = %d", j1);
+    if((k1<0)||(k1>ngridx-1)) printf("k1 error = %d", k1);
+
     ArrayAccess3D(d, ngridx, i, j, k) +=mass*tx*ty*tz;
     ArrayAccess3D(d, ngridx, i1, j, k)+=mass*dx*ty*tz;
     ArrayAccess3D(d, ngridx, i, j1, k) +=mass*tx*dy*tz;
@@ -160,15 +204,59 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
 
 
 double cic_density(Pdata_pos *p, float *d, double boxsize, 
-                      double mass, long long npart, long long ngrid[3]) {
-  long long ip;
-  double xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dx[3], dmean;
+                 double mass, long long npart, long long ngrid[3], SimInfo *s) {
+  double dmean, *pmin, *pmax, *dpart;
+
+  // ->> get boundary first <<- //
+  if(s==NULL) {
+    //printf("cic_density s=NULL\n"); fflush(stdout);
+
+    pmin=(double *)malloc(3*sizeof(double));
+    pmax=(double *)malloc(3*sizeof(double));
+    dpart=(double *)malloc(3*sizeof(double));
+
+    // ->> get particle boundary first <<- //
+    get_particle_boundary(p, boxsize, npart, ngrid, pmin, pmax, dpart);
+
+    // ->> CIC density <<- //
+    dmean=density(p, d, mass, pmin, pmax, dpart, npart, ngrid[0], ngrid[1], ngrid[2]); 
+
+    free(pmin); free(pmax);  free(dpart);
+    }
+  else {
+    get_particle_boundary(p, boxsize, npart, ngrid, s->pmin, s->pmax, s->dpart);
+    dmean=density(p, d, mass, s->pmin, s->pmax, s->dpart, npart, ngrid[0], ngrid[1], ngrid[2]); 
+    }
+
+  printf("\n->> CIC density is done.\n");
+  return dmean;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //double xmin, ymin, zmin, xmax, ymax, zmax, pmin[3], pmax[3], dx[3], dmean;
 
   // ->> obtain boundary <<- //
+  /*
   xmin=boxsize/2.0; xmax=boxsize/2.0;
   ymin=boxsize/2.0; ymax=boxsize/2.0;
   zmin=boxsize/2.0; zmax=boxsize/2.0;
 
+  #ifdef _OMP_
+  #pragma omp parallel for private(ip,xmin,xmax,ymin,ymax,zmin, zmax)
+  #endif
   for(ip=0; ip<npart; ip++) {
     if(p[ip].pos[0]<xmin) xmin=p[ip].pos[0];
     if(p[ip].pos[0]>xmax) xmax=p[ip].pos[0];
@@ -183,31 +271,22 @@ double cic_density(Pdata_pos *p, float *d, double boxsize,
   //printf("xmin %f ymin %f zmin %f\n",xmin, ymin, zmin);
   //printf("xmax %f ymax %f zmax %f\n",xmax, ymax, zmax);
 
-
   pmin[0]=xmin; pmin[1]=ymin; pmin[2]=zmin; 
   pmax[0]=xmax; pmax[1]=ymax; pmax[2]=zmax; 
-
 
   // ->> dx, dy, dz <<- //
   dx[0]=(xmax-xmin)/(double)ngrid[0];
   dx[1]=(ymax-ymin)/(double)ngrid[1];
   dx[2]=(zmax-zmin)/(double)ngrid[2];
+  */
   
   //printf("cic_density: dx=%f, dy=%f, dz=%f\n",dx[0], dx[1], dx[2]);
   
   // ->> renormalize particle positions <<- //
-  /*
-  for(ip=0; ip<npart; ip++) {
-    p[ip].pos[0]=(p[ip].pos[0]-xmin)/dx;
-    p[ip].pos[1]=(p[ip].pos[1]-ymin)/dy;
-    p[ip].pos[2]=(p[ip].pos[2]-zmin)/dz;
-    }
-  */
+  //for(ip=0; ip<npart; ip++) {
+  //  p[ip].pos[0]=(p[ip].pos[0]-xmin)/dx;
+  //  p[ip].pos[1]=(p[ip].pos[1]-ymin)/dy;
+  //  p[ip].pos[2]=(p[ip].pos[2]-zmin)/dz;
+  //  }
   //printf("ngridx %ld ngridy %ld ngridz %ld\n",ngrid[0],ngrid[1],ngrid[2]);
 
-  // ->> CIC density <<- //
-  dmean=density(p, d, mass, pmin, pmax, dx, npart, ngrid[0], ngrid[1], ngrid[2]); 
-
-  printf("\n->> CIC density is done.\n");
-  return;
-  }

@@ -139,7 +139,7 @@
       printf("\nmean density=%lg (M_star)*(h/Mpc)^3\nparticle mass resolution=%lg\n\n", rhom_, particle_mass);
 
       // ->> CIC density estimation <<- //
-      dmean=cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz); 
+      dmean=cic_density(p, d, boxsize, particle_mass, npart, ngrid_xyz, NULL); 
 
       // ->> save density field in file <<- //
       if(save_odensity==TRUE) { //

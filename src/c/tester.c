@@ -211,7 +211,7 @@ void testing_fftw(SimInfo *s, float *d, float *phi, float *phi_i, float *phi_ij,
     // ->> if do CIC density estimation <<- //
     if (do_density==TRUE) {
       // ->> CIC density estimation <<- //
-      dmean=cic_density(p, d, s.boxsize, s.particle_mass, s.npart, s.ngrid_xyz); 
+      dmean=cic_density(p, d, s.boxsize, s.particle_mass, s.npart, s.ngrid_xyz, NULL); 
 
       // ->> save density field in file <<- //
       if(save_odensity==TRUE) { //
