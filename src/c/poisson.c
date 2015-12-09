@@ -196,6 +196,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
   fftwf_free(dk);
+  free(ndim);
   if(do_grad==TRUE) {fftwf_free(dki);}
   if(do_hess==TRUE) {fftwf_free(dkij);}
 
