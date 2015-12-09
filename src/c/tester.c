@@ -36,7 +36,7 @@
 
 
 
-void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij);
+void testing_fftw(SimInfo *s, float *d, float *phi, float *phi_i, float *phi_ij, int fft_return_type);
 
 
 
@@ -250,18 +250,19 @@ void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij);
     int fft_return_type;
     float *phi, *phi_i, *phi_ij;
    
-    phi=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3);
-    //phi_i=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3);
-    //phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3*3);
+    //phi=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3));
+    phi_i=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3)*3);
+    //phi_ij=(float *)fftwf_malloc(sizeof(float)*pow(s.ngrid,3)*9);
           
     
-    fft_return_type=_RETURN_PHI_ONLY_;
-    testing_fftw(d, phi, phi_i, phi_ij);
+    //fft_return_type=_RETURN_PHI_ONLY_;
+    fft_return_type=_RETURN_GRADIENT_;
+    testing_fftw(&s, d, phi, phi_i, phi_ij, fft_return_type);
 
 
     // ->> write files <<- //
     fp=fopen(s.test_fname, "wb");
-    fwrite(phi, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+    fwrite(phi_i, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
 
     fclose(fp);
 
@@ -275,9 +276,9 @@ void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij);
     free(power);
     free(p); free(d);
 
-    fftwf_free(phi);
+    //fftwf_free(phi);
 
-    //fftwf_free(phi_i);
+    fftwf_free(phi_i);
     //fftwf_free(phi_ij);
 
 
@@ -292,7 +293,7 @@ void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij);
 
 
 
-void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij){
+void testing_fftw(SimInfo *s, float *d, float *phi, float *phi_i, float *phi_ij, int fft_return_type){
   
   poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 

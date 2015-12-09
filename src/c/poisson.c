@@ -26,7 +26,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   printf("\n->> Solve Poisson equation with FFT.\n");
 
   // ->> return type <<- //
-  if((return_type==_RETURN_PHI_GRADIENT_)||(return_type==_RETURN_PHI_HESSIAN_)||(return_type==_RETURN_PHI_GRADIENT_HESSIAN_)) 
+  if((return_type==_RETURN_PHI_GRADIENT_)||(return_type==_RETURN_PHI_HESSIAN_)||(return_type==_RETURN_PHI_GRADIENT_HESSIAN_)||(return_type==_RETURN_PHI_ONLY_)) 
     {do_phi=TRUE;}
   else {do_phi=FALSE;}
   if((return_type==_RETURN_GRADIENT_)||(return_type==_RETURN_GRADIENT_HESSIAN_))
