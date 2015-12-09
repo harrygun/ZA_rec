@@ -3,6 +3,7 @@
   #include <math.h>
   #include <string.h>
   #include <fftw3.h>
+  #include <omp.h>
 
   #include <gsl/gsl_integration.h>
   #include <gsl/gsl_sf.h>
@@ -30,9 +31,13 @@
   #include "mpi.h"
 #endif
 
-#ifdef _OPEN_MP_
-  #include "omp.h"
-#endif
+
+
+
+
+
+void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij);
+
 
 
   int main( int argc, char *argv[])  {
@@ -241,29 +246,24 @@
       fflush(stdout); abort(); }
 
 
-    // ->> Obtain displacement field <<- //
-    float *drec, *d_disp, *d_shift;
-
-    if(rc.do_rect==TRUE){
-      // ->> if do reconstruction <<- //
+    // ->> Perform some test <<- //
+    int fft_return_type;
+    float *phi, *phi_i, *phi_ij;
    
-      drec=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_disp=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_shift=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      
-      reconstruction_partmover(&rc, &s, p, d, drec, d_disp, d_shift);
+    phi=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3);
+    //phi_i=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3);
+    //phi_ij=(float *)fftwf_malloc(sizeof(float)*s->ngrid**3*3);
+          
+    
+    fft_return_type=_RETURN_PHI_ONLY_;
+    testing_fftw(d, phi, phi_i, phi_ij);
 
 
-      // ->> write files <<- //
-      fp=fopen(rc.rec_fname, "wb");
-      //printf("writing files...\n");
+    // ->> write files <<- //
+    fp=fopen(s.test_fname, "wb");
+    fwrite(phi, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
-      fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-      fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-      fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-
-      fclose(fp);
-      }
+    fclose(fp);
 
 
 
@@ -275,16 +275,26 @@
     free(power);
     free(p); free(d);
 
+    fftwf_free(phi);
 
-    if(rc.do_rect==TRUE){
-      free(d_shift); free(d_disp); free(drec);
-      }
+    //fftwf_free(phi_i);
+    //fftwf_free(phi_ij);
+
+
 
     #ifdef _MPI_
       MPI_Finalize();
-      //MPI_Barrier(MPI_COMM_WORLD);
     #endif
 
     }
 
 
+
+
+
+void testing_fftw(float *d, float *phi, float *phi_i, float *phi_ij){
+  
+  poisson_solver_float(d, phi, phi_i, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
+
+  return;
+  }

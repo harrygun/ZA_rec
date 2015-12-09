@@ -170,6 +170,8 @@ rect: driver.o io.o cic.o poisson.o partmove.o misc.o reconstruction_partmoving.
 test_fftw: test_fftw.o io.o cic.o
 	$(CC) $(CFLAGS)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
+tester: tester.o io.o cic.o poisson.o misc.o
+	$(CC) $(CFLAGS)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 
 #--------------------------------------------------
