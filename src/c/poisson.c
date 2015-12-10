@@ -201,7 +201,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   if(do_hess==TRUE) {fftwf_free(dkij);}
 
   fftwf_destroy_plan(pforward);
-  //fftwf_cleanup();
+  fftwf_cleanup();
  
   printf("->> FFT is Done <<- \n\n");
 

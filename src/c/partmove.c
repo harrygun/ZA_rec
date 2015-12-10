@@ -64,7 +64,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
     // ->> position index <<- //
     for(i=0; i<3; i++){
-      idx[i]=(long long)((p[ip].pos[i]-(float)s->pmin[i])/(float)s->dpart[i]); 
+      idx[i]=(long long)(((double)p[ip].pos[i]-s->pmin[i])/s->dpart[i]); 
       if(idx[i]==s->ngrid) {idx[i]=0;}
 
       if((idx[i]<0)||(idx[i]>s->ngrid-1)) {
@@ -97,22 +97,32 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
  
       // ->> distance to grid <<- //
       for(i=0; i<3; i++) {
-        dp[i]=p[ip].pos[i]-idx[i]*(float)s->dpart[i]; }
+        dp[i]=(float)((double)p[ip].pos[i]-s->pmin[i]-idx[i]*s->dpart[i]); 
+	if(dp[i]>=(float)(s->pmax[i]-s->pmin[i])) dp[i]=0.; 
+
+	if((dp[i]<0)||(dp[i]>(float)s->dpart[i]))  {
+	  printf("dp error, dp=%f (pos=%f, pos_grid=%f, idx=%d, dpart=%f)\n", dp[i], p[ip].pos[i], 
+	         idx[i]*(float)s->dpart[i], idx[i], (float)s->dpart[i]);  
+	  fflush(stdout);
+	  }
+
+	}
 
       for(i=0; i<3; i++)  {
 
         // ->> define vertices for 3D interpolation <<- //
         for(l=0; l<2; l++){
 	  l1=l+idx[0]; 
-	  if(l1>s->ngrid)  l1=l1-s->ngrid;
+	  if(l1>=s->ngrid)  l1=l1-s->ngrid;
 
           for(m=0; m<2; m++) {
 	    m1=m+idx[1]; 
-	    if(m1>s->ngrid)  m1=m1-s->ngrid;
+	    if(m1>=s->ngrid)  m1=m1-s->ngrid;
 
             for(n=0; n<2; n++) {
 	      n1=n+idx[2]; 
-	      if(n1>s->ngrid)  n1=n1-s->ngrid;
+	      if(n1>=s->ngrid)  n1=n1-s->ngrid;
+
 
               v[l][m][n]=ArrayAccess4D_n4(si, 3, s->ngrid, s->ngrid, s->ngrid, i, l1, m1, n1);
 	      }
