@@ -3,6 +3,7 @@
 
   #define _TOPHAT_SMOOTH_  20121201
   #define _GAUSSIAN_SMOOTH_ 20150228
+  #define _INVERSE_GAUSSIAN_SMOOTH_ 19811029
 
 
   typedef float itreal;

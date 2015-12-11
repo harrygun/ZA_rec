@@ -78,6 +78,9 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
         else if(smooth_type==_GAUSSIAN_SMOOTH_) {
           W=exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
 	  }
+	else if(smooth_type==_INVERSE_GAUSSIAN_SMOOTH_){
+          W=1.-exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
+	  }
         else { 
           printf("smooth_field window function error.\n");  fflush(stdout);
 	  W=1.; }

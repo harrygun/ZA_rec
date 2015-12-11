@@ -274,6 +274,13 @@
       fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
       fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
+      // ->> smooth d_disp with `inverse_gaussian' 1.-W(k,R) <<- //
+      smooth_field(d_disp, s.boxsize, s.ngrid, _INVERSE_GAUSSIAN_SMOOTH_, s.smooth_R);
+
+      // ->> then write again <<- //
+      fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+
+
       fclose(fp);
       }
 
