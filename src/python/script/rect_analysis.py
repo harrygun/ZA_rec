@@ -120,12 +120,12 @@ if __name__=='__main__':
 
 
         #- >>
-        nplt, ncol = 2, 2
+        nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
-        ax[0].loglog(r_ori, xi_ori, 'y-')
-        ax[0].loglog(r_rec, xi_rec, 'k-')
-        ax[0].loglog(r_disp, xi_disp, 'r--')
-        ax[0].loglog(r_shift, xi_shift, 'b:')
+        ax[0].loglog(r_ori,  r_ori**2.*xi_ori, 'y-')
+        ax[0].loglog(r_rec,  r_rec**2.*xi_rec, 'k-')
+        ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
+        ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
 
 	#ax[1].semilogx(ki_ori, xi_rec/xi_ori, 'k-')
 	#ax[1].semilogx(ki_ori, xi_disp/xi_ori, 'r--')
