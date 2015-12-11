@@ -46,6 +46,7 @@ prog_control={
     #-------------------------------#
     'py_image_comparison':  True,
     'py_pk_comparison':       False,
+    'py_cf_comparison':       True,
     'py_part_position_check':  False,
     #-------------------------------#
     }
@@ -104,6 +105,16 @@ if __name__=='__main__':
 
 	pl.tight_layout()
 	pl.show()
+
+
+
+    # ->> correlation function comparison <<- //
+    if (p.py_cf_comparison==True):
+      pass
+
+
+
+
 
 
 
