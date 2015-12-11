@@ -132,7 +132,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   //->> solve Poisson equation again <<- //
   fft_return_type=_RETURN_GRADIENT_;
 
-  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, 0., fft_return_type);
 
 
   return;
