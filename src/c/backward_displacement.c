@@ -107,14 +107,14 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
 
   // ->> solve FFTW  to get 1st order phi and phi_i <<- //
   fft_return_type=_RETURN_HESSIAN_;
-  phi1_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
+  phi1_ij=(float *)fftwf_malloc(sizeof(float)*ngrid_tot*9);
 
   poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   // ->> phi^(2) <<- //
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
   // ->> smooth density field first <<- //
-  smooth_field(d, s->boxsize, s->ngrid, s->smooth_type, s->smooth_R);
+  smooth_field(d, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
 
   #ifdef _OMP_
   #pragma omp parallel for private(ip, i, j)

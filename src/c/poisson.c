@@ -99,7 +99,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
         else if(smooth_type==_GAUSSIAN_SMOOTH_) {
           W=exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
 	  }
-        else { W=1.; }
+        else { 
+          printf("Poisson_solver window function error.\n");  fflush(stdout);
+	  W=1.; }
 
         ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=greens*W;
         ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=greens*W;

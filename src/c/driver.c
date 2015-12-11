@@ -144,6 +144,8 @@
       printf("smooth scale=%lg\n", s.smooth_R);
       printf("z=%lg\n", cp.z);
 
+      //abort();
+
       droot=iniparser_getstring(dict,"Rect:data_root", "~/");
       particle_fname=iniparser_getstring(dict,"Rect:particle_file_name", "x.dat");
       //printf("particle fname: %s\n", particle_fname);

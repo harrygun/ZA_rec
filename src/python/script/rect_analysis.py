@@ -18,6 +18,7 @@ import rect.misc.ps as ps
 
 
 import rect.misc.file_import as fimp
+import rect.misc.power_update as pu
 
 
 
@@ -110,10 +111,28 @@ if __name__=='__main__':
 
     # ->> correlation function comparison <<- //
     if (p.py_cf_comparison==True):
-      pass
+
+        r_ori, xi_ori=pu.corfunk(d_ori, boxsize=p.boxsize, binsize=1)
+
+        r_rec,   xi_rec=pu.corfunk(drec, boxsize=p.boxsize)
+        r_disp,  xi_disp=pu.corfunk(d_disp, boxsize=p.boxsize)
+        r_shift, xi_shift=pu.corfunk(d_shift, boxsize=p.boxsize)
 
 
+        #- >>
+        nplt, ncol = 2, 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
+        ax[0].loglog(r_ori, xi_ori, 'y-')
+        ax[0].loglog(r_rec, xi_rec, 'k-')
+        ax[0].loglog(r_disp, xi_disp, 'r--')
+        ax[0].loglog(r_shift, xi_shift, 'b:')
 
+	#ax[1].semilogx(ki_ori, xi_rec/xi_ori, 'k-')
+	#ax[1].semilogx(ki_ori, xi_disp/xi_ori, 'r--')
+	#ax[1].semilogx(ki_ori, xi_shift/xi_ori, 'b:')
+
+	pl.tight_layout()
+	pl.show()
 
 
 

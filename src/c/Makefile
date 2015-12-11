@@ -174,7 +174,7 @@ default: rect test_fftw tester
 
 #--------------------------------------------------#
 #rect: driver.o io.o cic.o poisson.o partmove.o misc.o za_reconstruction.o
-rect: driver.o io.o cic.o poisson.o partmove.o misc.o reconstruction_partmoving.o backward_displacement.o
+rect: driver.o io.o cic.o poisson.o partmove.o misc.o reconstruction_partmoving.o backward_displacement.o fourier.o
 	$(CC) $(CFLAGS)  $^ -o $(WORKSPACE)/$@  $(LIB)
 
 test_fftw: test_fftw.o io.o cic.o
