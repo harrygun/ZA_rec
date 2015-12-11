@@ -34,23 +34,22 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
-  fftwf_complex *dk, dksig;
+  fftwf_complex *dk;
 
   dk=(fftwf_complex *)fftwf_malloc(dksize);
-
 
   // ->> multi-threads initialization <<- //
   #ifdef _OMP_
   fftwf_plan_with_nthreads(omp_get_max_threads());
   #endif
 
-  fftwf_plan pforward, pbackward, pbackward_hess, pbackward_grad;
+  fftwf_plan pforward, pbackward;
   
   pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
 
   
-  /* work out the green's function and the FFT of phi*/
+  /* smooth with FFT */
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid/2+1; n++){

@@ -100,7 +100,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   // ->> Psi_i = - nabla_i phi^(1) - 3/7 nabla phi^(2)   <<- //
   int fft_return_type;
   long long ip, i, j, ngrid_tot;
-  float *d2lpt, *phi1, *phi, *phi1_i, *phi1_ij;
+  float *d2lpt, *phi1, *phi1_i, *phi1_ij, *phi, *phi_i, *phi_ij;
   //char *other_req="";
 
   ngrid_tot=s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2];
@@ -112,31 +112,27 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   // ->> phi^(2) <<- //
-
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
-   
-
-
+  // ->> smooth density field first <<- //
+  smooth_field(d, s->boxsize, s->ngrid, s->smooth_type, s->smooth_R);
 
   #ifdef _OMP_
   #pragma omp parallel for private(ip, i, j)
   #endif
   for(ip=0; ip<ngrid_tot; ip++) {
-    phi[ip]=d[ip];
 
     for(i=0; i<3; i++)
       for(j=0; j>i; j++) {
-        phi[ip] += 3./7.*(ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, i, i, ip)
+        d[ip] += 3./7.*(ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, i, i, ip)
 	           * ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, j, j, ip) 
                    -pow(ArrayAccess3D_n3(phi1_ij, 3, 3, ngrid_tot, i, j, ip), 2));
         }
     }
 
-
   //->> solve Poisson equation again <<- //
   fft_return_type=_RETURN_GRADIENT_;
 
-  poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
+  poisson_solver_float(d, phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
 
   return;

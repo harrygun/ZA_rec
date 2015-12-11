@@ -47,7 +47,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
-  fftwf_complex *dk, *dki, *dkij, dksig;
+  fftwf_complex *dk, *dki, *dkij;
 
   dk=(fftwf_complex *)fftwf_malloc(dksize);
 
