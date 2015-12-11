@@ -17,8 +17,9 @@
   #include "parvar.h"
   #include "io.h"
   #include "cic.h"
-  #include "poisson.h"
   #include "misc.h"
+  #include "poisson.h"
+  #include "fourier.h"
 
 
   #ifdef _OMP_
@@ -99,7 +100,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   // ->> Psi_i = - nabla_i phi^(1) - 3/7 nabla phi^(2)   <<- //
   int fft_return_type;
   long long ip, i, j, ngrid_tot;
-  float *phi1, *phi, *phi1_i, *phi1_ij;
+  float *d2lpt, *phi1, *phi, *phi1_i, *phi1_ij;
   //char *other_req="";
 
   ngrid_tot=s->ngrid_xyz[0]*s->ngrid_xyz[1]*s->ngrid_xyz[2];
@@ -111,8 +112,12 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   poisson_solver_float(d, phi1, phi1_i, phi1_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
 
   // ->> phi^(2) <<- //
+
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
-  
+   
+
+
+
   #ifdef _OMP_
   #pragma omp parallel for private(ip, i, j)
   #endif
