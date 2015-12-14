@@ -32,6 +32,20 @@
 
 
 
+void forward_displacement_one_iteration(SimInfo *s, float *d, float *disp_input, 
+                                         float *disp_output){
+  // ->> forward modeling of displacement field for single iteration <<- //
+
+
+
+
+
+
+  return;
+  }
+
+
+
 
 
 
@@ -39,7 +53,7 @@
 
 
 /* ->>  Forward modeling of displacement field <<- */
-void displacement_forward(SimInfo *s, float *d, float *disp, int ) {
+void displacement_forward(SimInfo *s, float *d, float *disp, int nit_max) {
   /* ->> obtain ZA+2LPT displacement field from density field <<- */ 
 
   int fft_return_type;

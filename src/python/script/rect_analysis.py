@@ -72,7 +72,6 @@ if __name__=='__main__':
             print 'reading data ... ', p.rec_fname
 
             f_rec=rd.rblock(p.rec_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
-            //drec, d_disp, d_shift, d_disp_ivf=f_rec
             drec, d_disp, d_shift=f_rec
 
             d_ori=rd.rblock(p.original_density_fname, p.ngrid**3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid)
@@ -94,7 +93,7 @@ if __name__=='__main__':
         ki_disp, pki_disp=ps.pk(d_disp, boxsize=p.boxsize)
         ki_shift, pki_shift=ps.pk(d_shift, boxsize=p.boxsize)
 
-        //ki_disp_ivf, pki_disp_ivf=ps.pk(d_disp_ivf, boxsize=p.boxsize)
+        #ki_disp_ivf, pki_disp_ivf=ps.pk(d_disp_ivf, boxsize=p.boxsize)
 
         #- >>
         nplt, ncol = 2, 2
@@ -104,14 +103,23 @@ if __name__=='__main__':
         ax[0].loglog(ki_disp, pki_disp, 'r--')
         ax[0].loglog(ki_shift, pki_shift, 'b:')
 
-        //ax[0].loglog(ki_disp_ivf, pki_disp_ivf, 'g--')
+        #ax[0].loglog(ki_disp_ivf, pki_disp_ivf, 'g--')
 
 
 	ax[1].semilogx(ki_ori, pki_rec/pki_ori, 'k-')
 	ax[1].semilogx(ki_ori, pki_disp/pki_ori, 'r--')
 	ax[1].semilogx(ki_ori, pki_shift/pki_ori, 'b:')
 
-	//ax[1].semilogx(ki_ori, pki_disp_ivf/pki_ori, 'g--')
+	#ax[1].semilogx(ki_ori, pki_disp_ivf/pki_ori, 'g--')
+
+        # ->> window function <<- #
+	kk=10.**(np.linspace(-3, 1, 100))
+	ww1=(1.-np.exp(-kk**2.*p.smooth_r**2./2.) )**2.
+	ww2=np.exp(-kk**2.*p.smooth_r**2.)
+
+        ax[1].semilogx(kk, ww1, 'k--')
+        ax[1].semilogx(kk, ww2, 'k--')
+
 
 	pl.tight_layout()
 	pl.show()
@@ -127,7 +135,7 @@ if __name__=='__main__':
         r_disp,  xi_disp=pu.corfunk(d_disp, boxsize=p.boxsize)
         r_shift, xi_shift=pu.corfunk(d_shift, boxsize=p.boxsize)
 
-        //r_disp_ivf,  xi_disp_ivf=pu.corfunk(d_disp_ivf, boxsize=p.boxsize)
+        #r_disp_ivf,  xi_disp_ivf=pu.corfunk(d_disp_ivf, boxsize=p.boxsize)
 
         #- >>
         nplt, ncol = 1, 1
@@ -137,12 +145,14 @@ if __name__=='__main__':
         ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
         ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
 
-        //ax[0].loglog(r_disp_ivf, r_disp_ivf**2.*xi_disp_ivf, 'g--')
+        #ax[0].loglog(r_disp_ivf, r_disp_ivf**2.*xi_disp_ivf, 'g--')
 
 
 	#ax[1].semilogx(ki_ori, xi_rec/xi_ori, 'k-')
 	#ax[1].semilogx(ki_ori, xi_disp/xi_ori, 'r--')
 	#ax[1].semilogx(ki_ori, xi_shift/xi_ori, 'b:')
+
+	#ax[0].xlim(())
 
 	pl.tight_layout()
 	pl.show()
@@ -160,10 +170,10 @@ if __name__=='__main__':
 	sl=100
         cb0=ax[0].imshow(drec[:,:,sl]-drec.min()+1e-3, norm=colors.LogNorm())
         cb1=ax[1].imshow(d_disp[:,:,sl]-d_disp.min()+1e-3, norm=colors.LogNorm())
-        //cb3=ax[2].imshow(d_disp_ivf[:,:,sl]-d_disp_ivf.min()+1e-3, norm=colors.LogNorm())
+        #cb3=ax[2].imshow(d_disp_ivf[:,:,sl]-d_disp_ivf.min()+1e-3, norm=colors.LogNorm())
 
-        cb2=ax[3].imshow(d_shift[:,:,sl]-d_shift.min()+1e-3, norm=colors.LogNorm())
-        cb3=ax[4].imshow(d_ori[:,:,sl]-d_ori.min()+1e-3, norm=colors.LogNorm())
+        cb2=ax[2].imshow(d_shift[:,:,sl]-d_shift.min()+1e-3, norm=colors.LogNorm())
+        cb3=ax[3].imshow(d_ori[:,:,sl]-d_ori.min()+1e-3, norm=colors.LogNorm())
 
 
         #fig.savefig(root+'figure/ps_comp.png')
