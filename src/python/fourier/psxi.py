@@ -12,7 +12,7 @@ import genscript.fourier as fourier
 def pk_rfft(d, boxsize=1000.):
     ''' ->> obtain the angular averaged power spectrum <<- 
                   Using rfft instead of fft
-               It seems there're some error here
+          !!!! It seems there're some error here !!!!
     '''
 
     # ->> FFT first <<- #

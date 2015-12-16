@@ -14,7 +14,9 @@ import genscript.read as rd
 import rect.misc.io as mio
 import rect.misc.cyth.cgalio as cg
 import rect.misc.cic as mcic
-import rect.misc.ps as ps
+#import rect.misc.ps as ps
+import rect.fourier.psxi as ps
+
 
 
 import rect.misc.file_import as fimp
@@ -111,6 +113,8 @@ if __name__=='__main__':
 	ax[1].semilogx(ki_ori, pki_shift/pki_ori, 'b:')
 
 	#ax[1].semilogx(ki_ori, pki_disp_ivf/pki_ori, 'g--')
+
+	ax[1].semilogx(ki_ori, pki_disp/pki_ori/(1.-np.exp(-ki_ori**2.*p.smooth_r**2./2.) )**2., 'g--')
 
         # ->> window function <<- #
 	kk=10.**(np.linspace(-3, 1, 100))
