@@ -186,16 +186,32 @@ def pk(d, boxsize=1000., kspace='linear'):
 
 def xi(d, boxsize=1000., k=None, ps=None):
 
-    #->> do power spectrum first <<- #
-    if ((k==None)|(ps==None)):
-        k, ps=pk(d, boxsize=boxsize, kspace='linear')
-
-    #->> Fourier transform <<- #
     ndim=3
-    #fourier.FourierTransform(ndim, xlim=)
+
+    s = d.shape
+    dk = np.fft.fftn(d)
+
+    dk = dk*np.conjugate(dk)
+    dk[0,0,0] = 0.
+
+    _xi = (np.fft.ifftn(dk)*N.prod(s)).flatten()
+
+    # ->> 
+    sxi = dk2.shape
+    rmin = boxsize/float(s[0])
+
+    ri_list = [sfft.fftfreq(sxi[i],d=1./float(sxi[i]))*rmin for i in range(ndim)]
+    ri=mar.meshgrid(*ri_list)
+    r2=ri[0]**2.+ri[1]**2.+ri[2]**2.
 
 
-    #return xi
+    _r=np.sqrt(r2).flatten()
+    rmax=_r.max()
+    index = np.argsort(_r)
+    r=_r[index]
+    xi=_xi[index]
+
+
 
     return
 

@@ -117,12 +117,13 @@ if __name__=='__main__':
 	ax[1].semilogx(ki_ori, pki_disp/pki_ori/(1.-np.exp(-ki_ori**2.*p.smooth_r**2./2.) )**2., 'g--')
 
         # ->> window function <<- #
-	kk=10.**(np.linspace(-3, 1, 100))
-	ww1=(1.-np.exp(-kk**2.*p.smooth_r**2./2.) )**2.
-	ww2=np.exp(-kk**2.*p.smooth_r**2.)
+	if False:
+	    kk=10.**(np.linspace(-3, 1, 100))
+	    ww1=(1.-np.exp(-kk**2.*p.smooth_r**2./2.) )**2.
+	    ww2=np.exp(-kk**2.*p.smooth_r**2.)
 
-        ax[1].semilogx(kk, ww1, 'k--')
-        ax[1].semilogx(kk, ww2, 'k--')
+            ax[1].semilogx(kk, ww1, 'k--')
+            ax[1].semilogx(kk, ww2, 'k--')
 
 
 	pl.tight_layout()
