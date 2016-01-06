@@ -145,10 +145,18 @@ if __name__=='__main__':
         #- >>
         nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=8.,gap_size=0.5,return_figure=True)
-        ax[0].loglog(r_ori,  r_ori**2.*xi_ori, 'y-')
-        ax[0].loglog(r_rec,  r_rec**2.*xi_rec, 'k-')
-        ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
-        ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
+        #ax[0].loglog(r_ori,  r_ori**2.*xi_ori, 'y-')
+        #ax[0].loglog(r_rec,  r_rec**2.*xi_rec, 'k-')
+        #ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
+        #ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
+
+
+        ax[0].loglog(r_ori,  2.*xi_ori, 'y-')
+        ax[0].loglog(r_rec,  2.*xi_rec, 'k-')
+        ax[0].loglog(r_disp, 2.*xi_disp, 'r--')
+        ax[0].loglog(r_shift,2.*xi_shift, 'b:')
+
+
 
         #ax[0].loglog(r_disp_ivf, r_disp_ivf**2.*xi_disp_ivf, 'g--')
 

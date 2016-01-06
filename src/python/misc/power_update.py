@@ -516,9 +516,13 @@ def corfunk(d, d2=None, boxsize=500.,binsize=1, filename='',getnuminbin=False,ov
         s = d.shape
 
         dk = N.fft.rfftn(d)/N.prod(s)
+        #dk = N.fft.rfftn(d)
+
         sk = dk.shape
         if d2 != None:
             d2k = N.fft.rfftn(d2)/N.prod(s)
+            #d2k = N.fft.rfftn(d2)
+
             dk = dk*N.conjugate(d2k)+N.conjugate(dk)*d2k
         else:
             dk = dk*N.conjugate(dk)
@@ -531,6 +535,7 @@ def corfunk(d, d2=None, boxsize=500.,binsize=1, filename='',getnuminbin=False,ov
         #they should be in configuration space
 
         dk2 = N.fft.irfftn(dk)*N.prod(s)
+        #dk2 = N.fft.irfftn(dk)/N.prod(s)
 
         if (get2d):
             xips = 1.*dk2
