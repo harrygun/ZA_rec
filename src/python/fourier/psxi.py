@@ -212,6 +212,38 @@ def xi(d, boxsize=1000., k=None, ps=None):
     xi=_xi[index]
 
 
+    #->> !!!!! HERE <<_ #
+    raise Exception
 
-    return
+    # ->> bin edges <<- #
+    bedges=np.arange(kmin, kmax, kmin)
+
+    #->> cuts <<- #
+    cuts = np.searchsorted(r,bedges)
+
+    numinbin = np.zeros(bedges.shape)
+    pk = np.zeros(bedges.shape)
+    kmean = np.zeros(bedges.shape)
+    nbins = len(bedges)
+
+    kz0=np.ones(ki[-1].flatten().shape)[index]
+
+
+    #->> average over given k amplitude <<- #
+    for i in range(len(bedges)-1):
+        #->> 
+        if (cuts[i+1]>cuts[i]):
+            numinbin[i] = np.sum(kz0[cuts[i]:cuts[i+1]])
+            pk[i] = np.sum(kz0[cuts[i]:cuts[i+1]]*dk2[cuts[i]:cuts[i+1]].real)
+            kmean[i] = np.sum(kz0[cuts[i]:cuts[i+1]]*k[cuts[i]:cuts[i+1]])
+
+    wn0 = np.where(numinbin > 0.)[0]
+    pk = pk[wn0]; kmean = kmean[wn0]; numinbin=numinbin[wn0]
+    pk /= numinbin
+    kmean /= numinbin
+
+    pk *= boxsize**3/np.prod(np.array(s).astype(float))**2
+
+    return kmean, pk
+
 
