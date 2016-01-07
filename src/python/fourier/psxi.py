@@ -184,7 +184,7 @@ def pk(d, boxsize=1000., kspace='linear'):
 
 
 
-def xi(d, boxsize=1000., k=None, ps=None):
+def xi(d, boxsize=1000.):
 
     ndim=3
 
@@ -209,41 +209,39 @@ def xi(d, boxsize=1000., k=None, ps=None):
     rmax=_r.max()
     index = np.argsort(_r)
     r=_r[index]
-    xi=_xi[index]
+    _xi_=_xi[index]
 
 
-    #->> !!!!! HERE <<_ #
-    raise Exception
 
-    # ->> bin edges <<- #
-    bedges=np.arange(kmin, kmax, kmin)
+    # ->> bin edges, only linear now <<- #
+    bedges=np.arange(rmin, rmax, rmin)
 
     #->> cuts <<- #
     cuts = np.searchsorted(r,bedges)
 
     numinbin = np.zeros(bedges.shape)
-    pk = np.zeros(bedges.shape)
-    kmean = np.zeros(bedges.shape)
+    xi = np.zeros(bedges.shape)
+    rmean = np.zeros(bedges.shape)
     nbins = len(bedges)
 
-    kz0=np.ones(ki[-1].flatten().shape)[index]
+    rz0=np.ones(ri[-1].flatten().shape)[index]
 
 
     #->> average over given k amplitude <<- #
     for i in range(len(bedges)-1):
         #->> 
         if (cuts[i+1]>cuts[i]):
-            numinbin[i] = np.sum(kz0[cuts[i]:cuts[i+1]])
-            pk[i] = np.sum(kz0[cuts[i]:cuts[i+1]]*dk2[cuts[i]:cuts[i+1]].real)
-            kmean[i] = np.sum(kz0[cuts[i]:cuts[i+1]]*k[cuts[i]:cuts[i+1]])
+            numinbin[i] = np.sum(rz0[cuts[i]:cuts[i+1]])
+            xi[i] = np.sum(rz0[cuts[i]:cuts[i+1]]*_xi_[cuts[i]:cuts[i+1]].real)
+            rmean[i] = np.sum(rz0[cuts[i]:cuts[i+1]]*r[cuts[i]:cuts[i+1]])
 
     wn0 = np.where(numinbin > 0.)[0]
-    pk = pk[wn0]; kmean = kmean[wn0]; numinbin=numinbin[wn0]
-    pk /= numinbin
-    kmean /= numinbin
+    xi = xi[wn0]; rmean = rmean[wn0]; numinbin=numinbin[wn0]
+    xi /= numinbin
+    rmean /= numinbin
 
-    pk *= boxsize**3/np.prod(np.array(s).astype(float))**2
+    #xi *= boxsize**3/np.prod(np.array(s).astype(float))**2
 
-    return kmean, pk
+    return rmean, xi
 
 

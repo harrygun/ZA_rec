@@ -134,27 +134,28 @@ if __name__=='__main__':
     # ->> correlation function comparison <<- //
     if (p.py_cf_comparison==True):
 
-        r_ori, xi_ori=pu.corfunk(d_ori, boxsize=p.boxsize, binsize=1)
+        #r_ori, xi_ori=pu.corfunk(d_ori, boxsize=p.boxsize, binsize=1)
+        #r_rec,   xi_rec=pu.corfunk(drec, boxsize=p.boxsize)
+        #r_disp,  xi_disp=pu.corfunk(d_disp, boxsize=p.boxsize)
+        #r_shift, xi_shift=pu.corfunk(d_shift, boxsize=p.boxsize)
 
-        r_rec,   xi_rec=pu.corfunk(drec, boxsize=p.boxsize)
-        r_disp,  xi_disp=pu.corfunk(d_disp, boxsize=p.boxsize)
-        r_shift, xi_shift=pu.corfunk(d_shift, boxsize=p.boxsize)
 
-        #r_disp_ivf,  xi_disp_ivf=pu.corfunk(d_disp_ivf, boxsize=p.boxsize)
+        r_ori,  xi_ori  =ps.xi(d_ori, boxsize=p.boxsize)
+        r_rec,  xi_rec  =ps.xi(drec, boxsize=p.boxsize)
+        r_disp, xi_disp =ps.xi(d_disp, boxsize=p.boxsize)
+        r_shift,xi_shift=ps.xi(d_shift, boxsize=p.boxsize)
+
+
 
         #- >>
         nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=8.,gap_size=0.5,return_figure=True)
-        #ax[0].loglog(r_ori,  r_ori**2.*xi_ori, 'y-')
-        #ax[0].loglog(r_rec,  r_rec**2.*xi_rec, 'k-')
-        #ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
-        #ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
+        ax[0].loglog(r_ori,  r_ori**2.*xi_ori, 'y-')
+        ax[0].loglog(r_rec,  r_rec**2.*xi_rec, 'k-')
+        ax[0].loglog(r_disp, r_disp**2.*xi_disp, 'r--')
+        ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
 
 
-        ax[0].loglog(r_ori,  2.*xi_ori, 'y-')
-        ax[0].loglog(r_rec,  2.*xi_rec, 'k-')
-        ax[0].loglog(r_disp, 2.*xi_disp, 'r--')
-        ax[0].loglog(r_shift,2.*xi_shift, 'b:')
 
 
 
