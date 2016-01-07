@@ -191,10 +191,10 @@ def xi(d, boxsize=1000.):
     s = d.shape
     dk = np.fft.fftn(d)
 
-    dk = dk*np.conjugate(dk)
-    dk[0,0,0] = 0.
+    dk2 = dk*np.conjugate(dk)/np.prod(s)
+    dk2[0,0,0] = 0.
 
-    _xi = (np.fft.ifftn(dk)*N.prod(s)).flatten()
+    _xi = np.fft.ifftn(dk2).flatten()
 
     # ->> 
     sxi = dk2.shape
