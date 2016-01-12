@@ -114,7 +114,7 @@ if __name__=='__main__':
 
 	#ax[1].semilogx(ki_ori, pki_disp_ivf/pki_ori, 'g--')
 
-	ax[1].semilogx(ki_ori, pki_disp/pki_ori/(1.-np.exp(-ki_ori**2.*p.smooth_r**2./2.) )**2., 'g--')
+	#ax[1].semilogx(ki_ori, pki_disp/pki_ori/(1.-np.exp(-ki_ori**2.*p.smooth_r**2./2.) )**2., 'g--')
 
         # ->> window function <<- #
 	if False:
@@ -156,12 +156,7 @@ if __name__=='__main__':
         ax[0].loglog(r_shift,r_shift**2.*xi_shift, 'b:')
 
 
-
-
-
         #ax[0].loglog(r_disp_ivf, r_disp_ivf**2.*xi_disp_ivf, 'g--')
-
-
 	#ax[1].semilogx(ki_ori, xi_rec/xi_ori, 'k-')
 	#ax[1].semilogx(ki_ori, xi_disp/xi_ori, 'r--')
 	#ax[1].semilogx(ki_ori, xi_shift/xi_ori, 'b:')
