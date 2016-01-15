@@ -17,3 +17,19 @@ import genscript.read as rd
 
 
 
+
+
+
+
+
+
+
+def likeli_opt():
+
+
+    return
+
+
+
+
+

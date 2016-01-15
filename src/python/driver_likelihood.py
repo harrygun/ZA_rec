@@ -51,7 +51,7 @@ param_dict={
 
 prog_control={
     #-------------------------------#
-    'do_likelihood_rec':        True,
+    'do_likelihood_rec':        False,
     #-------------------------------#
     }
 
@@ -91,13 +91,23 @@ if __name__=='__main__':
         p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
 	print 'particle mass:', p.particle_mass
 
+
+	# ->> import the initial density field <<- #
+	fn_part_init=droot_part+'100.000xv0.dat'
+        pos_init, v_init=mio.read_cita_simulation(fn_part_init, p.nbin)
+	print 'init pos, v:', pos_init.shape, v_init.shape
+         
+
     else:
         raise Exception
 
 
 
-    ''' ->> Performing Lagrangian reconstruction <<- '''
-    if p.do_LPT_rec==True:
+
+
+
+    ''' ->> Performing likelihood reconstruction <<- '''
+    if p.do_likelihood_rec==True:
         pos, delta =dd
 	print 'data shape:', pos.shape, delta.shape, delta.min(), delta.max(), delta.mean()
 
