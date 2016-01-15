@@ -45,7 +45,7 @@ param_dict={
     'particle_mass':    1.e5,
     #'import_format':   'gadget_DTFE',
     'import_format':   'cita_simulation',
-    'save_data':    True,
+    'save_data':    False,
     'redshift':     0.,
     }
 
@@ -97,6 +97,7 @@ if __name__=='__main__':
         pos_init, v_init=mio.read_cita_simulation(fn_part_init, p.nbin)
 	print 'init pos, v:', pos_init.shape, v_init.shape
          
+        quit()
 
     else:
         raise Exception
