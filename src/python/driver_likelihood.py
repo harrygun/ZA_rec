@@ -113,6 +113,15 @@ if __name__=='__main__':
 	disp=pos-pos_init
 	print 'data shape:', pos.shape, pos_init.shape, disp.shape
 
+
+
+        # ->>  <<- #
+
+
+
+
+
+
 	quit()
 
 
