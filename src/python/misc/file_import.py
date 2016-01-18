@@ -67,6 +67,11 @@ def import_gadget_DTFE(p, fn_part, fn_field, import_data_type='all'):
 
 def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
 
+    if import_data_type in ['all', 'field']:
+        _import_field_=True
+    else:
+        _import_field_=False
+
     pos_, v=mio.read_cita_simulation(fn_part, p.nbin)
 
     xmin, xmax =np.zeros(3), np.zeros(3)
@@ -78,9 +83,14 @@ def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
 
     #pos=np.rollaxis(pos, -1).reshape(3, p.nbin, p.nbin, p.nbin)
 
-    den=np.load(fn_field)['d']
-
     #print 'shape:', den.shape, pos.shape
     print 'pos max/min:', xmax, xmin
 
-    return pos, den
+
+    if _import_field_:
+        den=np.load(fn_field)['d']
+	return  pos, den
+    else:
+	return  pos, None
+
+

@@ -24,7 +24,10 @@ import genscript.read as rd
 
 
 
-def likeli_opt():
+
+def likelihood_opt():
+
+
 
 
     return

@@ -51,7 +51,7 @@ param_dict={
 
 prog_control={
     #-------------------------------#
-    'do_likelihood_rec':        False,
+    'do_likelihood_rec':        True,
     #-------------------------------#
     }
 
@@ -72,7 +72,7 @@ if __name__=='__main__':
 	-------------------------------------------------     
     '''
     #import_type='all'
-    import_type='field'
+    import_type='particle'
 
     # ->> imporot data <<- #
     if p.import_format=='cita_simulation':
@@ -83,7 +83,6 @@ if __name__=='__main__':
 
 	fn_part=droot_part+'0.000xv0.dat'
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
-	fn_write=droot_part+'0.000xv0.dat.displaced.npz'
 
         dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
 
@@ -97,7 +96,6 @@ if __name__=='__main__':
         pos_init, v_init=mio.read_cita_simulation(fn_part_init, p.nbin)
 	print 'init pos, v:', pos_init.shape, v_init.shape
          
-        quit()
 
     else:
         raise Exception
@@ -109,8 +107,13 @@ if __name__=='__main__':
 
     ''' ->> Performing likelihood reconstruction <<- '''
     if p.do_likelihood_rec==True:
-        pos, delta =dd
-	print 'data shape:', pos.shape, delta.shape, delta.min(), delta.max(), delta.mean()
+
+        # ->> obtain displacement field first <<- #
+        pos=dd[0]
+	disp=pos-pos_init
+	print 'data shape:', pos.shape, pos_init.shape, disp.shape
+
+	quit()
 
 
 
