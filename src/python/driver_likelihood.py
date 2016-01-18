@@ -71,10 +71,9 @@ if __name__=='__main__':
     ''' -------------------------------------------------
 	-------------------------------------------------     
     '''
-    #import_type='all'
+    # ->> imporot data <<- #
     import_type='particle'
 
-    # ->> imporot data <<- #
     if p.import_format=='cita_simulation':
         p.nbin=256
 	p.boxsize=512.
@@ -90,18 +89,13 @@ if __name__=='__main__':
         p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
 	print 'particle mass:', p.particle_mass
 
-
 	# ->> import the initial density field <<- #
 	fn_part_init=droot_part+'100.000xv0.dat'
         pos_init, v_init=mio.read_cita_simulation(fn_part_init, p.nbin)
-	print 'init pos, v:', pos_init.shape, v_init.shape
+	print 'init pos, v:', pos_init.shape, v_init.shape, pos_init.min(), pos_init.max()
          
-
     else:
         raise Exception
-
-
-
 
 
 
@@ -112,16 +106,24 @@ if __name__=='__main__':
         pos=dd[0]
 	disp=pos-pos_init
 	print 'data shape:', pos.shape, pos_init.shape, disp.shape
+	print 'disp: ', disp.min(), disp.max()
+
+
+        if True:
+            pl.hist(disp[:,0].flatten(), bins=100, range=[-20,20], histtype='step', color='k')
+            pl.hist(disp[:,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
+            pl.hist(disp[:,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+            pl.show()
+
+
+        # ->>  obtain ZA displacement <<- #
 
 
 
-        # ->>  <<- #
 
 
 
-
-
-
+        p.finalize()
 	quit()
 
 

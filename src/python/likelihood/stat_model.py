@@ -21,14 +21,12 @@ import genscript.read as rd
 
 
 
-def likelihood_opt():
+
+
+''' ->> Statistical <<- '''
+
+def statmodel(p, ):
 
 
 
-
-    return
-
-
-
-
-
+return
