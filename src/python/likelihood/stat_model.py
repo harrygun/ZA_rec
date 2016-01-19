@@ -23,7 +23,7 @@ import genscript.read as rd
 
 
 
-''' ->> Statistical <<- '''
+''' ->> Statistical model <<- '''
 
 def statmodel(p, ):
 
