@@ -15,6 +15,7 @@ import cosmology.power  as power
 import genscript.read as read
 import genscript.myplot as mpl
 import genscript.read as rd
+import genscript.myarray as mar
 
 import lagrangian.lpt_rec as lrec
 import misc.io as mio
