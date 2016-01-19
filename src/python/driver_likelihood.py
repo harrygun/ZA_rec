@@ -83,7 +83,7 @@ if __name__=='__main__':
 	fn_part=droot_part+'0.000xv0.dat'
 	fn_field=droot_field+'0.000xv0.dat.den.npz'
 
-        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type)
+        dd=fimp.import_cita_simulation(p, fn_part, fn_field, import_data_type=import_type, renormalize_pos=False)
 
 	# ->> estimate mass resolution <<- #
         p.particle_mass = mcic.mass_resolution(p, z=0., boxsize_unit='Mpc/h')
@@ -107,10 +107,16 @@ if __name__=='__main__':
 	pos_init=pos_init.reshape(pos.shape)
 	disp=pos-pos_init
 
-	print 'data shape:', pos.shape, pos_init.shape, disp.shape
+	print 'pos/pos_init/disp shape:', pos.shape, pos_init.shape, disp.shape
 	print 'disp: ', disp.min(), disp.max()
 
-        #->> 
+        #->> another way of calculating displacement field <<- #
+        lgrid=np.linspace(0, p.boxsize, p.nbin, endpoint=False)
+        grid=mar.meshgrid(lgrid, lgrid, lgrid)[::-1,...]
+        print 'lgrid shape:', lgrid.shape, 'meshgrid shape:', grid.shape, si.shape
+
+	quit()
+         
 
         # ->> 
 	if False:
