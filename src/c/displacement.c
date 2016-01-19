@@ -20,7 +20,6 @@
   #include "misc.h"
   #include "poisson.h"
   #include "fourier.h"
-  #include "backward_displacement.h"
 
 
   #ifdef _OMP_
@@ -29,13 +28,22 @@
 
 
 
-
-
-void get_stat_model(SimInfo *s, ) {
-
-
+void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi) {
+  // ->> get real displacement field from simulation directly <<- //
 
   return;
   }
 
 
+
+
+void get_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi, int get_real_disp, 
+                      int get_model_disp){
+
+
+
+
+
+
+  return;
+  }

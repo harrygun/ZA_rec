@@ -1,0 +1,183 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AR	Makefile	/^AR=ar$/;"	m
+ARFLAGS	Makefile	/^ARFLAGS=-r$/;"	m
+ArrayAccess2D_n2	parvar.h	/^  #define ArrayAccess2D_n2(/;"	d
+ArrayAccess2D_n2_list	parvar.h	/^  #define ArrayAccess2D_n2_list(/;"	d
+ArrayAccess3D	parvar.h	/^  #define ArrayAccess3D(/;"	d
+ArrayAccess3D_n3	parvar.h	/^  #define ArrayAccess3D_n3(/;"	d
+ArrayAccess4D_n4	parvar.h	/^  #define ArrayAccess4D_n4(/;"	d
+ArrayAccess5D_n5	parvar.h	/^  #define ArrayAccess5D_n5(/;"	d
+BoxSize	gadget_read_snapshot.c	/^  double BoxSize;$/;"	m	struct:io_header_1	file:
+CC	Makefile	/^  CC= gcc$/;"	m
+CC	Makefile	/^  CC= mpicc$/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -D_MPI_ -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -D_MPI_ -I \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -arch i386 -arch x86_64 -I \/Users\/harrygun\/workspace\/lib\/gsl\/include \\$/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -arch x86_64 -D _MPI_ -I \/Users\/harrygun\/workspace\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^	CFLAGS = -g -fPIC -I \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^        CFLAGS = -fopenmp -g  -D _OMP_ -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+CFLAGS	Makefile	/^        CFLAGS = -g -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
+COMFFLAGS	Makefile	/^COMFFLAGS = -nofor_main    $/;"	m
+DO_MPI	Makefile	/^DO_MPI= no$/;"	m
+DO_OMP	Makefile	/^DO_OMP=yes$/;"	m
+FC	Makefile	/^FC= ifort$/;"	m
+FFTWLIB	Makefile	/^        FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm$/;"	m
+FFTWLIB	Makefile	/^        FFTWLIB = -lfftw3f -lfftw3 -lm$/;"	m
+FISHLIB	Makefile	/^    FISHLIB  = lfish$/;"	m
+FLIB	Makefile	/^FLIB = -L\/usr\/local\/lib  -lm   $/;"	m
+GENLIB	Makefile	/^    GENLIB   = lmylib$/;"	m
+GSLIB	Makefile	/^    GSLIB = -L \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/lib -lgsl -lgslcblas -lm$/;"	m
+GSLIB	Makefile	/^    GSLIB = -L\/Users\/harrygun\/workspace\/lib\/gsl\/lib -lgsl -lgslcblas -lm$/;"	m
+GSLIB	Makefile	/^    GSLIB = -L\/home\/wangxin\/lib\/gsl\/lib -lgsl -lgslcblas -lm$/;"	m
+HubbleParam	gadget_read_snapshot.c	/^  double HubbleParam;$/;"	m	struct:io_header_1	file:
+INILIB	Makefile	/^    INILIB = -L$(INIPATH) -liniparser$/;"	m
+INIPATH	Makefile	/^    INIPATH = \/Users\/harrygun\/workspace\/lib\/iniparser$/;"	m
+INIPATH	Makefile	/^    INIPATH = \/home\/wangxin\/lib\/iniparser$/;"	m
+INIPATH	Makefile	/^    INIPATH = \/home\/wangxin\/workspace\/lib\/iniparser\/$(HOSTNAME)$/;"	m
+INIPATH	Makefile	/^    INIPATH = \/home\/xwang\/workspace\/lib\/iniparser$/;"	m
+Id	gadget_read_snapshot.c	/^int *Id;$/;"	v
+LIB	Makefile	/^LIB  = $(INILIB) $(GSLIB) $(MYLIB)$/;"	m
+MPICC	Makefile	/^MPICC= mpicc$/;"	m
+MPIINCLUDE	Makefile	/^    MPIINCLUDE= $(MPIPATH)\/include$/;"	m
+MPIPATH	Makefile	/^    MPIPATH = \/Users\/harrygun\/software\/work\/mpich2\/mpich2-1.2.1p1$/;"	m
+MPIPATH	Makefile	/^    MPIPATH = \/home\/wangxin\/software\/mpich2\/gwln1$/;"	m
+MPIPATH	Makefile	/^    MPIPATH = \/usr\/mpi\/intel\/openmpi-1.4.3$/;"	m
+MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)$/;"	m
+MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) $/;"	m
+MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)\/$(HOSTNAME)  -$(GENLIB) -$(FISHLIB) $/;"	m
+MYLIBPATH	Makefile	/^    MYLIBPATH= \/Users\/harrygun\/workspace\/lib\/mylib$/;"	m
+MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/wangxin\/lib\/mylib$/;"	m
+MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/wangxin\/workspace\/lib\/mylib$/;"	m
+MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/xwang\/workspace\/lib\/mylib$/;"	m
+Mass	gadget_read_snapshot.c	/^  float Mass;$/;"	m	struct:particle_data	file:
+MemIdx3D	parvar.h	/^  #define MemIdx3D(/;"	d
+MemIdx3D_n3	parvar.h	/^  #define MemIdx3D_n3(/;"	d
+Ne	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
+Ngas	gadget_read_snapshot.c	/^int NumPart, Ngas;$/;"	v
+NumPart	gadget_read_snapshot.c	/^int NumPart, Ngas;$/;"	v
+Omega0	gadget_read_snapshot.c	/^  double Omega0;$/;"	m	struct:io_header_1	file:
+OmegaLambda	gadget_read_snapshot.c	/^  double OmegaLambda;$/;"	m	struct:io_header_1	file:
+P	gadget_read_snapshot.c	/^} *P;$/;"	v	typeref:struct:particle_data
+Pdata	io.h	/^  } Pdata;$/;"	t	typeref:struct:particle_data
+Pdata_pos	io.h	/^  } Pdata_pos;$/;"	t	typeref:struct:particle_pos_data
+Pos	gadget_read_snapshot.c	/^  float Pos[3];$/;"	m	struct:particle_data	file:
+RANLIB	Makefile	/^RANLIB=ranlib$/;"	m
+RectCtrl	parvar.h	/^  }RectCtrl;$/;"	t	typeref:struct:rect_controller
+Redshift	gadget_read_snapshot.c	/^double Time, Redshift;$/;"	v
+Rho	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
+SKIP	gadget_read_snapshot.c	/^#define SKIP /;"	d	file:
+SimInfo	parvar.h	/^  } SimInfo;$/;"	t	typeref:struct:simulation_info
+Temp	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
+Time	gadget_read_snapshot.c	/^double Time, Redshift;$/;"	v
+Type	gadget_read_snapshot.c	/^  int Type;$/;"	m	struct:particle_data	file:
+U	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
+Vel	gadget_read_snapshot.c	/^  float Vel[3];$/;"	m	struct:particle_data	file:
+WORKSPACE	Makefile	/^WORKSPACE = ..\/..\/workspace$/;"	m
+_GAUSSIAN_SMOOTH_	parvar.h	/^  #define _GAUSSIAN_SMOOTH_ /;"	d
+_H_BACKWARD_DISPLACEMENT_	backward_displacement.h	/^#define _H_BACKWARD_DISPLACEMENT_$/;"	d
+_H_CIC_	cic.h	/^#define _H_CIC_$/;"	d
+_H_FOURIER_	fourier.h	/^#define _H_FOURIER_$/;"	d
+_H_IO_	io.h	/^#define _H_IO_$/;"	d
+_H_MISC_	misc.h	/^#define _H_MISC_$/;"	d
+_H_PART_MOVE_	partmove.h	/^#define _H_PART_MOVE_$/;"	d
+_H_PARVAR_	parvar.h	/^#define _H_PARVAR_$/;"	d
+_H_POISSON_	poisson.h	/^#define _H_POISSON_$/;"	d
+_H_RECONSTRUCTION_PART_MOVING_	reconstruction_partmoving.h	/^#define _H_RECONSTRUCTION_PART_MOVING_$/;"	d
+_H_STAT_MODEL_	stat_model.h	/^#define _H_STAT_MODEL_$/;"	d
+_H_ZA_RECONSTRUCTION_	za_reconstruction.h	/^#define  _H_ZA_RECONSTRUCTION_$/;"	d
+_INVERSE_GAUSSIAN_SMOOTH_	parvar.h	/^  #define _INVERSE_GAUSSIAN_SMOOTH_ /;"	d
+_RETURN_GRADIENT_	poisson.h	/^  #define _RETURN_GRADIENT_ /;"	d
+_RETURN_GRADIENT_HESSIAN_	poisson.h	/^  #define _RETURN_GRADIENT_HESSIAN_ /;"	d
+_RETURN_HESSIAN_	poisson.h	/^  #define _RETURN_HESSIAN_ /;"	d
+_RETURN_PHI_GRADIENT_	poisson.h	/^  #define _RETURN_PHI_GRADIENT_ /;"	d
+_RETURN_PHI_GRADIENT_HESSIAN_	poisson.h	/^  #define _RETURN_PHI_GRADIENT_HESSIAN_ /;"	d
+_RETURN_PHI_HESSIAN_	poisson.h	/^  #define _RETURN_PHI_HESSIAN_ /;"	d
+_RETURN_PHI_ONLY_	poisson.h	/^  #define _RETURN_PHI_ONLY_ /;"	d
+_TOPHAT_SMOOTH_	parvar.h	/^  #define _TOPHAT_SMOOTH_ /;"	d
+allocate_memory	gadget_read_snapshot.c	/^int allocate_memory(void)$/;"	f
+boxsize	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+cic_density	cic.c	/^double cic_density(Pdata_pos *p, float *d, double boxsize, $/;"	f
+density	cic.c	/^double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],$/;"	f
+displacement_2lpt	backward_displacement.c	/^void displacement_2lpt(SimInfo *s, float *d, float *disp) {$/;"	f
+displacement_forward	forward_displacement.c	/^void displacement_forward(SimInfo *s, float *d, float *disp, int nit_max) {$/;"	f
+displacement_intp	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
+displacement_order	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200];$/;"	m	struct:rect_controller
+displacement_type	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200];$/;"	m	struct:rect_controller
+do_disp_perturb	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
+do_rect	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
+dpart	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
+fftw_tester	poisson.c	/^void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname) {$/;"	f
+fill	gadget_read_snapshot.c	/^  char fill[256 - 6 * 4 - 6 * 8 - 2 * 8 - 2 * 4 - 6 * 4 - 2 * 4 - 4 * 8];	\/* fills to 256 Bytes *\/$/;"	m	struct:io_header_1	file:
+flag_cooling	gadget_read_snapshot.c	/^  int flag_cooling;$/;"	m	struct:io_header_1	file:
+flag_feedback	gadget_read_snapshot.c	/^  int flag_feedback;$/;"	m	struct:io_header_1	file:
+flag_sfr	gadget_read_snapshot.c	/^  int flag_sfr;$/;"	m	struct:io_header_1	file:
+forward_displacement_one_iteration	forward_displacement.c	/^void forward_displacement_one_iteration(SimInfo *s, float *d, float *disp_input, $/;"	f
+get_displacement	displacement.c	/^void get_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi, int get_real_disp, $/;"	f
+get_particle_boundary	cic.c	/^void get_particle_boundary(Pdata_pos *p, double boxsize, long long npart, $/;"	f
+get_real_displacement	displacement.c	/^void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi) {$/;"	f
+get_rhom	cic.c	/^double get_rhom(Cospar *cp, double z){$/;"	f
+get_stat_model	stat_model.c	/^void get_stat_model(SimInfo *s, ) {$/;"	f
+header1	gadget_read_snapshot.c	/^} header1;$/;"	v	typeref:struct:io_header_1
+io_header_1	gadget_read_snapshot.c	/^struct io_header_1$/;"	s	file:
+itreal	parvar.h	/^  typedef float itreal;$/;"	t
+load_cita_simulation	io.c	/^void load_cita_simulation(char *fname, Pdata *p, int npart) {$/;"	f
+load_cita_simulation_position	io.c	/^void load_cita_simulation_position(char *fname, Pdata_pos *p, int npart) {$/;"	f
+load_scalar_map	io.c	/^void load_scalar_map(char *fname, float *m, int ngrid, char *dtype){$/;"	f
+load_snapshot	gadget_read_snapshot.c	/^int load_snapshot(char *fname, int files)$/;"	f
+main	driver.c	/^  int main( int argc, char *argv[])  {$/;"	f
+main	test_fftw.c	/^  int main( int argc, char *argv[])  {$/;"	f
+main	tester.c	/^  int main( int argc, char *argv[])  {$/;"	f
+mass	gadget_read_snapshot.c	/^  double mass[6];$/;"	m	struct:io_header_1	file:
+mat_inv_3d_float	misc.c	/^void mat_inv_3d_float(float mat[3][3], float imat[3][3]){$/;"	f
+mat_multiply_3d_float	misc.c	/^void mat_multiply_3d_float(float mat[3][3], float x[3], float y[3]){$/;"	f
+move_grid	partmove.c	/^void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){$/;"	f
+move_particle	partmove.c	/^void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp){$/;"	f
+ngrid	parvar.h	/^  long long ngrid, ngrid_xyz[3], npart;$/;"	m	struct:simulation_info
+ngrid_xyz	parvar.h	/^  long long ngrid, ngrid_xyz[3], npart;$/;"	m	struct:simulation_info
+npart	gadget_read_snapshot.c	/^  int npart[6];$/;"	m	struct:io_header_1	file:
+npart	parvar.h	/^  long long ngrid, ngrid_xyz[3], npart;$/;"	m	struct:simulation_info
+npartTotal	gadget_read_snapshot.c	/^  int npartTotal[6];$/;"	m	struct:io_header_1	file:
+num_files	gadget_read_snapshot.c	/^  int num_files;$/;"	m	struct:io_header_1	file:
+part_mass	cic.c	/^double part_mass(Cospar *cp, double z, double boxsize, int ngrid){$/;"	f
+particle_data	gadget_read_snapshot.c	/^struct particle_data$/;"	s	file:
+particle_data	io.h	/^typedef struct particle_data {$/;"	s
+particle_mass	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+particle_pos_data	io.h	/^typedef struct particle_pos_data {$/;"	s
+pi	fourier.c	/^  #define pi /;"	d	file:
+pi	poisson.c	/^  #define pi /;"	d	file:
+pi	test_fftw.c	/^  #define pi /;"	d	file:
+pmax	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
+pmin	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
+poisson_solver_float	poisson.c	/^void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, $/;"	f
+pos	io.h	/^  float pos[3];$/;"	m	struct:particle_data
+pos	io.h	/^  float pos[3];$/;"	m	struct:particle_pos_data
+rec_fname	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200];$/;"	m	struct:rect_controller
+rec_type	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200];$/;"	m	struct:rect_controller
+reconstruction_partmover	reconstruction_partmoving.c	/^void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, $/;"	f
+rect_controller	parvar.h	/^typedef struct rect_controller{$/;"	s
+redshift	gadget_read_snapshot.c	/^  double redshift;$/;"	m	struct:io_header_1	file:
+reordering	gadget_read_snapshot.c	/^int reordering(void)$/;"	f
+simulation_info	parvar.h	/^typedef struct simulation_info{$/;"	s
+smooth_R	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+smooth_field	fourier.c	/^void smooth_field(float *d, double boxsize, int ngrid, int smooth_type, $/;"	f
+smooth_type	parvar.h	/^  char *smooth_type, *test_fname;$/;"	m	struct:simulation_info
+smooth_type_flag	parvar.h	/^  int smooth_type_flag;$/;"	m	struct:simulation_info
+test_fname	parvar.h	/^  char *smooth_type, *test_fname;$/;"	m	struct:simulation_info
+testing_fftw	tester.c	/^void testing_fftw(SimInfo *s, float *d, float *phi, float *phi_i, float *phi_ij, int fft_return_type){$/;"	f
+time	gadget_read_snapshot.c	/^  double time;$/;"	m	struct:io_header_1	file:
+trilinear	partmove.c	/^float trilinear(float pos[3], float dp[3], float v[2][2][2]){$/;"	f
+unit_conversion	gadget_read_snapshot.c	/^int unit_conversion(void)$/;"	f
+vel	io.h	/^  float vel[3];$/;"	m	struct:particle_data
+xmax	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+xmin	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+za_displacement	backward_displacement.c	/^void za_displacement(SimInfo *s, float *d, float *disp) {$/;"	f
+za_displacement	za_reconstruction.c	/^void za_displacement(SimInfo *s, float *d, float *disp) {$/;"	f
+za_displacement_pert	backward_displacement.c	/^void za_displacement_pert(SimInfo *s, float *d, float *disp) {$/;"	f
+za_displacement_pert	za_reconstruction.c	/^void za_displacement_pert(SimInfo *s, float *d, float *disp) {$/;"	f
+za_reconstruction	za_reconstruction.c	/^void za_reconstruction(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d, $/;"	f
