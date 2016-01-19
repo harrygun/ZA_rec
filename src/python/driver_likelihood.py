@@ -116,8 +116,10 @@ if __name__=='__main__':
         grid=np.rollaxis(mar.meshgrid(lgrid, lgrid, lgrid)[::-1,...], 0, 4)
         print 'lgrid shape:', lgrid.shape, 'meshgrid shape:', grid.shape
 
+        err=pos_init-grid
+	print 'err: ', err.max(), err.min()
+
 	quit()
-         
 
         # ->> 
 	if False:
