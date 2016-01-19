@@ -81,13 +81,13 @@ def import_cita_simulation(p, fn_part, fn_field, import_data_type='all', renorma
         for i in range(3):
             xmax[i], xmin[i] = np.max(pos_[...,i]), np.min(pos_[...,i])
             pos[...,i]=(pos_[...,i]-xmin[i])*p.boxsize/(xmax[i]-xmin[i]) 
+
+        print 'renormalizing pos...  max/min=', xmax, xmin
     else:
         pos=pos_
 
     #pos=np.rollaxis(pos, -1).reshape(3, p.nbin, p.nbin, p.nbin)
-
     #print 'shape:', den.shape, pos.shape
-    print 'pos max/min:', xmax, xmin
 
 
     if _import_field_:

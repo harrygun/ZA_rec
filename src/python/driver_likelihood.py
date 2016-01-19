@@ -113,7 +113,7 @@ if __name__=='__main__':
 
         #->> another way of calculating displacement field <<- #
         lgrid=np.linspace(0, p.boxsize, p.nbin, endpoint=False)
-        grid=mar.meshgrid(lgrid, lgrid, lgrid)[::-1,...]
+        grid=mar.meshgrid(lgrid, lgrid, lgrid) #[::-1,...]
         print 'lgrid shape:', lgrid.shape, 'meshgrid shape:', grid.shape
 
 	quit()
