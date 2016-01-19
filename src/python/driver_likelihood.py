@@ -119,21 +119,23 @@ if __name__=='__main__':
         err=pos_init-grid
 	print 'err: ', err.max(), err.min()
 
-	quit()
-
-        # ->> 
-	if False:
-	    nplots=2
-            ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
-	    #ax[0].plot(pos)
+	disp_uni=pos-grid
 
 
         if True:
-            pl.hist(disp[...,0].flatten(), bins=100, range=[-20,20], histtype='step', color='g')
-            pl.hist(disp[...,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
-            pl.hist(disp[...,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+	    nplots=2
+            ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
 
-            pl.hist(np.sqrt(disp[...,0]**2+disp[...,1]**2+disp[...,2]**2).flatten(), bins=100, range=[-20,20], histtype='step', color='k')
+            ax[0].hist(disp[...,0].flatten(), bins=100, range=[-20,20], histtype='step', color='g')
+            ax[0].hist(disp[...,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
+            ax[0].hist(disp[...,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+            #pl.hist(np.sqrt(disp[...,0]**2+disp[...,1]**2+disp[...,2]**2).flatten(), bins=100, range=[-20,20], histtype='step', color='k')
+
+
+            ax[1].hist(disp_uni[...,0].flatten(), bins=100, range=[-20,20], histtype='step', color='g')
+            ax[1].hist(disp_uni[...,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
+            ax[1].hist(disp_uni[...,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+
             pl.show()
 
 
