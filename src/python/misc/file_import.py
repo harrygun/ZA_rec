@@ -77,9 +77,12 @@ def import_cita_simulation(p, fn_part, fn_field, import_data_type='all'):
     xmin, xmax =np.zeros(3), np.zeros(3)
     pos=np.zeros(pos_.shape)
 
+    '''
     for i in range(3):
         xmax[i], xmin[i] = np.max(pos_[...,i]), np.min(pos_[...,i])
 	pos[...,i]=(pos_[...,i]-xmin[i])*p.boxsize/(xmax[i]-xmin[i]) 
+    '''
+    pos=pos_
 
     #pos=np.rollaxis(pos, -1).reshape(3, p.nbin, p.nbin, p.nbin)
 

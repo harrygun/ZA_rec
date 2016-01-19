@@ -103,16 +103,23 @@ if __name__=='__main__':
     if p.do_likelihood_rec==True:
 
         # ->> obtain displacement field first <<- #
-        pos=dd[0]
+        pos=dd[0].reshape(p.nbin,p.nbin,p.nbin,3)
+	pos_init=pos_init.reshape(pos.shape)
 	disp=pos-pos_init
+
 	print 'data shape:', pos.shape, pos_init.shape, disp.shape
 	print 'disp: ', disp.min(), disp.max()
 
-        # ->> 
-	if True:
-            fig=mpl.mysubplots(1, 2)
+        #->> 
 
-        if False:
+        # ->> 
+	if False:
+	    nplots=2
+            ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
+	    #ax[0].plot(pos)
+
+
+        if True:
             pl.hist(disp[:,0].flatten(), bins=100, range=[-20,20], histtype='step', color='k')
             pl.hist(disp[:,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
             pl.hist(disp[:,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
