@@ -120,9 +120,11 @@ if __name__=='__main__':
 
 
         if True:
-            pl.hist(disp[:,0].flatten(), bins=100, range=[-20,20], histtype='step', color='k')
-            pl.hist(disp[:,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
-            pl.hist(disp[:,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+            pl.hist(disp[...,0].flatten(), bins=100, range=[-20,20], histtype='step', color='g')
+            pl.hist(disp[...,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
+            pl.hist(disp[...,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
+
+            pl.hist(np.sqrt(disp[...,0]**2+disp[...,1]**2+disp[...,2]**2).flatten(), bins=100, range=[-20,20], histtype='step', color='k')
             pl.show()
 
 
