@@ -108,8 +108,11 @@ if __name__=='__main__':
 	print 'data shape:', pos.shape, pos_init.shape, disp.shape
 	print 'disp: ', disp.min(), disp.max()
 
+        # ->> 
+	if True:
+            fig=mpl.mysubplots(1, 2)
 
-        if True:
+        if False:
             pl.hist(disp[:,0].flatten(), bins=100, range=[-20,20], histtype='step', color='k')
             pl.hist(disp[:,1].flatten(), bins=100, range=[-20,20], histtype='step', color='r')
             pl.hist(disp[:,2].flatten(), bins=100, range=[-20,20], histtype='step', color='b')
