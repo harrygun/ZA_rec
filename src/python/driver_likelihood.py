@@ -121,8 +121,7 @@ if __name__=='__main__':
 
 	disp_uni=pos-grid
 
-
-        if True:
+        if False:
 	    nplots=2
             ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
 	    n_bin=500
@@ -130,31 +129,19 @@ if __name__=='__main__':
             ax[0].hist(disp[...,0].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='g')
             ax[0].hist(disp[...,1].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='r')
             ax[0].hist(disp[...,2].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='b')
-            #pl.hist(np.sqrt(disp[...,0]**2+disp[...,1]**2+disp[...,2]**2).flatten(), bins=100, range=[-20,20], histtype='step', color='k')
 
 
             ax[1].hist(disp_uni[...,0].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='g')
             ax[1].hist(disp_uni[...,1].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='r')
             ax[1].hist(disp_uni[...,2].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='b')
 
+
             pl.show()
 
 
         # ->>  obtain ZA displacement <<- #
-
-
-
-
-
-
-        p.finalize()
-	quit()
-
-
-
-        ''' ->> perform Lagrangian Reconstruction <<-  '''
-
         rect_type='ZA_displaced_shifted'
+
         _dd_ = lrec.lag_rec_ZA(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type, rect_type=rect_type)
 
         # ->> unwrap density <<- #
