@@ -154,7 +154,7 @@
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
-      rc.do_rect=iniparser_getboolean(dict, "Rect:do_reconstruction", INIFALSE);
+      rc.do_rect=iniparser_getboolean(dict, "Rect:do_backward_reconstruction", INIFALSE);
       rc.displacement_intp=iniparser_getboolean(dict, "Rect:displacement_interpolation", INIFALSE);
       rc.do_disp_perturb=iniparser_getboolean(dict, "Rect:perturbe_displacement", INIFALSE);
       //->> reconstruction type, displacement type etc. <<- //
@@ -250,7 +250,7 @@
 
 
     /*-----------------------------------------------------
-         // ->>   performing reconstruction   <<- //
+         // ->>   performing Backward reconstruction   <<- //
     -----------------------------------------------------*/
     if(rc.do_rect!=TRUE) {
       printf("Do NOT perform reconstruction.\n");
