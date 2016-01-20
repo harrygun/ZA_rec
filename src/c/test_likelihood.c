@@ -24,7 +24,7 @@
   #include "poisson.h"
   #include "reconstruction_partmoving.h"
 
-  #include ""
+  #include "stat_model.h"
 
 
 
@@ -32,3 +32,19 @@
   #include <omp.h>
 #endif
 
+
+
+
+void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init) {
+
+
+  // ->> try to build the statistical model from real displacement <<- //
+  get_stat_disp_model(s, p, d, fname_part_init, NULL);
+
+  // ->>  <<- //
+
+
+
+
+  return;
+  }

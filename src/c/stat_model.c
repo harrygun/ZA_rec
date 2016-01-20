@@ -35,7 +35,7 @@
 
 
 
-void get_stat_disp_model(SimInfo *s, Pdata_pos *p, char *fname_part_init, 
+void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *stat_disp_model_type) {
   // ->>  <<- //
   float *disp, *disp_model;
@@ -47,8 +47,17 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, char *fname_part_init,
   get_real_displacement(s, p, disp, fname_part_init);
 
   // ->> obtain model displacement <<- //
-  char *model_type="ZA";
-  get_model_displacement(s, p, disp_model, "ZA");
+  char *model_type;
+  if(stat_disp_model_type==NULL) {
+    sprintf(model_type, "ZA");
+    }
+  else {
+    model_type=stat_disp_model_type;
+    }
+  get_model_displacement(s, p, d, disp_model, model_type);
+
+
+  // ->> construct model <<- //
 
 
 

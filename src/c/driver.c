@@ -180,6 +180,7 @@
       fclose(fp);
 
       /*-----------------------------------------------------------------------*/
+      // ->> testing initialization <<- //
       int do_fftw_testing;
       char *fftw_test_fname, *fftw_return_type;
       do_fftw_testing=iniparser_getboolean(dict, "Rect:do_fftw_testing", INIFALSE);
@@ -187,8 +188,12 @@
       fftw_return_type=iniparser_getstring(dict,"Rect:fftw_test_return_type", "gradient");
 
       s.test_fname=iniparser_getstring(dict,"Rect:other_test_fname", "y.dat");
-      /*-----------------------------------------------------------------------*/
 
+      // ->> testing for displacement/likelihood <<- //
+      int do_likelihood_testing;
+      do_likelihood_testing=iniparser_getboolean(dict, "Rect:do_likelihood_testing", INIFALSE);
+
+      /*-----------------------------------------------------------------------*/
     /*-----     End of initialization.    ------*/
 
 
@@ -242,13 +247,19 @@
       get_particle_boundary(p, s.boxsize, s.npart, s.ngrid_xyz, s.pmin, s.pmax, s.dpart);
       }
 
+
+    // ->> Testing <<- //
+    if(do_likelihood_testing==TRUE){
+      printf("Do Likelihood testing.\n"); fflush(stdout);
+
+      abort();
+      }
+
     if(do_fftw_testing==TRUE) {
       printf("Do FFTW testing.\n"); fflush(stdout);
       fftw_tester(&s, d, fftw_return_type, fftw_test_fname);
       abort();
       }
-
-    // ->> Testing <<- //
 
     /*-----------------------------------------------------
          // ->>   performing Backward reconstruction   <<- //

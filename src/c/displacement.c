@@ -21,6 +21,8 @@
   #include "poisson.h"
   #include "fourier.h"
 
+  #include "backward_displacement.h"
+
 
   #ifdef _OMP_
   #include <omp.h>
@@ -53,16 +55,17 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, char *fname_pa
 
 
 
-void get_model_displacement(SimInfo *s, Pdata_pos *p, char *model_disp_type){
 
-
-  if(strcmp(model_disp_type, "ZA")==0 ) {
-
-
-    }
-  else abort();
+void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *model_disp_type){
     
 
+  if(strcmp(model_disp_type, "ZA")==0 ) {
+    za_displacement(s, d, disp);
+    }
+  else if(strcmp(model_disp_type, "ZA")==0 ) {
+    displacement_2lpt(s, d, disp);
+    }
+  else abort();
 
   return;
   }
