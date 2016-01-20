@@ -9,10 +9,10 @@
 
 
 
-void load_cita_simulation(char *fname, Pdata *p, int npart) {
+void load_cita_simulation(char *fname, Pdata *p, long long npart) {
   /* ->> load simulation data <<- */
   FILE *fd;
-  int n, npt;
+  long long n, npt;
   float dummy[11];
     
   // ->> start to read <<- //
@@ -41,10 +41,10 @@ void load_cita_simulation(char *fname, Pdata *p, int npart) {
 
 
 
-void load_cita_simulation_position(char *fname, Pdata_pos *p, int npart) {
+void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
   /* ->> load only the position of simulation data <<- */
   FILE *fd;
-  int n, npt;
+  long long n, npt;
   float dummy[11], vel[3];
     
   // ->> start to read <<- //
@@ -73,7 +73,7 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, int npart) {
 
 
 
-void load_scalar_map(char *fname, float *m, int ngrid, char *dtype){
+void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){
   int size;
   FILE *fp=fopen(fname, "r");
 

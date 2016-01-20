@@ -28,9 +28,28 @@
 
 
 
-void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi) {
+void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, char *fname_part_init) {
   // ->> get real displacement field from simulation directly <<- //
 
+  long long ip, i;
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  load_cita_simulation_position(fname_part_init, pinit, s->npart);
+
+
+  #ifdef _OMP_
+  #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
+  #endif
+  for(ip=0; ip<s->npart; ip++) {
+    for(i=0; i<3; i++) {
+      disp[ip][i]
+      ArrayAccess4D_n4(disp, 3, s->ngrid, s->ngrid, s->ngrid, i, idx[0], idx[1], idx[2])
+      =p[i].pos[] 
+      }
+    }
+
+
+
+  free(pinit);
   return;
   }
 
