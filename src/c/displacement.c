@@ -37,16 +37,13 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, char *fname_pa
 
 
   #ifdef _OMP_
-  #pragma omp parallel for private(ip,i,j,p_ij,mat,imat,p_i,pc_i)
+  #pragma omp parallel for private(ip,i)
   #endif
   for(ip=0; ip<s->npart; ip++) {
     for(i=0; i<3; i++) {
-      disp[ip][i]
-      ArrayAccess4D_n4(disp, 3, s->ngrid, s->ngrid, s->ngrid, i, idx[0], idx[1], idx[2])
-      =p[i].pos[] 
+      ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=p[ip].pos[i]-pinit[ip].pos[i]
       }
     }
-
 
 
   free(pinit);
@@ -56,13 +53,19 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, char *fname_pa
 
 
 
-void get_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pi, int get_real_disp, 
-                      int get_model_disp){
+void get_model_displacement(SimInfo *s, Pdata_pos *p, char *model_disp_type){
 
 
+  if(strcmp(model_disp_type, "ZA")==0 ) {
 
 
+    }
+  else abort();
+    
 
 
   return;
   }
+
+
+

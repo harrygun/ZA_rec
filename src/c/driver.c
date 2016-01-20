@@ -114,7 +114,7 @@
 
       //double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name;
-      char *oden_fname, *main_dtype, *rec_name;
+      char *oden_fname, *main_dtype, *rec_name, *fname_pinit;
       int do_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
@@ -149,6 +149,8 @@
       droot=iniparser_getstring(dict,"Rect:data_root", "~/");
       particle_fname=iniparser_getstring(dict,"Rect:particle_file_name", "x.dat");
       //printf("particle fname: %s\n", particle_fname);
+
+      fname_pinit=iniparser_getstring(dict,"Rect:init_particle_file_name", "x.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
@@ -185,6 +187,8 @@
       fftw_return_type=iniparser_getstring(dict,"Rect:fftw_test_return_type", "gradient");
 
       s.test_fname=iniparser_getstring(dict,"Rect:other_test_fname", "y.dat");
+      /*-----------------------------------------------------------------------*/
+
     /*-----     End of initialization.    ------*/
 
 
