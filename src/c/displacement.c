@@ -62,7 +62,7 @@ void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, cha
   if(strcmp(model_disp_type, "ZA")==0 ) {
     za_displacement(s, d, disp);
     }
-  else if(strcmp(model_disp_type, "ZA")==0 ) {
+  else if(strcmp(model_disp_type, "2LPT")==0 ) {
     displacement_2lpt(s, d, disp);
     }
   else abort();

@@ -35,16 +35,39 @@
 
 
 
-void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init) {
-
+void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
+                       char *fname_out) {
 
   // ->> try to build the statistical model from real displacement <<- //
-  get_stat_disp_model(s, p, d, fname_part_init, NULL);
+  //get_stat_disp_model(s, p, d, fname_part_init, NULL);
 
-  // ->>  <<- //
+  float *disp, *disp_model;
+
+  disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+
+  // ->> obtain real displacement <<- //
+  get_real_displacement(s, p, disp, fname_part_init);
+
+  // ->> obtain model displacement <<- //
+  char *model_type;
+  if(stat_disp_model_type==NULL) {
+    sprintf(model_type, "ZA");
+    }
+  else {
+    model_type=stat_disp_model_type;
+    }
+  get_model_displacement(s, p, d, disp_model, model_type);
 
 
+  // ->> construct model <<- //
+  FILE *fp=fopen(fname_out, "wb");
 
+  fwrite(disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
+  fwrite(disp_model, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
 
+  fclose(fp);
+
+  free(disp); free(disp_model);
   return;
   }

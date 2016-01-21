@@ -24,6 +24,7 @@
   #include "poisson.h"
   //#include "za_reconstruction.h"
   #include "reconstruction_partmoving.h"
+  #include ""
 
 
 
@@ -191,7 +192,10 @@
 
       // ->> testing for displacement/likelihood <<- //
       int do_likelihood_testing;
+      char *likeli_test_fname;
+
       do_likelihood_testing=iniparser_getboolean(dict, "Rect:do_likelihood_testing", INIFALSE);
+      likeli_test_fname=iniparser_getstring(dict,"Rect:Likelihood_test_fname", "y.dat");
 
       /*-----------------------------------------------------------------------*/
     /*-----     End of initialization.    ------*/
@@ -251,7 +255,7 @@
     // ->> Testing <<- //
     if(do_likelihood_testing==TRUE){
       printf("Do Likelihood testing.\n"); fflush(stdout);
-
+      test_displacement(&s, p, d, fname_pinit, likeli_test_fname);
       abort();
       }
 
