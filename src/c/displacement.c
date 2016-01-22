@@ -43,7 +43,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, char *fname_pa
   #endif
   for(ip=0; ip<s->npart; ip++) {
     for(i=0; i<3; i++) {
-      ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=p[ip].pos[i]-pinit[ip].pos[i]
+      ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=p[ip].pos[i]-pinit[ip].pos[i];
       }
     }
 
