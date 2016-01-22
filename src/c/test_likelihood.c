@@ -50,21 +50,15 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   get_real_displacement(s, p, disp, fname_part_init);
 
   // ->> obtain model displacement <<- //
-  char *model_type;
-  if(stat_disp_model_type==NULL) {
-    sprintf(model_type, "ZA");
-    }
-  else {
-    model_type=stat_disp_model_type;
-    }
+  char *model_type="ZA";
   get_model_displacement(s, p, d, disp_model, model_type);
 
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");
 
-  fwrite(disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
-  fwrite(disp_model, sizeof(float), s.ngrid*s.ngrid*s.ngrid*3, fp);
+  fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
 
   fclose(fp);
 

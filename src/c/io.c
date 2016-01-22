@@ -58,7 +58,7 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
 
   fread(&npt, 4, 1, fd);
   printf("npt=%d, npart=%d\n", npt, npart);
-  if(npart!=npt) {printf("npart error.\n"); exit(0);}
+  if((int)npart!=(int)npt) {printf("npart error.\n"); exit(0);}
 
   fread(dummy, sizeof(float), 11, fd);
 
