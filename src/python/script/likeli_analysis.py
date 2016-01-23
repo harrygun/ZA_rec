@@ -52,6 +52,8 @@ prog_control={
     'py_cf_comparison':       True,
     'py_part_position_check':  False,
     #-------------------------------#
+    'do_likelihood_testing':   True,
+    'Likelihood_test_fname':   'x.dat'
     }
 
 
@@ -66,43 +68,21 @@ if __name__=='__main__':
     root=p.folder
 
 
-    # ->> import data <<- #
-    if (p.py_import_density_field==True):
-
-        if p.import_format=='cita_simulation':
-            p.rec_fname=p.reconstructed_fname+'_'+p.smooth_type+'_R'+str(p.smooth_R)+'.dat'
-            print 'reading data ... ', p.rec_fname
-
-            f_rec=rd.rblock(p.rec_fname, p.ngrid**3*3, dtype='float').reshape(3,p.ngrid,p.ngrid,p.ngrid)
-            drec, d_disp, d_shift=f_rec
-
-            d_ori=rd.rblock(p.original_density_fname, p.ngrid**3, dtype='float').reshape(p.ngrid,p.ngrid,p.ngrid)
-
-            print 'density shape:', drec.shape, d_disp.shape, d_shift.shape, d_ori.shape
-	    print 'density min/max:', drec.min(), drec.max(), d_disp.min(), d_disp.max(), d_shift.min(), d_shift.max()
-
-        else:
-            raise Exception
 
 
 
-    # ->> power spectrum measurement <<- #
-    if (p.py_pk_comparison==True):
+    if (p.do_likelihood_testing==True):
 
-        ki_ori, pki_ori=ps.pk(d_ori, boxsize=p.boxsize)
+        # ->> import testing data <<- #
+        dd=rd.rblock(p.Likelihood_test_fname, p.ngrid**3*6, dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
+	disp, disp_model = dd[:3,...], dd[3:,...]
 
-        ki_rec, pki_rec=ps.pk(drec, boxsize=p.boxsize)
-        ki_disp, pki_disp=ps.pk(d_disp, boxsize=p.boxsize)
-        ki_shift, pki_shift=ps.pk(d_shift, boxsize=p.boxsize)
 
-        #ki_disp_ivf, pki_disp_ivf=ps.pk(d_disp_ivf, boxsize=p.boxsize)
-
-        #- >>
-        nplt, ncol = 2, 2
+        nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
+
         ax[0].loglog(ki_ori, pki_ori, 'y-')
 
-	ax[1].semilogx(ki_ori, pki_shift/pki_ori, 'b:')
 
 	pl.tight_layout()
 	pl.show()

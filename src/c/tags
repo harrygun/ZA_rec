@@ -91,6 +91,7 @@ _H_PARVAR_	parvar.h	/^#define _H_PARVAR_$/;"	d
 _H_POISSON_	poisson.h	/^#define _H_POISSON_$/;"	d
 _H_RECONSTRUCTION_PART_MOVING_	reconstruction_partmoving.h	/^#define _H_RECONSTRUCTION_PART_MOVING_$/;"	d
 _H_STAT_MODEL_	stat_model.h	/^#define _H_STAT_MODEL_$/;"	d
+_H_TEST_LIKELIHOOD_	test_likelihood.h	/^#define _H_TEST_LIKELIHOOD_$/;"	d
 _H_ZA_RECONSTRUCTION_	za_reconstruction.h	/^#define  _H_ZA_RECONSTRUCTION_$/;"	d
 _INVERSE_GAUSSIAN_SMOOTH_	parvar.h	/^  #define _INVERSE_GAUSSIAN_SMOOTH_ /;"	d
 _RETURN_GRADIENT_	poisson.h	/^  #define _RETURN_GRADIENT_ /;"	d
@@ -169,7 +170,7 @@ smooth_R	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];
 smooth_field	fourier.c	/^void smooth_field(float *d, double boxsize, int ngrid, int smooth_type, $/;"	f
 smooth_type	parvar.h	/^  char *smooth_type, *test_fname;$/;"	m	struct:simulation_info
 smooth_type_flag	parvar.h	/^  int smooth_type_flag;$/;"	m	struct:simulation_info
-test_displacement	test_likelihood.c	/^void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init) {$/;"	f
+test_displacement	test_likelihood.c	/^void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, $/;"	f
 test_fname	parvar.h	/^  char *smooth_type, *test_fname;$/;"	m	struct:simulation_info
 testing_fftw	test_driver.c	/^void testing_fftw(SimInfo *s, float *d, float *phi, float *phi_i, float *phi_ij, int fft_return_type){$/;"	f
 time	gadget_read_snapshot.c	/^  double time;$/;"	m	struct:io_header_1	file:
