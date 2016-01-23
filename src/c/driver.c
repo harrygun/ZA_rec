@@ -195,7 +195,7 @@
       char *likeli_test_fname;
 
       do_likelihood_testing=iniparser_getboolean(dict, "Rect:do_likelihood_testing", INIFALSE);
-      likeli_test_fname=iniparser_getstring(dict,"Rect:Likelihood_test_fname", "y.dat");
+      likeli_test_fname=iniparser_getstring(dict,"Rect:likelihood_test_fname", "y.dat");
 
       /*-----------------------------------------------------------------------*/
     /*-----     End of initialization.    ------*/

@@ -53,7 +53,7 @@ prog_control={
     'py_part_position_check':  False,
     #-------------------------------#
     'do_likelihood_testing':   True,
-    'Likelihood_test_fname':   'x.dat'
+    'likelihood_test_fname':   'x.dat',
     }
 
 
@@ -72,17 +72,15 @@ if __name__=='__main__':
 
 
     if (p.do_likelihood_testing==True):
-        print 'likelihood fname:', p.Likelihood_test_fname
-
-	quit()
+        print 'likelihood fname:', p.likelihood_test_fname
 
         # ->> import testing data <<- #
-        dd=rd.rblock(p.Likelihood_test_fname, p.ngrid**3*6, \
+        dd=rd.rblock(p.likelihood_test_fname, p.ngrid**3*6, \
 	             dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
         # ->> make plots <<- #
-        nplt, ncol = 2, 2
+        nplt, ncol = 4, 2
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                      gap_size=0.5,return_figure=True)
         n_bin=500
@@ -91,7 +89,12 @@ if __name__=='__main__':
         for i in range(3):
             ax[0].hist(disp[i].flatten(), bins=n_bin, range=[-20,20], \
 	               histtype='step', color=color[i])
-
+            ax[1].hist(disp_model[i].flatten(), bins=n_bin, \
+	             range=[-20,20], histtype='step', color=color[i])
+            ax[2].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
+	             range=[-20,20], histtype='step', color=color[i])
+            ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
+	             range=[-20,20], histtype='step', color=color[i])
 
 	pl.tight_layout()
 	pl.show()

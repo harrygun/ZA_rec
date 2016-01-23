@@ -50,7 +50,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   get_real_displacement(s, p, disp, fname_part_init);
 
   // ->> obtain model displacement <<- //
-  char *model_type="ZA";
+  char *model_type="2LPT";  //"ZA";
   get_model_displacement(s, p, d, disp_model, model_type);
 
 

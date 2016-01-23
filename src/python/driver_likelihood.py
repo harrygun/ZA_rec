@@ -121,7 +121,7 @@ if __name__=='__main__':
 
 	disp_uni=pos-grid
 
-        if False:
+        if True:
 	    nplots=2
             ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
 	    n_bin=500
@@ -138,8 +138,10 @@ if __name__=='__main__':
 
             pl.show()
 
+        quit()
 
         # ->>  obtain ZA displacement <<- #
+    """
         rect_type='ZA_displaced_shifted'
 
         _dd_ = lrec.lag_rec_ZA(p, pos, delta, smooth_R=p.smooth_R, smooth_type=p.smooth_type, rect_type=rect_type)
@@ -203,7 +205,7 @@ if __name__=='__main__':
             pl.show()
 
 
-
+    """
 
 
     
