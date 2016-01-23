@@ -72,6 +72,9 @@ if __name__=='__main__':
 
 
     if (p.do_likelihood_testing==True):
+        print 'likelihood fname:', p.Likelihood_test_fname
+
+	quit()
 
         # ->> import testing data <<- #
         dd=rd.rblock(p.Likelihood_test_fname, p.ngrid**3*6, \
