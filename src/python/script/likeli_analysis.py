@@ -74,14 +74,20 @@ if __name__=='__main__':
     if (p.do_likelihood_testing==True):
 
         # ->> import testing data <<- #
-        dd=rd.rblock(p.Likelihood_test_fname, p.ngrid**3*6, dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
+        dd=rd.rblock(p.Likelihood_test_fname, p.ngrid**3*6, \
+	             dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
+        # ->> make plots <<- #
+        nplt, ncol = 2, 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+	                      gap_size=0.5,return_figure=True)
+        n_bin=500
+	color=['g', 'r', 'b']
 
-        nplt, ncol = 1, 1
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,gap_size=0.5,return_figure=True)
-
-        ax[0].loglog(ki_ori, pki_ori, 'y-')
+        for i in range(3):
+            ax[0].hist(disp[i].flatten(), bins=n_bin, range=[-20,20], \
+	               histtype='step', color=color[i])
 
 
 	pl.tight_layout()
