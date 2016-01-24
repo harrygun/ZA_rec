@@ -1,4 +1,5 @@
   #include <stdio.h>
+  #include <time.h>
   #include <stdlib.h>
   #include <math.h>
   #include <string.h>
@@ -40,13 +41,13 @@
   int main( int argc, char *argv[])  {
 
       int debug= 20, i, j, k, do_MPI=99;
+      clock_t t0, t1;
       char *ini_name;
 
       if(argc!=2)  //
         myerr("Input parameters file is needed.", FALSE);
 
         ini_name=argv[1];
-
 
 /*------------------------------------------------
             MPI initialization.
@@ -76,10 +77,12 @@
       if(mpi_rank!=0) 
         printf("%d Received parameter filename %s.\n", mpi_rank, ini_name);
 
-    #endif
+      if(mpi_rank==0) 
+        t0=clock();
 
-    #ifndef _MPI_
+    #else
       do_MPI = FALSE;
+      t0=clock();
     #endif
 
   /*--------------------------------------
@@ -323,7 +326,19 @@
     #ifdef _MPI_
       MPI_Finalize();
       //MPI_Barrier(MPI_COMM_WORLD);
+
+      if(mpi_rank==0)  {
+        t1=clock();
+        printf("running time: %dms", (int)((t1-t0)*1000/CLOCKS_PER_SEC));
+        fflush(stdout);
+	}
+
+    #else 
+      t1=clock();
+      printf("running time: %dms", (int)((t1-t0)*1000/CLOCKS_PER_SEC));
+      fflush(stdout);
     #endif
+
 
     }
 

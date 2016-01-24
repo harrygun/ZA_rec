@@ -121,7 +121,7 @@ if __name__=='__main__':
 
 	disp_uni=pos-grid
 
-        if True:
+        if False:
 	    nplots=2
             ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
 	    n_bin=500
@@ -136,6 +136,18 @@ if __name__=='__main__':
             ax[1].hist(disp_uni[...,2].flatten(), bins=n_bin, range=[-20,20], histtype='step', color='b')
 
 
+            pl.show()
+
+	if True:
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=1, 20
+            
+            ax[0].imshow(disp[axis,:,:,nsl]); 
+            ax[1].imshow(disp_uni[axis,:,:,nsl]); 
+            
+            pl.tight_layout()
             pl.show()
 
         quit()
