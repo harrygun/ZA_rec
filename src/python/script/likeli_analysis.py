@@ -80,24 +80,39 @@ if __name__=='__main__':
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
         # ->> make plots <<- #
-        nplt, ncol = 4, 2
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-	                      gap_size=0.5,return_figure=True)
-        n_bin=500
-	color=['g', 'r', 'b']
+	if False:
+            nplt, ncol = 4, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+	                          gap_size=0.5,return_figure=True)
+            n_bin=500
+	    color=['g', 'r', 'b']
 
-        for i in range(3):
-            ax[0].hist(disp[i].flatten(), bins=n_bin, range=[-20,20], \
-	               histtype='step', color=color[i])
-            ax[1].hist(disp_model[i].flatten(), bins=n_bin, \
-	             range=[-20,20], histtype='step', color=color[i])
-            ax[2].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
-	             range=[-20,20], histtype='step', color=color[i])
-            ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
-	             range=[-20,20], histtype='step', color=color[i])
+            for i in range(3):
+                ax[0].hist(disp[i].flatten(), bins=n_bin, range=[-20,20], \
+	                   histtype='step', color=color[i])
+                ax[1].hist(disp_model[i].flatten(), bins=n_bin, \
+	                 range=[-20,20], histtype='step', color=color[i])
+                ax[2].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
+	                 range=[-20,20], histtype='step', color=color[i])
+                ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
+	                 range=[-20,20], histtype='step', color=color[i])
 
-	pl.tight_layout()
-	pl.show()
+	    pl.tight_layout()
+	    pl.show()
+
+        if True:
+            # ->> show images <<- #
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=1, 20
+            
+            ax[0].imshow(disp[axis,:,:,nsl]); 
+            ax[1].imshow(disp_model[axis,:,:,nsl]); 
+            
+            pl.tight_layout()
+            pl.show()
+
 
 
 
