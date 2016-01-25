@@ -104,9 +104,17 @@ if __name__=='__main__':
     if p.do_likelihood_rec==True:
 
         # ->> obtain displacement field first <<- #
-        pos=dd[0].reshape(p.nbin,p.nbin,p.nbin,3)
+        pos=dd[0].reshape(p.nbin, p.nbin, p.nbin, 3)
+	print 'pos min/max:', pos.min(), pos.max()
+
+        pmax=p.boxsize/(int(p.nbin))*(p.nbin-1)
+	print 'pmax=', pmax
+	#->> 
 	pos_init=pos_init.reshape(pos.shape)
 	disp=pos-pos_init
+
+	disp[np.where(disp>pmax)]=disp[np.where(disp>pmax)]-pmax
+	disp[np.where(disp<-pmax)]=disp[np.where(disp<-pmax)]+pmax
 
 	print 'pos/pos_init/disp shape:', pos.shape, pos_init.shape, disp.shape
 	print 'disp: ', disp.min(), disp.max()
@@ -120,8 +128,11 @@ if __name__=='__main__':
 	print 'err: ', err.max(), err.min()
 
 	disp_uni=pos-grid
+	disp_uni[np.where(disp_uni>pmax)]=disp_uni[np.where(disp_uni>pmax)]-pmax
+	disp_uni[np.where(disp_uni<-pmax)]=disp_uni[np.where(disp_uni<-pmax)]+pmax
 
-        if False:
+
+        if True:
 	    nplots=2
             ax=mpl.mysubplots(nplots, ncol_max=2, subp_size=5)
 	    n_bin=500
@@ -142,10 +153,16 @@ if __name__=='__main__':
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
-            axis, nsl=1, 20
+            axis, nsl=0, 20
             
-            ax[0].imshow(disp[axis,:,:,nsl]); 
-            ax[1].imshow(disp_uni[axis,:,:,nsl]); 
+            cb1=ax[0].imshow(disp[:,:,nsl,axis])
+            cb2=ax[1].imshow(disp_uni[:,:,nsl,axis])
+
+            #cb1=ax[0].imshow(pos[:,:,nsl,axis])
+            #cb2=ax[1].imshow(pos_init[:,:,nsl,axis])
+
+	    #pl.colorbar(cb1)
+	    #pl.colorbar(cb2)
             
             pl.tight_layout()
             pl.show()

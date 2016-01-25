@@ -107,8 +107,9 @@ if __name__=='__main__':
             	                      gap_size=0.5,return_figure=True)
             axis, nsl=1, 20
             
-            ax[0].imshow(disp[axis,:,:,nsl]); 
-            ax[1].imshow(disp_model[axis,:,:,nsl]); 
+            ax[0].imshow(disp[axis,:,:,nsl])
+            ax[1].imshow(disp_model[axis,:,:,nsl])
+
             
             pl.tight_layout()
             pl.show()

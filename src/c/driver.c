@@ -259,13 +259,27 @@
     if(do_likelihood_testing==TRUE){
       printf("Do Likelihood testing.\n"); fflush(stdout);
       test_displacement(&s, p, d, fname_pinit, likeli_test_fname);
-      abort();
+
+      // ->> free <<- //
+      iniparser_freedict(dict);
+      myinterp_free(power); free(power);
+      free(p); free(d);
+      free(s.pmin); free(s.pmax); free(s.dpart);
+
+      goto stop;
       }
 
     if(do_fftw_testing==TRUE) {
       printf("Do FFTW testing.\n"); fflush(stdout);
       fftw_tester(&s, d, fftw_return_type, fftw_test_fname);
-      abort();
+
+      // ->> free <<- //
+      iniparser_freedict(dict);
+      myinterp_free(power); free(power);
+      free(p); free(d);
+      free(s.pmin); free(s.pmax); free(s.dpart);
+
+      goto stop;
       }
 
     /*-----------------------------------------------------
@@ -323,19 +337,21 @@
       free(d_shift); free(d_disp); free(drec);
       }
 
+
+    stop:
     #ifdef _MPI_
       MPI_Finalize();
       //MPI_Barrier(MPI_COMM_WORLD);
 
       if(mpi_rank==0)  {
         t1=clock();
-        printf("running time: %dms", (int)((t1-t0)*1000/CLOCKS_PER_SEC));
+        printf("->> running time: %dsec\n\n", (int)((t1-t0)/CLOCKS_PER_SEC));
         fflush(stdout);
 	}
 
     #else 
       t1=clock();
-      printf("running time: %dms", (int)((t1-t0)*1000/CLOCKS_PER_SEC));
+      printf("->> running time: %dsec\n\n", (int)((t1-t0)/CLOCKS_PER_SEC));
       fflush(stdout);
     #endif
 
