@@ -23,6 +23,7 @@
   #include "cic.h"
   #include "poisson.h"
   #include "reconstruction_partmoving.h"
+  #include "fourier.h"
 
   #include "stat_model.h"
 
@@ -40,7 +41,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
 
   // ->> try to build the statistical model from real displacement <<- //
   //get_stat_disp_model(s, p, d, fname_part_init, NULL);
-
+  int i;
   float *disp, *disp_model;
 
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
@@ -49,16 +50,13 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   // ->> obtain real displacement <<- //
   get_real_displacement(s, p, disp, fname_part_init);
 
-  // ->> 
-  for(i=0; i<3; i++){
-    smooth_field(disp[], s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
-    }
-
+  // ->> smooth the field <<- //
+  for(i=0; i<3; i++)
+    smooth_field(&disp[i*s->ngrid*s->ngrid*s->ngrid], s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
 
   // ->> obtain model displacement <<- //
-  char *model_type="2LPT";  //"ZA";
+  char *model_type="ZA"; "2LPT";  //"ZA";
   get_model_displacement(s, p, d, disp_model, model_type);
-
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");

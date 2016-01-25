@@ -105,10 +105,14 @@ if __name__=='__main__':
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
-            axis, nsl=1, 20
+            axis, nsl=1, 50
             
-            ax[0].imshow(disp[axis,:,:,nsl])
-            ax[1].imshow(disp_model[axis,:,:,nsl])
+            #cb1=ax[0].imshow(disp[axis,:,:,nsl])
+            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
+            cb2=ax[1].imshow(disp_model[axis,15:-15,15:-15,nsl])
+
+	    #fig.colorbar(cb1) #, orientation='horizontal')
+	    #fig.colorbar(cb2) #, orientation='horizontal')
 
             
             pl.tight_layout()
