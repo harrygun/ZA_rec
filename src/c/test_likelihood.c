@@ -38,7 +38,6 @@
 
 void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                        char *fname_out) {
-
   // ->> try to build the statistical model from real displacement <<- //
   //get_stat_disp_model(s, p, d, fname_part_init, NULL);
   int i;
@@ -55,7 +54,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
     smooth_field(&disp[i*s->ngrid*s->ngrid*s->ngrid], s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
 
   // ->> obtain model displacement <<- //
-  char *model_type="ZA"; "2LPT";  //"ZA";
+  char *model_type="ZA"; //"2LPT";  //"ZA";
   get_model_displacement(s, p, d, disp_model, model_type);
 
   // ->> construct model <<- //
@@ -69,3 +68,5 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   free(disp); free(disp_model);
   return;
   }
+
+

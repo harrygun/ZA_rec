@@ -80,7 +80,7 @@ if __name__=='__main__':
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
         # ->> make plots <<- #
-	if False:
+	if True:
             nplt, ncol = 4, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
@@ -108,7 +108,7 @@ if __name__=='__main__':
             axis, nsl=1, 50
             
             #cb1=ax[0].imshow(disp[axis,:,:,nsl])
-            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
+            cb1=ax[0].imshow(disp[axis,nsl,15:-15,15:-15])
             cb2=ax[1].imshow(disp_model[axis,15:-15,15:-15,nsl])
 
 	    #fig.colorbar(cb1) #, orientation='horizontal')
