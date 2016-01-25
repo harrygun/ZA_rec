@@ -49,6 +49,12 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   // ->> obtain real displacement <<- //
   get_real_displacement(s, p, disp, fname_part_init);
 
+  // ->> 
+  for(i=0; i<3; i++){
+    smooth_field(disp[], s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
+    }
+
+
   // ->> obtain model displacement <<- //
   char *model_type="2LPT";  //"ZA";
   get_model_displacement(s, p, d, disp_model, model_type);
