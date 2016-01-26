@@ -44,7 +44,8 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
   disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
   // ->> obtain real displacement <<- //
-  get_real_displacement(s, p, disp, fname_part_init);
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, p, disp, fname_part_init, disp_calmethod);
 
   // ->> obtain model displacement <<- //
   char *model_type;

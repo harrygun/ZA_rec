@@ -40,18 +40,21 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
                        char *fname_out) {
   // ->> try to build the statistical model from real displacement <<- //
   //get_stat_disp_model(s, p, d, fname_part_init, NULL);
-  int i;
+  long long i, j, k;
   float *disp, *disp_model;
 
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
   // ->> obtain real displacement <<- //
-  get_real_displacement(s, p, disp, fname_part_init);
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, p, disp, fname_part_init, disp_calmethod);
+
 
   // ->> smooth the field <<- //
-  for(i=0; i<3; i++)
+  for(i=0; i<3; i++){
     smooth_field(&disp[i*s->ngrid*s->ngrid*s->ngrid], s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
+    }
 
   // ->> obtain model displacement <<- //
   char *model_type="ZA"; //"2LPT";  //"ZA";
