@@ -39,12 +39,13 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
   load_cita_simulation_position(fname_part_init, pinit, s->npart);
 
   // ->> box boundary <<- //
-  //float grid[3], xmin, xmax, dx;
-  //xmin=0.; xmax=s->boxsize;
-  //dx=(xmax-xmin)/(float)s->ngrid;
+  float grid[3], xmin, xmax, dx;
+  xmin=0.; xmax=s->boxsize;
+  dx=(xmax-xmin)/(float)s->ngrid;
 
   // ->>
   if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
+    printf("direct subtraction for real_displacement.\n"); fflush(stdout);
 
     #ifdef _OMP_
     #pragma omp parallel for private(ip,i)
@@ -56,10 +57,11 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
       }
     }
   else if( strcmp(disp_calmethod, "grid_wise")==0 ){
+    printf("grid-wise calculation for real_displacement.\n"); fflush(stdout);
 
     // ->> re-arrange data into grid <<- //
     #ifdef _OMP_
-    #pragma omp parallel for private(i,j,k,m,ip)
+    #pragma omp parallel for private(i,j,k,m,ip,grid)
     #endif
     for(i=0; i<s->ngrid; i++)
       for(j=0; j<s->ngrid; j++)
@@ -68,12 +70,16 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
           // ->> grid index <<- //
           ip=MemIdx3D(s->ngrid, i, j, k);
 
-          //grid[0]=xmin+i*dx;
-          //grid[1]=xmin+j*dx;
-          //grid[2]=xmin+k*dx;
+          grid[0]=xmin+i*dx;
+          grid[1]=xmin+j*dx;
+          grid[2]=xmin+k*dx;
 
-          for(m=0; m<3; m++)
+          for(m=0; m<3; m++){
             ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-pinit[ip].pos[m];
+            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-pinit[ip].pos[2-m];
+            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-grid[m];
+            }
+
           }
     }
 

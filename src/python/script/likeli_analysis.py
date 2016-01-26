@@ -81,21 +81,24 @@ if __name__=='__main__':
 
         # ->> make plots <<- #
 	if True:
-            nplt, ncol = 4, 2
+            nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
             n_bin=500
 	    color=['g', 'r', 'b']
 
+	    drange=[-20,20]
+
             for i in range(3):
-                ax[0].hist(disp[i].flatten(), bins=n_bin, range=[-20,20], \
-	                   histtype='step', color=color[i])
-                ax[1].hist(disp_model[i].flatten(), bins=n_bin, \
-	                 range=[-20,20], histtype='step', color=color[i])
-                ax[2].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
-	                 range=[-20,20], histtype='step', color=color[i])
-                ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
-	                 range=[-20,20], histtype='step', color=color[i])
+                ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
+	                   histtype='step', color=color[0])
+                ax[i].hist(disp_model[i].flatten(), bins=n_bin, \
+	                 range=drange, histtype='step', color=color[1])
+                ax[i].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
+	                 range=drange, histtype='step', color=color[2])
+
+                #ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
+	        #         range=drange, histtype='step', color=color[i])
 
 	    pl.tight_layout()
 	    pl.show()
@@ -108,8 +111,8 @@ if __name__=='__main__':
             axis, nsl=1, 50
             
             #cb1=ax[0].imshow(disp[axis,:,:,nsl])
-            cb1=ax[0].imshow(disp[axis,nsl,15:-15,15:-15])
-            cb2=ax[1].imshow(disp_model[axis,15:-15,15:-15,nsl])
+            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
+            cb2=ax[1].imshow(-disp_model[axis,15:-15,15:-15,nsl])
 
 	    #fig.colorbar(cb1) #, orientation='horizontal')
 	    #fig.colorbar(cb2) #, orientation='horizontal')
