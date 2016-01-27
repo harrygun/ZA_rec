@@ -94,7 +94,7 @@ if __name__=='__main__':
 
 	    for i in range(3):
                 k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
-                k2, pk2=ps.pk(disp_model[i], boxsize=p.boxsize)
+                k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
 
 		ax[i].plot(k1, pk2/pk1, lw1[i])
 
