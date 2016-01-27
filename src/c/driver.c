@@ -119,7 +119,7 @@
       //double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name;
       char *oden_fname, *main_dtype, *rec_name, *fname_pinit;
-      int do_density, save_odensity;
+      int do_density, import_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
       cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
@@ -168,6 +168,8 @@
 
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
+      import_density=iniparser_getboolean(dict, "Rect:import_density", INIFALSE);
+
       save_odensity=iniparser_getboolean(dict, "Rect:save_original_density", INIFALSE);
       oden_fname=iniparser_getstring(dict,"Rect:original_density_fname", "y.dat");
       rec_name=iniparser_getstring(dict,"Rect:reconstructed_fname", "y.dat");
@@ -244,14 +246,20 @@
         }
 
       }
-    else { 
-      // ->> otherwise, import density field <<- //
-      main_dtype="float";
-      printf("Importing the original density map directly, dtype=%s\n", main_dtype);
-      load_scalar_map(oden_fname, d, s.ngrid, main_dtype);
+    else {
+      if(import_density==TRUE){ 
+        // ->> otherwise, import density field <<- //
+        main_dtype="float";
+        printf("Importing the original density map directly, dtype=%s\n", main_dtype);
+        load_scalar_map(oden_fname, d, s.ngrid, main_dtype);
 
-      // ->> get particle boundary <<- //
-      get_particle_boundary(p, s.boxsize, s.npart, s.ngrid_xyz, s.pmin, s.pmax, s.dpart);
+        // ->> get particle boundary <<- //
+        get_particle_boundary(p, s.boxsize, s.npart, s.ngrid_xyz, s.pmin, s.pmax, s.dpart);
+        }
+      else{
+        printf("CAUTION: NO density map were estimated nor imported\n"); 
+	fflush(stdout);
+        }
       }
 
 

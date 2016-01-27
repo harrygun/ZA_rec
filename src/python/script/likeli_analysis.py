@@ -121,7 +121,7 @@ if __name__=='__main__':
 
 
         # ->> make plots <<- #
-	if False:
+	if True:
             nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
@@ -143,7 +143,7 @@ if __name__=='__main__':
 	    pl.tight_layout()
 	    pl.show()
 
-        if False:
+        if True:
             # ->> show images <<- #
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
