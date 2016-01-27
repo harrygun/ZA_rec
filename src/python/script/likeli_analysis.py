@@ -80,7 +80,27 @@ if __name__=='__main__':
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
 
-        _disp_correlation_=True
+        _disp_correlation_=False
+	_disp_transfer_ = True
+
+        if _disp_transfer_:
+	    # ->> calculate the transfer function of displacement field <<- #
+            nplt, ncol = 3, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+	                          gap_size=0.5,return_figure=True)
+
+	    lw1=['k-', 'r-', 'b-', 'g-']
+	    lw2=['k--', 'r--', 'b--', 'g--']
+
+	    for i in range(3):
+                k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
+                k2, pk2=ps.pk(disp_model[i], boxsize=p.boxsize)
+
+		ax[i].plot(k1, pk2/pk1, lw1[i])
+
+	    pl.show()
+
+
 	if _disp_correlation_:
             #->> calculate the correlation function between displacement <<- #
 
@@ -92,15 +112,10 @@ if __name__=='__main__':
 	    lw2=['k--', 'r--', 'b--', 'g--']
 
 	    for i in range(3):
-	        """
                 k_, pk_=ps.pk(disp[i], boxsize=p.boxsize)
 		ax[i].loglog(k_, pk_, lw1[i])
                 k_, pk_=ps.pk(disp_model[i], boxsize=p.boxsize)
 		ax[i].loglog(k_, pk_, lw2[i])
-		"""
-
-                k_, pk_=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
-		ax[i].plot(k_, pk_, lw1[i])
 
 	    pl.show()
 
