@@ -14,7 +14,7 @@ import genscript.read as rd
 import rect.misc.io as mio
 import rect.misc.cyth.cgalio as cg
 import rect.misc.cic as mcic
-#import rect.misc.ps as ps
+import rect.misc.ps as psor
 import rect.fourier.psxi as ps
 
 
@@ -79,8 +79,34 @@ if __name__=='__main__':
 	             dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
+
+        _disp_correlation_=True
+	if _disp_correlation_:
+            #->> calculate the correlation function between displacement <<- #
+
+            nplt, ncol = 3, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+	                          gap_size=0.5,return_figure=True)
+
+	    lw1=['k-', 'r-', 'b-', 'g-']
+	    lw2=['k--', 'r--', 'b--', 'g--']
+
+	    for i in range(3):
+	        """
+                k_, pk_=ps.pk(disp[i], boxsize=p.boxsize)
+		ax[i].loglog(k_, pk_, lw1[i])
+                k_, pk_=ps.pk(disp_model[i], boxsize=p.boxsize)
+		ax[i].loglog(k_, pk_, lw2[i])
+		"""
+
+                k_, pk_=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
+		ax[i].plot(k_, pk_, lw1[i])
+
+	    pl.show()
+
+
         # ->> make plots <<- #
-	if True:
+	if False:
             nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
@@ -102,7 +128,7 @@ if __name__=='__main__':
 	    pl.tight_layout()
 	    pl.show()
 
-        if True:
+        if False:
             # ->> show images <<- #
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
