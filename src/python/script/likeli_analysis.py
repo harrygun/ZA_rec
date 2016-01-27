@@ -80,7 +80,7 @@ if __name__=='__main__':
 	disp, disp_model = dd[:3,...], dd[3:,...]
 
 
-        _disp_correlation_=False
+        _disp_correlation_=True
 	_disp_transfer_ = True
 
         if _disp_transfer_:
