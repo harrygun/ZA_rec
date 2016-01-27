@@ -85,7 +85,7 @@ if __name__=='__main__':
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
             n_bin=500
-	    color=['g', 'r', 'b']
+	    color=['g', 'r', 'b', 'y']
 
 	    drange=[-20,20]
 
@@ -96,9 +96,8 @@ if __name__=='__main__':
 	                 range=drange, histtype='step', color=color[1])
                 ax[i].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
 	                 range=drange, histtype='step', color=color[2])
-
-                #ax[3].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
-	        #         range=drange, histtype='step', color=color[i])
+                ax[i].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
+	                 range=drange, histtype='step', color=color[3])
 
 	    pl.tight_layout()
 	    pl.show()
@@ -108,7 +107,7 @@ if __name__=='__main__':
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
-            axis, nsl=1, 50
+            axis, nsl=0, 100
             
             #cb1=ax[0].imshow(disp[axis,:,:,nsl])
             cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
