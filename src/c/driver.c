@@ -257,7 +257,7 @@
         get_particle_boundary(p, s.boxsize, s.npart, s.ngrid_xyz, s.pmin, s.pmax, s.dpart);
         }
       else{
-        printf("CAUTION: NO density map were estimated nor imported\n"); 
+        printf("\n->> CAUTION: NO density map were estimated nor imported <<-\n\n"); 
 	fflush(stdout);
         }
       }

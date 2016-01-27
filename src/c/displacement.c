@@ -84,7 +84,6 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
     }
 
 
-
   free(pinit);
   return;
   }
@@ -93,8 +92,15 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
 
 
 
-void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *model_disp_type){
+void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *fname_part_init, char *model_disp_type){
+
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  load_cita_simulation_position(fname_part_init, pinit, s->npart);
     
+  double dmean;
+  // ->> estimate the density field from initial field <<- //
+  dmean=cic_density(pinit, d, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz, s); 
+
 
   if(strcmp(model_disp_type, "ZA")==0 ) {
     za_displacement(s, d, disp);
@@ -104,6 +110,9 @@ void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, cha
     }
   else abort();
 
+
+
+  free(pinit);
   return;
   }
 

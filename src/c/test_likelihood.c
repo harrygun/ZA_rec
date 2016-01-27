@@ -60,13 +60,14 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
 
   // ->> obtain model displacement <<- //
   char *model_type="ZA"; //"2LPT";  //"ZA";
-  get_model_displacement(s, p, d, disp_model, model_type);
+  get_model_displacement(s, p, d, disp_model, fname_part_init, model_type);
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");
 
   fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(d, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
 
   fclose(fp);
 

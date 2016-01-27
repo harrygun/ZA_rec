@@ -74,14 +74,17 @@ if __name__=='__main__':
     if (p.do_likelihood_testing==True):
         print 'likelihood fname:', p.likelihood_test_fname
 
+        z_init = 100.
+
         # ->> import testing data <<- #
-        dd=rd.rblock(p.likelihood_test_fname, p.ngrid**3*6, \
-	             dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
-	disp, disp_model = dd[:3,...], dd[3:,...]
+        dd=rd.rblock(p.likelihood_test_fname, p.ngrid**3*7, \
+	             dtype='float').reshape(7,p.ngrid,p.ngrid,p.ngrid)
+	disp, disp_model = dd[:3,...], dd[3:,...]/(p.pk.D1(1.+z_init))
+	d=dd[-1,...]
 
 
         _disp_correlation_=True
-	_disp_transfer_ = True
+	_disp_transfer_ = False
 
         if _disp_transfer_:
 	    # ->> calculate the transfer function of displacement field <<- #
@@ -145,7 +148,7 @@ if __name__=='__main__':
 
         if True:
             # ->> show images <<- #
-            nplt, ncol = 2, 2
+            nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
             axis, nsl=0, 100
@@ -153,6 +156,8 @@ if __name__=='__main__':
             #cb1=ax[0].imshow(disp[axis,:,:,nsl])
             cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
             cb2=ax[1].imshow(-disp_model[axis,15:-15,15:-15,nsl])
+
+            cb2=ax[2].imshow(d[15:-15,15:-15,nsl])
 
 	    #fig.colorbar(cb1) #, orientation='horizontal')
 	    #fig.colorbar(cb2) #, orientation='horizontal')
