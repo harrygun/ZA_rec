@@ -67,7 +67,13 @@ if __name__=='__main__':
 
     root=p.folder
 
+    _do_some_test_=True
+    if _do_some_test_:
 
+
+
+        p.finalize()
+	quit()
 
 
 
@@ -79,7 +85,7 @@ if __name__=='__main__':
         # ->> import testing data <<- #
         dd=rd.rblock(p.likelihood_test_fname, p.ngrid**3*7, \
 	             dtype='float').reshape(7,p.ngrid,p.ngrid,p.ngrid)
-	disp, disp_model = dd[:3,...], dd[3:,...]/(p.pk.D1(1.+z_init))
+	disp, disp_model = dd[:3,...], dd[3:,...]
 	d=dd[-1,...]
 
 
