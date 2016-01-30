@@ -114,8 +114,8 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
                            s->ngrid, s->smooth_type_flag, s->smooth_R);
     }
 
-  // 
-
+  // ->>  displacement <<- //
+  
 
 
   // ->> obtain model displacement <<- //
