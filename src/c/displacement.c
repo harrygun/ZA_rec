@@ -30,16 +30,14 @@
 
 
 
-void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp, 
-                           char *fname_part_init, char *disp_calmethod) {
+void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *disp, 
+                           char *disp_calmethod) {
   // ->> get real displacement field from simulation directly <<- //
 
   long long ip, i, j, k, m;
-  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
-  load_cita_simulation_position(fname_part_init, pinit, s->npart);
+  float grid[3], xmin, xmax, dx;
 
   // ->> box boundary <<- //
-  float grid[3], xmin, xmax, dx;
   xmin=0.; xmax=s->boxsize;
   dx=(xmax-xmin)/(float)s->ngrid;
 
@@ -75,16 +73,15 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, float *disp,
           grid[2]=xmin+k*dx;
 
           for(m=0; m<3; m++){
-            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-pinit[ip].pos[m];
+            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-pinit[ip].pos[m];
             //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-pinit[ip].pos[2-m];
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-grid[m];
+            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-grid[m];
             }
 
           }
     }
 
 
-  free(pinit);
   return;
   }
 

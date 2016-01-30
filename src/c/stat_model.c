@@ -39,13 +39,21 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
                           char *stat_disp_model_type) {
   // ->>  <<- //
   float *disp, *disp_model;
+  Pdata_pos *pinit;
 
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
   // ->> obtain real displacement <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, p, disp, fname_part_init, disp_calmethod);
+
+  if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
+    // ->> load initial position <<- //
+    pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+    load_cita_simulation_position(fname_part_init, pinit, s->npart);
+    }
+  get_real_displacement(s, p, pinit, disp, disp_calmethod);
+
 
   // ->> obtain model displacement <<- //
   char *model_type;

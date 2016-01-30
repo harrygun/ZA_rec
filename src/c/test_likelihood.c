@@ -42,13 +42,21 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   //get_stat_disp_model(s, p, d, fname_part_init, NULL);
   int i;
   float *disp, *disp_model;
+  Pdata_pos *pinit;
 
   disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
   // ->> obtain real displacement <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, p, disp, fname_part_init, disp_calmethod);
+
+  if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
+    // ->> load initial position <<- //
+    pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+    load_cita_simulation_position(fname_part_init, pinit, s->npart);
+    }
+
+  get_real_displacement(s, p, pinit, disp, disp_calmethod);
 
 
   // ->> smooth the field <<- //
@@ -71,8 +79,61 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
 
   fclose(fp);
 
+
+  // ->> free <<- //
   free(disp); free(disp_model);
+  if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
+    free(pinit); }
+
   return;
   }
 
 
+
+
+void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
+                          char *fname_out) {
+  int i;
+  float *disp_init, *disp_model;
+  double dmean;
+  disp_init=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+
+
+  // ->> get displacement field differently <<- //
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  load_cita_simulation_position(fname_part_init, pinit, s->npart);
+
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+
+
+  // ->> smooth the field <<- //
+  for(i=0; i<3; i++) {
+    smooth_field(&disp_init[i*s->ngrid*s->ngrid*s->ngrid], s->boxsize, 
+                           s->ngrid, s->smooth_type_flag, s->smooth_R);
+    }
+
+  // 
+
+
+
+  // ->> obtain model displacement <<- //
+  dmean=cic_density(p, d, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz, s); 
+  za_displacement(s, d, disp_model);
+
+  // ->> construct model <<- //
+  FILE *fp=fopen(fname_out, "wb");
+
+  fwrite(disp_init, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(d, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
+
+  fclose(fp);
+
+  // ->> free <<- //
+  free(disp_init); free(disp_model);
+  free(pinit);
+
+  return;
+  }

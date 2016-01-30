@@ -83,65 +83,19 @@ if __name__=='__main__':
     df=rd.rblock(p.original_density_fname, p.ngrid**3, \
                  dtype='float').reshape(p.ngrid, p.ngrid, p.ngrid)
 
-    # define controllers:  
-    _density_ZA_cor_ = False
-    _density_propagator_ = False 
-    _density_map_cmp_ = False
 
     # ->> define some other useful variables <<- #
     lw1=['k-', 'r-', 'b-', 'g-']
 
 
     # ->> get the divergence of the displacement field <<- #
+    
+    #->> 
+    if False:
 
-    if _density_propagator_:
-        #->> 
-        nplt, ncol = 2, 2
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-	                          gap_size=0.5,return_figure=True)
-
-	di=di[1:,1:,1:]
-	df=df[1:,1:,1:]
-
-        k1, ck1=psor.cross(di, df, boxsize=p.boxsize)
-        k2, pk2=psor.pk(di, boxsize=p.boxsize)
-        k3, pk3=psor.pk(df, boxsize=p.boxsize)
-
-	#print 'len:', k1.shape, ck1.shape, k2.shape, pk2.shape, k3.shape, pk3.shape
-
-	ax[0].semilogx(k1, ck1/np.sqrt(pk2[1:]*pk3[1:]))
-	#ax[0].semilogx(k1, ck1/np.sqrt(pk2*pk3))
-
-	ax[1].loglog(k1, ck1,'k-')
-	ax[1].loglog(k2, pk2,'r-')
-	ax[1].loglog(k3, pk3,'b-')
-
-	pl.show()
-
-
-    if _density_map_cmp_:
-        nplt, ncol = 2, 2
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-            	                      gap_size=0.5,return_figure=True)
-
-
-        nsl=20
-        #cb=ax[0].imshow(di[:,:,nsl])
-
-	print 'di:', di[0,0,0]
-
-        ax[0].imshow(di[1:,1:,nsl])
-        ax[1].imshow(df[:,:,nsl]-df.min()+1e-3, norm=colors.LogNorm())
-
-
-        pl.show()
-
-
-    if _density_ZA_cor_:
         nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
-        tt=np.zeros(di.shape)
 
         for i in range(3):
 	  #tt+=disp[i]*disp[i]
@@ -149,7 +103,7 @@ if __name__=='__main__':
 
 	tt=np.sqrt(tt)
 
-        k1, ck1=psor.cross(tt, di, boxsize=p.boxsize)
+        k1, ck1=psor.cross(disp[0], d, boxsize=p.boxsize)
         k2, pk2=psor.pk(di, boxsize=p.boxsize)
 
 
@@ -157,6 +111,19 @@ if __name__=='__main__':
         pl.tight_layout()
         pl.show()
 
+
+    if True:
+        nplt, ncol = 2, 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+
+        nsl=20
+	axis=0
+
+        ax[0].imshow(disp[axis,:,:,nsl])
+        ax[1].imshow(-disp_model[axis,:,:,nsl])
+
+        pl.show()
 
 
 
