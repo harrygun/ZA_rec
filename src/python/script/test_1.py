@@ -91,25 +91,28 @@ if __name__=='__main__':
     # ->> get the divergence of the displacement field <<- #
     
     #->> 
-    if False:
+    if True:
 
-        nplt, ncol = 1, 1
+        nplt, ncol = 3, 2
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
 
+
+        lw1=['k-', 'r-', 'b-', 'g-']
+        lw2=['k--', 'r--', 'b--', 'g--']
+        
         for i in range(3):
-	  #tt+=disp[i]*disp[i]
-	  tt+=disp_model[i]*disp_model[i]
+            #k_, pk_=ps.pk(disp[i], boxsize=p.boxsize)
+            #ax[i].loglog(k_, pk_, lw1[i])
+            #k_, pk_=ps.pk(disp_model[i], boxsize=p.boxsize)
+            #ax[i].loglog(k_, pk_, lw2[i])
 
-	tt=np.sqrt(tt)
-
-        k1, ck1=psor.cross(disp[0], d, boxsize=p.boxsize)
-        k2, pk2=psor.pk(di, boxsize=p.boxsize)
-
-
-        ax[0].semilogx(k1, ck1/pk2, lw1[i])
-        pl.tight_layout()
+            k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
+            k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
+            ax[i].plot(k1, pk2/pk1, lw1[i])
+        
         pl.show()
+
 
 
     if True:
@@ -118,7 +121,7 @@ if __name__=='__main__':
             	                      gap_size=0.5,return_figure=True)
 
         nsl=20
-	axis=0
+	axis=2
 
         ax[0].imshow(disp[axis,:,:,nsl])
         ax[1].imshow(-disp_model[axis,:,:,nsl])
