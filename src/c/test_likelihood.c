@@ -139,6 +139,9 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
   }
 
 
+
+
+
 //->>
 void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                         char *fname_out) {
@@ -157,7 +160,6 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
   char *disp_calmethod="grid_wise";
   get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
 
-  
 
 
 
@@ -174,3 +176,6 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
 
   return;
   }
+
+
+
