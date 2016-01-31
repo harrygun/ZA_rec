@@ -210,7 +210,7 @@
             // ->>     Importing data     <<- //
     -----------------------------------------------------*/
     //  ->> loading particle data <<- //
-    Pdata_pos *p=(Pdata_pos *)malloc(s.npart*sizeof(Pdata));
+    Pdata_pos *p=(Pdata_pos *)malloc(s.npart*sizeof(Pdata_pos));
     load_cita_simulation_position(particle_fname, p, s.npart);
 
     // ->> initialize the boundary of particles <<- //

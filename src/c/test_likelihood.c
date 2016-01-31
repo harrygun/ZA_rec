@@ -101,7 +101,7 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
 
 
   // ->> get displacement field differently <<- //
-  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
   load_cita_simulation_position(fname_part_init, pinit, s->npart);
 
   char *disp_calmethod="grid_wise";
@@ -115,7 +115,7 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
     }
 
   // ->>  displacement <<- //
-  
+   
 
 
   // ->> obtain model displacement <<- //
@@ -134,6 +134,43 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
   // ->> free <<- //
   free(disp_init); free(disp_model);
   free(pinit);
+
+  return;
+  }
+
+
+//->>
+void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
+                        char *fname_out) {
+  int i;
+  float *disp_init, *disp_model;
+  double dmean;
+  disp_init=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+
+
+  // ->> get displacement field differently <<- //
+  Pdata *pinit=(Pdata *)malloc(s->npart*sizeof(Pdata));
+  load_cita_simulation(fname_part_init, pinit, s->npart);
+
+  // ->> 
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+
+  
+
+
+
+  // ->> construct model <<- //
+  FILE *fp=fopen(fname_out, "wb");
+
+  fwrite(disp_init, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(d, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
+
+  fclose(fp);
+
+  // ->> free <<- //
 
   return;
   }
