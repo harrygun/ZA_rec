@@ -172,7 +172,9 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
   get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
 
   // ->> obtain model displacement <<- //
-  dmean=cic_density(pinit, d, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz, s); 
+  Pdata_pos *pos_init=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
+  load_cita_simulation_position(fname_part_init, pos_init, s->npart);
+  dmean=cic_density(pos_init,d,s->boxsize,s->particle_mass, s->npart, s->ngrid_xyz, s); 
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");
@@ -185,7 +187,7 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
 
   // ->> free <<- //
   free(disp_init); free(vel);
-  free(pinit);
+  free(pinit);  free(pos_init);
 
   return;
   }
