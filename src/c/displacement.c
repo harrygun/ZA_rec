@@ -41,6 +41,18 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   xmin=0.; xmax=s->boxsize;
   dx=(xmax-xmin)/(float)s->ngrid;
 
+
+  double *pmin, *pmax, *dpart;
+  pmin=(double *)malloc(3*sizeof(double));
+  pmax=(double *)malloc(3*sizeof(double));
+  dpart=(double *)malloc(3*sizeof(double));
+
+  get_particle_boundary(p, s->boxsize, s->npart, s->ngrid_xyz, pmin, pmax, dpart);
+  printf("->> xmin %f ymin %f zmin %f\n",pmin[0], pmin[1], pmin[2]);
+  printf("->> xmax %f ymax %f zmax %f\n",pmax[0], pmax[1], pmax[2]);
+
+
+
   // ->>
   if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
     printf("direct subtraction for real_displacement.\n"); fflush(stdout);
@@ -73,11 +85,8 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
           grid[2]=xmin+k*dx;
 
           for(m=0; m<3; m++){
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-pinit[ip].pos[m];
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-pinit[ip].pos[2-m];
-	    
-            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-grid[m];
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-grid[m];
+            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[m]-grid[2-m];
+            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=p[ip].pos[2-m]-grid[m];
             }
 
           }

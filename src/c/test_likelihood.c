@@ -24,6 +24,7 @@
   #include "poisson.h"
   #include "reconstruction_partmoving.h"
   #include "fourier.h"
+  #include "backward_displacement.h"
 
   #include "stat_model.h"
 
@@ -93,6 +94,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
 
 void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *fname_out) {
+  // ->> direct estimation of displacement field <<- //
   int i;
   float *disp_init, *disp_model;
   double dmean;
@@ -142,12 +144,12 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
 
 
 
-// ->> <<- //
+// ->>  <<- //
 void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                         char *fname_out) {
   int i;
   long long ip;
-  float *disp_init, *vel;
+  float *disp_init, *vel, *disp_model;
   double dmean;
   disp_init=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
   vel=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
@@ -167,19 +169,27 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
       }
     }
 
-  // ->>  grid-wise displacement field <<- //
-  char *disp_calmethod="grid_wise";
-  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
-
   // ->> obtain model displacement <<- //
   Pdata_pos *pos_init=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
   load_cita_simulation_position(fname_part_init, pos_init, s->npart);
-  dmean=cic_density(pos_init,d,s->boxsize,s->particle_mass, s->npart, s->ngrid_xyz, s); 
+  dmean=cic_density(pos_init, d, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz, s); 
+
+
+  // ->>  grid-wise displacement field <<- //
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, p, pos_init, disp_init, disp_calmethod);
+
+
+  // ->> ZA <<- //
+  //disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  //s->smooth_R=0.;
+  //za_displacement(s, d, disp_model);
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");
 
   fwrite(disp_init, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  //fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   fwrite(vel, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   fwrite(d, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
 

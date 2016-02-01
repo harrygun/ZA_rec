@@ -108,7 +108,9 @@ if __name__=='__main__':
 
             k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
             k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
-            ax[i].plot(k1, pk2/pk1, lw1[i])
+            k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
+
+            ax[i].plot(k1, pk1/np.sqrt(pk3*pk2), lw1[i])
         
         pl.show()
 
@@ -119,14 +121,16 @@ if __name__=='__main__':
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
 
-        nsl=20
+        nsl=200
 	axis=2
 
-        ax[0].imshow(disp[axis,:,:,nsl])
-        ax[1].imshow(-disp_model[axis,:,:,nsl])
+        cb1=ax[0].imshow(disp[axis,:,:,nsl])
+        cb2=ax[1].imshow(-disp_model[axis,:,:,nsl])
+
+	#pl.colorbar(cb1)
+	#pl.colorbar(cb2)
 
         pl.show()
-
 
 
 
