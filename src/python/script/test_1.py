@@ -97,7 +97,6 @@ if __name__=='__main__':
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
 	                          gap_size=0.5,return_figure=True)
 
-
         lw1=['k-', 'r-', 'b-', 'g-']
         lw2=['k--', 'r--', 'b--', 'g--']
         

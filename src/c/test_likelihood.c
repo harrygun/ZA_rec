@@ -142,37 +142,50 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
 
 
 
-//->>
+// ->> <<- //
 void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                         char *fname_out) {
   int i;
-  float *disp_init, *disp_model;
+  long long ip;
+  float *disp_init, *vel;
   double dmean;
   disp_init=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
-  disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  vel=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
 
 
   // ->> get displacement field differently <<- //
   Pdata *pinit=(Pdata *)malloc(s->npart*sizeof(Pdata));
   load_cita_simulation(fname_part_init, pinit, s->npart);
 
-  // ->> 
+  // ->>
+  #ifdef _OMP_
+  #pragma omp parallel for private(ip,i)
+  #endif
+  for(ip=0; ip<s->npart; ip++) {
+    for(i=0; i<3; i++) {
+      ArrayAccess2D_n2(vel, 3, s->npart, i, ip)=pinit[ip].vel[i];
+      }
+    }
+
+  // ->>  grid-wise displacement field <<- //
   char *disp_calmethod="grid_wise";
   get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
 
-
-
+  // ->> obtain model displacement <<- //
+  dmean=cic_density(pinit, d, s->boxsize, s->particle_mass, s->npart, s->ngrid_xyz, s); 
 
   // ->> construct model <<- //
   FILE *fp=fopen(fname_out, "wb");
 
   fwrite(disp_init, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
-  fwrite(disp_model, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(vel, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   fwrite(d, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
 
   fclose(fp);
 
   // ->> free <<- //
+  free(disp_init); free(vel);
+  free(pinit);
 
   return;
   }
