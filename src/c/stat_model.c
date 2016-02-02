@@ -73,17 +73,20 @@ Interpar *transfer_func_init(char *fname ) {
 
   // ->> initialize <<- //
   int i, line;
-  line = countFILEline(fp);
+  line=countFILEline(fp);
 
-  double *p, *k;
-  p= dvec(line);
-  k= dvec(line);
+  double *k, *tfk;
+  k=(double *)malloc(line*sizeof(double));
+  tfk=(double *)malloc(line*sizeof(double));
+
 
   for(i=0; i<line; i++)
     fscanf(fp, "%lg  %lg\n",&k[i], &p[i]);
 
       myinterp_init( power, k, p, line);
 
+
+  free(k); free(tfk);
   fclose(fp);
 
   return tf;

@@ -25,7 +25,7 @@ import rect.misc.power_update as pu
 
 
 
-
+"""
 def disp_likelihood_test(p):
 
     print 'likelihood fname:', p.likelihood_test_fname
@@ -125,7 +125,7 @@ def disp_likelihood_test(p):
 
 
     return
-
+"""
 
 
 
@@ -228,7 +228,7 @@ if __name__=='__main__':
 
 
         # ->> save some <<- #
-	ddd=np.array([k1,cr])
+	ddd=np.array([cd_k,cd_p])
 	print 'R(k) shape:', ddd.shape
 	ddd.tofile(p.disp_transfunc_fname)
 

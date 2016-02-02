@@ -83,6 +83,29 @@ if __name__=='__main__':
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
 
 
+        for i in range(3):
+
+            k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
+            k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
+            k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
+
+	    cr=pk1/np.sqrt(pk3*pk2)
+
+	    cd_k.append(k1)
+	    cd_p.append(cr)
+
+            ax[0].semilogx(k1, pk1/np.sqrt(pk3*pk2), lw1[i])
+	    ax[0].set_ylim([0, 1.05])
+
+
+        # ->> save some <<- #
+	ddd=np.array([k1,cr])
+	print 'R(k) shape:', ddd.shape
+
+	raise Exception('!!! write file differently')
+	ddd.tofile(p.disp_transfunc_fname)
+
+
 
 
 
