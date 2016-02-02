@@ -13,6 +13,7 @@
   #include "power.h"
   #include "cospara.h"
   #include "myinterpolate.h"
+  #include "readfile.h"
 
   #include "parvar.h"
   #include "io.h"
@@ -65,12 +66,27 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
 
 
-void transfer_func_init(Interpar ) {
+Interpar *transfer_func_init(char *fname ) {
   // ->> import transfer function and interpolate <<- //
+  Interpar *tf= (Interpar *)malloc(sizeof(Interpar));
+  FILE *fp = fopen(fname, "r"); 
 
-      Interpar *power = (Interpar *)malloc(sizeof(Interpar));
+  // ->> initialize <<- //
+  int i, line;
+  line = countFILEline(fp);
 
-  return;
+  double *p, *k;
+  p= dvec(line);
+  k= dvec(line);
+
+  for(i=0; i<line; i++)
+    fscanf(fp, "%lg  %lg\n",&k[i], &p[i]);
+
+      myinterp_init( power, k, p, line);
+
+  fclose(fp);
+
+  return tf;
   }
 
 
