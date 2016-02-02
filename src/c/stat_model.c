@@ -65,9 +65,10 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
 
 
-void transfer_func_init( ) {
+void transfer_func_init(Interpar ) {
   // ->> import transfer function and interpolate <<- //
 
+      Interpar *power = (Interpar *)malloc(sizeof(Interpar));
 
   return;
   }
