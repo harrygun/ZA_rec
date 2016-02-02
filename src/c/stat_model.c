@@ -32,6 +32,13 @@
 
 
 
+void transfer_func_init() {
+
+
+  return;
+  }
+
+
 
 
 
