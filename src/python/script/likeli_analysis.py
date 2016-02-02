@@ -45,6 +45,8 @@ param_dict={
     'py_import_density_field':   True,
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'cal_rect_transfer_func':    True,
+    'disp_transfunc_fname':   'rk.dat',
+    'disp_field_fname':       'a.dat',
     }
 
 prog_control={
@@ -74,7 +76,14 @@ if __name__=='__main__':
 
 
     if (p.cal_rect_transfer_func):
-        
+        dd=rd.rblock(p.disp_field_fname, p.ngrid**3*6, dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
+
+	#->> discard boundary data <<- #
+        bd=10
+        disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
+
+
+
 
 
     if (p.do_likelihood_testing==True):

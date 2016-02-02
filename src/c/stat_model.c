@@ -32,7 +32,41 @@
 
 
 
-void transfer_func_init() {
+void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d, 
+                                 char *fname_part_init, char *fname_out) {
+  // ->> output displacement field for calculating transfer function <<- //
+  int i;
+  float *disp_init, *disp;
+  disp_init=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+  disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+
+  // ->> get displacement field differently <<- //
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
+  load_cita_simulation_position(fname_part_init, pinit, s->npart);
+
+  // ->>  get initial displacement <<- //
+  char *disp_calmethod="grid_wise";
+  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+
+  // ->>  get final displacement <<- //
+  get_real_displacement(s, p, pinit, disp, disp_calmethod);
+
+  // ->> output <<- //
+  FILE *fp=fopen(fname_out, "wb");
+  fwrite(disp_init, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fclose(fp);
+
+  // ->> free <<- //
+  free(disp_init); free(disp);
+  free(pinit);
+  return;
+  }
+
+
+
+void transfer_func_init( ) {
+  // ->> import transfer function and interpolate <<- //
 
 
   return;
