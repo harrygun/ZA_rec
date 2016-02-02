@@ -17,10 +17,13 @@ import rect.misc.cic as mcic
 import rect.misc.ps as psor
 import rect.fourier.psxi as ps
 
-
-
 import rect.misc.file_import as fimp
 import rect.misc.power_update as pu
+
+import likeli_test as ltst
+
+
+
 
 
 
@@ -41,6 +44,7 @@ param_dict={
     'particle_file_name':  'z.dat',
     'py_import_density_field':   True,
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
+    'cal_rect_transfer_func':    True,
     }
 
 prog_control={
@@ -67,111 +71,13 @@ if __name__=='__main__':
 
     root=p.folder
 
-    _do_some_test_=True
-    if _do_some_test_:
 
 
-
-        p.finalize()
-	quit()
-
+    if (p.cal_rect_transfer_func):
+        
 
 
     if (p.do_likelihood_testing==True):
-        print 'likelihood fname:', p.likelihood_test_fname
-
-        z_init = 100.
-
-        # ->> import testing data <<- #
-        dd=rd.rblock(p.likelihood_test_fname, p.ngrid**3*7, \
-	             dtype='float').reshape(7,p.ngrid,p.ngrid,p.ngrid)
-	disp, disp_model = dd[:3,...], dd[3:,...]
-	d=dd[-1,...]
-
-
-        _disp_correlation_=True
-	_disp_transfer_ = False
-
-        if _disp_transfer_:
-	    # ->> calculate the transfer function of displacement field <<- #
-            nplt, ncol = 3, 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-	                          gap_size=0.5,return_figure=True)
-
-	    lw1=['k-', 'r-', 'b-', 'g-']
-	    lw2=['k--', 'r--', 'b--', 'g--']
-
-	    for i in range(3):
-                k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
-                k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
-
-		ax[i].plot(k1, pk2/pk1, lw1[i])
-
-	    pl.show()
-
-
-	if _disp_correlation_:
-            #->> calculate the correlation function between displacement <<- #
-
-            nplt, ncol = 3, 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-	                          gap_size=0.5,return_figure=True)
-
-	    lw1=['k-', 'r-', 'b-', 'g-']
-	    lw2=['k--', 'r--', 'b--', 'g--']
-
-	    for i in range(3):
-                k_, pk_=ps.pk(disp[i], boxsize=p.boxsize)
-		ax[i].loglog(k_, pk_, lw1[i])
-                k_, pk_=ps.pk(disp_model[i], boxsize=p.boxsize)
-		ax[i].loglog(k_, pk_, lw2[i])
-
-	    pl.show()
-
-
-        # ->> make plots <<- #
-	if True:
-            nplt, ncol = 3, 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-	                          gap_size=0.5,return_figure=True)
-            n_bin=500
-	    color=['g', 'r', 'b', 'y']
-
-	    drange=[-20,20]
-
-            for i in range(3):
-                ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
-	                   histtype='step', color=color[0])
-                ax[i].hist(disp_model[i].flatten(), bins=n_bin, \
-	                 range=drange, histtype='step', color=color[1])
-                ax[i].hist((disp[i]+disp_model[i]).flatten(), bins=n_bin, \
-	                 range=drange, histtype='step', color=color[2])
-                ax[i].hist((disp[i]-disp_model[i]).flatten(), bins=n_bin, \
-	                 range=drange, histtype='step', color=color[3])
-
-	    pl.tight_layout()
-	    pl.show()
-
-        if True:
-            # ->> show images <<- #
-            nplt, ncol = 3, 2
-            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-            	                      gap_size=0.5,return_figure=True)
-            axis, nsl=0, 100
-            
-            #cb1=ax[0].imshow(disp[axis,:,:,nsl])
-            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
-            cb2=ax[1].imshow(-disp_model[axis,15:-15,15:-15,nsl])
-
-            cb2=ax[2].imshow(d[15:-15,15:-15,nsl])
-
-	    #fig.colorbar(cb1) #, orientation='horizontal')
-	    #fig.colorbar(cb2) #, orientation='horizontal')
-
-            
-            pl.tight_layout()
-            pl.show()
-
 
 
 

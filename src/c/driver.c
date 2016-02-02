@@ -267,9 +267,9 @@
     if(do_likelihood_testing==TRUE){
       printf("Do Likelihood testing.\n"); fflush(stdout);
       //test_displacement(&s, p, d, fname_pinit, likeli_test_fname);
-      //test_disp_direct_cal(&s, p, d, fname_pinit, likeli_test_fname);
-      //
-      test_disp_vel_comp(&s, p, d, fname_pinit, likeli_test_fname);
+      //test_disp_vel_comp(&s, p, d, fname_pinit, likeli_test_fname);
+      
+      test_disp_direct_cal(&s, p, d, fname_pinit, likeli_test_fname);
 
       // ->> free <<- //
       iniparser_freedict(dict);
