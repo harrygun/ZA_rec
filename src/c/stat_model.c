@@ -72,13 +72,13 @@ double tk_interp(Interpar *tf, double k){
   if(k<=tf->min)  {
     tk_b=myinterp(tf, tf->min);
     dk=k-tf->min; 
-    tk=tk_b+dk*tf->slop_min;
+    tk=exp(log(tk_b)+dk*tf->slop_min);
     }
 
   else if(k>=tf->max){
     tk_b=myinterp(tf, tf->max);
     dk=k-tf->max; 
-    tk=tk_b+dk*tf->slop_max;
+    tk=exp(log(tk_b)+dk*tf->slop_max);
     }
 
   else{
@@ -99,7 +99,7 @@ Interpar *transfer_func_init(char *fname) {
   FILE *fp = fopen(fname, "r"); 
 
   // ->> importing data <<- //
-  int i, j, line;
+  int i, j, line, extdidx=15;
   line=countFILEline(fp);
 
   double *k, *tfk, kk, dtf, dk;
@@ -118,42 +118,46 @@ Interpar *transfer_func_init(char *fname) {
     myinterp_init(&tf[j], &ArrayAccess2D_n2(k, 3, line, j, 0), &ArrayAccess2D_n2(tfk, 3, line, j, 0), line);
 
     //->> extrapolation initialization <<- //
-    sprintf(tf[j].extra_type, "linear");
+    sprintf(tf[j].extra_type, "log-linear");
 
     tf[j].min=ArrayAccess2D_n2(k, 3, line, j, 0);
     tf[j].max=ArrayAccess2D_n2(k, 3, line, j, line-1);
 
-    dk=ArrayAccess2D_n2(k, 3, line, j, 4)-ArrayAccess2D_n2(k, 3, line, j, 0);
-    dtf=ArrayAccess2D_n2(tfk, 3, line, j, 4)-ArrayAccess2D_n2(tfk, 3, line, j, 0);
+    dk=ArrayAccess2D_n2(k, 3, line, j, extdidx)-ArrayAccess2D_n2(k, 3, line, j, 0);
+    dtf=log(ArrayAccess2D_n2(tfk, 3, line, j, extdidx))-log(ArrayAccess2D_n2(tfk, 3, line, j, 0));
     tf[j].slop_min=dtf/dk;
 
-    dk=ArrayAccess2D_n2(k, 3, line, j, line-1)-ArrayAccess2D_n2(k, 3, line, j, line-5);
-    dtf=ArrayAccess2D_n2(tfk, 3, line, j, line-1)-ArrayAccess2D_n2(tfk, 3, line, j, line-5);
+    dk=ArrayAccess2D_n2(k, 3, line, j, line-extdidx/2)-ArrayAccess2D_n2(k, 3, line, j, line-extdidx);
+    dtf=log(ArrayAccess2D_n2(tfk, 3, line, j, line-extdidx/2))-log(ArrayAccess2D_n2(tfk, 3, line, j, line-extdidx));
     tf[j].slop_max=dtf/dk;
 
     //printf("tf boundary:  %lg   %lg  %lg  %lg\n", tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
     }
 
-  /*
+  fclose(fp);
+
+
+  #ifdef _DO_TF_TEST_
+  fp=fopen("result/test_tf.dat", "w");
   for(i=0; i<line; i++) {
     for(j=0; j<3; j++) {
       //kk=ArrayAccess2D_n2(k, 3, line, j, i);
       kk=pow(10., -2+(double)i*4./((double)line) ); 
       printf("%lg  %lg  ", kk, tk_interp(&tf[j], kk) );
+      fprintf(fp, "%lg  %lg  ", kk, tk_interp(&tf[j], kk) );
       //printf("%lg  %lg  ", ArrayAccess2D_n2(k, 3, line, j, i), ArrayAccess2D_n2(tfk, 3, line, j, i));
       }
     printf("\n");
+    fprintf(fp, "\n");
     } 
-  */
+  fclose(fp);
+  #endif
+
 
   free(k); free(tfk);
-  fclose(fp);
 
   return tf;
   }
-
-
-
 
 
 
@@ -168,9 +172,11 @@ void transfer_func_finalize(Interpar *tf){
 
 
 
+
+
 void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *stat_disp_model_type) {
-  // ->>  <<- //
+  // ->> obtain statistical displacement model <<- //
   float *disp, *disp_model;
   Pdata_pos *pinit;
 
