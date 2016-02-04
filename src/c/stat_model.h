@@ -4,4 +4,6 @@
 
 void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, char *stat_disp_model_type);
 
+Interpar *transfer_func_init(char *fname);
+
 #endif

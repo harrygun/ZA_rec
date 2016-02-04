@@ -23,10 +23,10 @@
   #include "io.h"
   #include "cic.h"
   #include "poisson.h"
-  //#include "za_reconstruction.h"
   #include "reconstruction_partmoving.h"
   #include "test_likelihood.h"
 
+  #include "stat_model.h"
 
 
 #ifdef _MPI_
@@ -166,6 +166,8 @@
       rc.displacement_type=iniparser_getstring(dict,"Rect:displacement_type", "backward");
       rc.displacement_order=iniparser_getstring(dict,"Rect:displacement_order", "1LPT");
 
+      rc.displacement_tf_fname=iniparser_getstring(dict,"Rect:disp_transfunc_fname", "s.dat");
+
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
       import_density=iniparser_getboolean(dict, "Rect:import_density", INIFALSE);
@@ -298,36 +300,49 @@
     -----------------------------------------------------*/
     if(rc.do_rect!=TRUE) {
       printf("Do NOT perform reconstruction.\n");
-      fflush(stdout); abort(); }
-
+      fflush(stdout); 
+      goto stop; 
+      }
 
     // ->> Obtain displacement field <<- //
     float *drec, *d_disp, *d_shift;
 
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
-   
-      drec=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_disp=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      d_shift=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-      
-      reconstruction_partmover(&rc, &s, p, d, drec, d_disp, d_shift);
+    
+      if(strcmp(rc.displacement_type, "backward_displacement")==0 ) {
+        drec=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+        d_disp=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+        d_shift=(float *)malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+        
+        reconstruction_partmover(&rc, &s, p, d, drec, d_disp, d_shift);
 
+        // ->> write files <<- //
+        fp=fopen(rc.rec_fname, "wb");
 
-      // ->> write files <<- //
-      fp=fopen(rc.rec_fname, "wb");
+        fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+        fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+        fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 
-      fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-      fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-      fwrite(d_shift, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+        // ->> smooth d_disp with `inverse_gaussian' 1.-W(k,R) <<- //
+	if(FALSE!=FALSE) {
+          smooth_field(d_disp, s.boxsize, s.ngrid, _INVERSE_GAUSSIAN_SMOOTH_, s.smooth_R);
+          fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+	  }
+        fclose(fp);
 
-      // ->> smooth d_disp with `inverse_gaussian' 1.-W(k,R) <<- //
-      //smooth_field(d_disp, s.boxsize, s.ngrid, _INVERSE_GAUSSIAN_SMOOTH_, s.smooth_R);
-      // ->> then write again <<- //
-      //fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+        // ->> free <<- //
+        free(d_shift); free(d_disp); free(drec);
+        }
 
+      else if(strcmp(rc.displacement_type, "likelihood_reconstruction")==0) {
+        // ->> initialization  <<- //
+        Interpar *tf=transfer_func_init(rc.displacement_tf_fname);
 
-      fclose(fp);
+        // ->> free <<- //
+        transfer_func_finalize(tf);
+        }
+
       }
 
 
@@ -340,12 +355,11 @@
     myinterp_free(power); free(power);
 
     free(p); free(d);
-
     free(s.pmin); free(s.pmax); free(s.dpart);
 
-    if(rc.do_rect==TRUE){
-      free(d_shift); free(d_disp); free(drec);
-      }
+    //if(rc.do_rect==TRUE){
+    //  free(d_shift); free(d_disp); free(drec);
+    //  }
 
 
     stop:

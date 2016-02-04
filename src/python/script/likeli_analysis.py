@@ -20,7 +20,7 @@ import rect.fourier.psxi as ps
 import rect.misc.file_import as fimp
 import rect.misc.power_update as pu
 
-import likeli_test as ltst
+#import likeli_test as ltst
 
 
 
@@ -76,40 +76,46 @@ if __name__=='__main__':
 
 
     if (p.cal_rect_transfer_func):
-        dd=rd.rblock(p.disp_field_fname, p.ngrid**3*6, dtype='float').reshape(6,p.ngrid,p.ngrid,p.ngrid)
+        nblock=7
+        dd=rd.rblock(p.disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
 	#->> discard boundary data <<- #
         bd=10
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
 
 
+	_cd_k, _cd_p=[], []
         for i in range(3):
-
             k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
             k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
             k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
 
 	    cr=pk1/np.sqrt(pk3*pk2)
 
-	    cd_k.append(k1)
-	    cd_p.append(cr)
+	    _cd_k.append(k1)
+	    _cd_p.append(cr)
+	
 
-            ax[0].semilogx(k1, pk1/np.sqrt(pk3*pk2), lw1[i])
-	    ax[0].set_ylim([0, 1.05])
+	cd_k=np.array(_cd_k)
+	cd_p=np.array(_cd_p)
+
+        # ->> save data <<- #
+        f=open(p.disp_transfunc_fname, "w")
+
+	for i in range(cd_k.shape[-1]):
+	    for j in range(3):
+	        strr="{0}  {1}  ".format(cd_k[j,i],cd_p[j,i]).rstrip('\n')
+                f.write(strr)
+	    f.write("\n")
 
 
-        # ->> save some <<- #
-	ddd=np.array([k1,cr])
-	print 'R(k) shape:', ddd.shape
-
-	raise Exception('!!! write file differently')
-	ddd.tofile(p.disp_transfunc_fname)
-
-
+	f.close()
+        # ->> close <<- #
 
 
 
     if (p.do_likelihood_testing==True):
+        pass
 
 
 

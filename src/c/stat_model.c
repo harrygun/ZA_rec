@@ -66,25 +66,76 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
 
 
-Interpar *transfer_func_init(char *fname ) {
+double tk_interp(Interpar *tf, double k){
+  double tk;
+
+  if(k<=tf->min)  {
+    }
+
+  else if(k>=tf->max){
+    }
+
+  tk=myinterp(tf, k);
+  if(tk<0)  tk=0;
+
+
+  return tk;
+  }
+
+
+
+Interpar *transfer_func_init(char *fname) {
   // ->> import transfer function and interpolate <<- //
-  Interpar *tf= (Interpar *)malloc(sizeof(Interpar));
+  Interpar *tf= (Interpar *)malloc(3*sizeof(Interpar));
   FILE *fp = fopen(fname, "r"); 
 
-  // ->> initialize <<- //
-  int i, line;
+  // ->> importing data <<- //
+  int i, j, line;
   line=countFILEline(fp);
 
-  double *k, *tfk;
-  k=(double *)malloc(line*sizeof(double));
-  tfk=(double *)malloc(line*sizeof(double));
+  double *k, *tfk, kk, dtf, dk;
+  k=(double *)malloc(3*line*sizeof(double));
+  tfk=(double *)malloc(3*line*sizeof(double));
+
+  for(i=0; i<line; i++) {
+    for(j=0; j<3; j++) {
+      fscanf(fp, "%lg  %lg ", &ArrayAccess2D_n2(k, 3, line, j, i), &ArrayAccess2D_n2(tfk, 3, line, j, i));
+      }
+    fscanf(fp, "\n");
+    }
+
+  // ->> initialize interpolator <<- //
+  for(j=0; j<3; j++) {
+    myinterp_init(&tf[j], &ArrayAccess2D_n2(k, 3, line, j, 0), &ArrayAccess2D_n2(tfk, 3, line, j, 0), line);
+
+    //->> extrapolation initialization <<- //
+    sprintf(tf[j].extra_type, "linear");
+
+    tf[j].min=ArrayAccess2D_n2(k, 3, line, j, 0);
+    tf[j].max=ArrayAccess2D_n2(k, 3, line, j, line-1);
+
+    dk=ArrayAccess2D_n2(k, 3, line, j, 1)-ArrayAccess2D_n2(k, 3, line, j, 0);
+    dtf=ArrayAccess2D_n2(tfk, 3, line, j, 1)-ArrayAccess2D_n2(tfk, 3, line, j, 0);
+    tf[j].slop_min=dtf/dk;
+
+    dk=ArrayAccess2D_n2(k, 3, line, j, line-1)-ArrayAccess2D_n2(k, 3, line, j, line-2);
+    dtf=ArrayAccess2D_n2(tfk, 3, line, j, line-1)-ArrayAccess2D_n2(tfk, 3, line, j, line-2);
+    tf[j].slop_max=dtf/dk;
+
+    printf("tf boundary:  %lg   %lg  %lg  %lg\n", tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
+    }
 
 
-  for(i=0; i<line; i++)
-    fscanf(fp, "%lg  %lg\n",&k[i], &p[i]);
-
-      myinterp_init( power, k, p, line);
-
+  for(i=0; i<line; i++) {
+    for(j=0; j<3; j++) {
+      //kk=ArrayAccess2D_n2(k, 3, line, j, i);
+      kk=pow(10., -1.8+(double)i*2.5/((double)line) ); 
+      printf("%lg    ", kk);
+      printf("%lg  %lg  ", kk, tk_interp(&tf[j], kk) );
+      //printf("%lg  %lg  ", ArrayAccess2D_n2(k, 3, line, j, i), ArrayAccess2D_n2(tfk, 3, line, j, i));
+      }
+    printf("\n");
+    } 
 
   free(k); free(tfk);
   fclose(fp);
@@ -93,6 +144,18 @@ Interpar *transfer_func_init(char *fname ) {
   }
 
 
+
+
+
+
+void transfer_func_finalize(Interpar *tf){
+  int i;
+
+  for(i=0; i<3; i++)
+    myinterp_free(&tf[i]);
+
+  return;
+  }
 
 
 
