@@ -67,17 +67,26 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
 
 double tk_interp(Interpar *tf, double k){
-  double tk;
+  double tk_b, tk, dk;
 
   if(k<=tf->min)  {
+    tk_b=myinterp(tf, tf->min);
+    dk=k-tf->min; 
+    tk=tk_b+dk*tf->slop_min;
     }
 
   else if(k>=tf->max){
+    tk_b=myinterp(tf, tf->max);
+    dk=k-tf->max; 
+    tk=tk_b+dk*tf->slop_max;
     }
 
-  tk=myinterp(tf, k);
-  if(tk<0)  tk=0;
+  else{
+    tk=myinterp(tf, k); 
+    }
 
+  if(tk<0)  tk=0.;
+  if(tk>1)  tk=1.;
 
   return tk;
   }
@@ -114,28 +123,28 @@ Interpar *transfer_func_init(char *fname) {
     tf[j].min=ArrayAccess2D_n2(k, 3, line, j, 0);
     tf[j].max=ArrayAccess2D_n2(k, 3, line, j, line-1);
 
-    dk=ArrayAccess2D_n2(k, 3, line, j, 1)-ArrayAccess2D_n2(k, 3, line, j, 0);
-    dtf=ArrayAccess2D_n2(tfk, 3, line, j, 1)-ArrayAccess2D_n2(tfk, 3, line, j, 0);
+    dk=ArrayAccess2D_n2(k, 3, line, j, 4)-ArrayAccess2D_n2(k, 3, line, j, 0);
+    dtf=ArrayAccess2D_n2(tfk, 3, line, j, 4)-ArrayAccess2D_n2(tfk, 3, line, j, 0);
     tf[j].slop_min=dtf/dk;
 
-    dk=ArrayAccess2D_n2(k, 3, line, j, line-1)-ArrayAccess2D_n2(k, 3, line, j, line-2);
-    dtf=ArrayAccess2D_n2(tfk, 3, line, j, line-1)-ArrayAccess2D_n2(tfk, 3, line, j, line-2);
+    dk=ArrayAccess2D_n2(k, 3, line, j, line-1)-ArrayAccess2D_n2(k, 3, line, j, line-5);
+    dtf=ArrayAccess2D_n2(tfk, 3, line, j, line-1)-ArrayAccess2D_n2(tfk, 3, line, j, line-5);
     tf[j].slop_max=dtf/dk;
 
-    printf("tf boundary:  %lg   %lg  %lg  %lg\n", tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
+    //printf("tf boundary:  %lg   %lg  %lg  %lg\n", tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
     }
 
-
+  /*
   for(i=0; i<line; i++) {
     for(j=0; j<3; j++) {
       //kk=ArrayAccess2D_n2(k, 3, line, j, i);
-      kk=pow(10., -1.8+(double)i*2.5/((double)line) ); 
-      printf("%lg    ", kk);
+      kk=pow(10., -2+(double)i*4./((double)line) ); 
       printf("%lg  %lg  ", kk, tk_interp(&tf[j], kk) );
       //printf("%lg  %lg  ", ArrayAccess2D_n2(k, 3, line, j, i), ArrayAccess2D_n2(tfk, 3, line, j, i));
       }
     printf("\n");
     } 
+  */
 
   free(k); free(tfk);
   fclose(fp);
