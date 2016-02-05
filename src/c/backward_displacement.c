@@ -114,7 +114,7 @@ void displacement_2lpt(SimInfo *s, float *d, float *disp) {
   // ->> phi^(2) <<- //
   phi=(float *)fftwf_malloc(sizeof(float)*ngrid_tot);
   // ->> smooth density field first <<- //
-  smooth_field(d, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R);
+  smooth_field(d, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, NULL);
 
   #ifdef _OMP_
   #pragma omp parallel for private(ip, i, j)

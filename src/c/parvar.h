@@ -5,6 +5,8 @@
   #define _GAUSSIAN_SMOOTH_ 20150228
   #define _INVERSE_GAUSSIAN_SMOOTH_ 19811029
 
+  #define _ANISOTROPIC_INTERPOLATOR_SMOOTH_ 19820220
+
 
   typedef float itreal;
   //typedef double itreal;

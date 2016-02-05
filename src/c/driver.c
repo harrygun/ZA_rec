@@ -149,7 +149,6 @@
       printf("smooth scale=%lg\n", s.smooth_R);
       printf("z=%lg\n", cp.z);
 
-      //abort();
 
       droot=iniparser_getstring(dict,"Rect:data_root", "~/");
       particle_fname=iniparser_getstring(dict,"Rect:particle_file_name", "x.dat");
@@ -328,7 +327,7 @@
 
         // ->> smooth d_disp with `inverse_gaussian' 1.-W(k,R) <<- //
 	if(FALSE!=FALSE) {
-          smooth_field(d_disp, s.boxsize, s.ngrid, _INVERSE_GAUSSIAN_SMOOTH_, s.smooth_R);
+          smooth_field(d_disp, s.boxsize, s.ngrid, _INVERSE_GAUSSIAN_SMOOTH_, s.smooth_R, NULL);
           fwrite(d_disp, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
 	  }
         fclose(fp);
@@ -346,11 +345,13 @@
         disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
          
-        load_displacement(&cp, &s, p, disp, disp_lpt, disp_mc, tf);
+        load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit);
 
-        // ->> 
-
-
+        // ->> statistical separate LPT & mode-coupling term <<- //
+        disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
+ 
+        // ->> output displacement field <<- //
+        output_stat_disp_model(disp, disp_lpt, disp_mc, fname_out);
 
 
 

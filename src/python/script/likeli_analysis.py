@@ -46,7 +46,7 @@ param_dict={
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
     'cal_rect_transfer_func':    True,
     'disp_transfunc_fname':   'rk.dat',
-    'disp_field_fname':       'a.dat',
+    'raw_disp_field_fname':       'a.dat',
     }
 
 prog_control={
@@ -77,7 +77,7 @@ if __name__=='__main__':
 
     if (p.cal_rect_transfer_func):
         nblock=7
-        dd=rd.rblock(p.disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+        dd=rd.rblock(p.raw_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
 	#->> discard boundary data <<- #
         bd=10

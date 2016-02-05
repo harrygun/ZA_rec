@@ -4,9 +4,12 @@
   #include <string.h>
   #include <fftw3.h>
 
+  #include "myinterpolate.h"
+
   #include "const.h"
   #include "parvar.h"
   #include "poisson.h"
+
 
   #define pi M_PI
 
@@ -16,7 +19,7 @@
 
 
 void smooth_field(float *d, double boxsize, int ngrid, int smooth_type, 
-                                                       double smooth_R)  {
+                                          double smooth_R, Interpar *sw)  {
   /* ->> smooth field with FFT <<- */
   long long dksize, dsize, l, m, n, i, j;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin;
@@ -80,6 +83,9 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
 	  }
 	else if(smooth_type==_INVERSE_GAUSSIAN_SMOOTH_){
           W=1./(1.-exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.)); 
+	  }
+	else if(smooth_type==_ANISOTROPIC_INTERPOLATOR_SMOOTH_) {
+          W=myinterp(&sw[0], ki[0])*myinterp(&sw[1], ki[1])*myinterp(&sw[2], ki[2]);
 	  }
         else { 
           printf("smooth_field window function error.\n");  fflush(stdout);

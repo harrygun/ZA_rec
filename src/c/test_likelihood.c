@@ -63,7 +63,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
   // ->> smooth the field <<- //
   for(i=0; i<3; i++) {
     smooth_field(&disp[i*s->ngrid*s->ngrid*s->ngrid], s->boxsize, 
-                       s->ngrid, s->smooth_type_flag, s->smooth_R);
+                       s->ngrid, s->smooth_type_flag, s->smooth_R, NULL);
     }
 
 

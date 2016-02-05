@@ -200,17 +200,27 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
 
 
 
-void disp_stat_separation(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
-                          float *disp_lpt, float *disp_mc, Interpar *tf)  {
+void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, 
+                                                float *disp_mc, Interpar *tf)  {
   // ->> For each particle, statistical separate the into  <<- //
   //     deterministic and stochastic contributions .      <<- //
-  int i;
+  long long ip, i, j, k;
   
   //->> convolve displacement field with transfer function <<- //
+  for(i=0; i<3; i++) {
+    smooth_field(&ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, 0), s->boxsize, s->ngrid, 
+                                  _ANISOTROPIC_INTERPOLATOR_SMOOTH_, s->smooth_R, tf);
+    }
 
-
-
-
+  // ->> now get the mode-coupling term <<- //
+  #ifdef _OMP_
+  #pragma omp parallel for private(ip)
+  #endif
+  for(ip=0; ip<s->npart; ip++) 
+    for(i=0; i<3; i++)    {
+      ArrayAccess2D_n2(disp_mc, 3, s->npart, i, ip)=ArrayAccess2D_n2(disp, 3, s->npart, i, ip)
+                                                 -ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, ip);
+    }
 
   return;
   }
@@ -229,8 +239,18 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
 
 
 
+  return;
+  }
 
 
-  free(disp);
+void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc, char *fname_out){
+  // ->> write displacement field into files <<- //
+  //
+  FILE *fp=fopen(fname_out, "wb");
+  fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp_lpt, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fwrite(disp_mc, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+
+  fclose(fp);
   return;
   }
