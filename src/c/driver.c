@@ -119,6 +119,7 @@
       //double boxsize;
       char *smooth_type, *particle_fname, *droot, *plin_name;
       char *oden_fname, *main_dtype, *rec_name, *fname_pinit;
+      char *raw_disp_fname, *stat_disp_fname;
       int do_density, import_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
@@ -155,6 +156,8 @@
       //printf("particle fname: %s\n", particle_fname);
 
       fname_pinit=iniparser_getstring(dict,"Rect:init_particle_file_name", "x.dat");
+      raw_disp_fname=iniparser_getstring(dict,"Rect:raw_disp_field_fname", "x.dat");
+      stat_disp_fname=iniparser_getstring(dict,"Rect:stat_disp_field_fname", "x.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
@@ -351,7 +354,7 @@
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
  
         // ->> output displacement field <<- //
-        output_stat_disp_model(disp, disp_lpt, disp_mc, fname_out);
+        output_stat_disp_model(&s, disp, disp_lpt, disp_mc, stat_disp_fname);
 
 
 
