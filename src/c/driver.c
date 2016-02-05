@@ -337,20 +337,24 @@
         }
 
       else if(strcmp(rc.displacement_type, "likelihood_reconstruction")==0) {
-        // ->> initialization  <<- //
+        // ->> initialization of transfer function <<- //
         Interpar *tf=transfer_func_init(rc.displacement_tf_fname);
 
-        // ->> import initial displacement <<- //
-        Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
-        load_cita_simulation_position(fname_pinit, pinit, s->npart);
-
-        // ->>  
+        // ->> load various displacement field  <<- //
+        float *disp_lpt, *disp;
+        disp_lpt=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
+        disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
          
+
+
+
+
 
 
 
         // ->> free <<- //
         transfer_func_finalize(tf);
+	free(disp);  free(disp_lpt);
         }
 
       }

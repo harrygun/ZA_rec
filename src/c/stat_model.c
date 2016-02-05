@@ -172,15 +172,33 @@ void transfer_func_finalize(Interpar *tf){
 
 
 
-
-void get_disp_mc(Cospar *cp, SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, Interpar *tf){
+/* -> displacement field manipulation  <- */
+void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, 
+                            float *disp, float *disp_lpt)  {
 
   // -> get the stochastic term of displacement <<- //
+  int i;
+  char *disp_calmethod="grid_wise";
+
+
+  // ->> import initial displacement <<- //
+  Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
+  load_cita_simulation_position(fname_part_init, pinit, s->npart);
  
+  // ->>  get initial displacement <<- //
+  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+
+  // ->>  get final displacement <<- //
+  get_real_displacement(s, p, pinit, disp, disp_calmethod);
+
+  free(pinit);
+  return;
+  }
 
 
 
-
+void get_disp_mc(Cospar *cp, SimInfo *s, Interpar *tf){
+  // ->> free <<- //
   return;
   }
 

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "cospara.h"
 #include "io.h"
 
 
@@ -71,15 +72,6 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
   return;
   }
 
-
-
-
-void load_cita_simulation_position(Cospar *cp, char *fname, Pdata_pos *p, 
-                                             long long npart, double z) {
-  double ;
-
-
-  }
 
 
 
