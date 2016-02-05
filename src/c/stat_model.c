@@ -47,10 +47,10 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
   // ->>  get initial displacement <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod, 1.);
 
   // ->>  get final displacement <<- //
-  get_real_displacement(s, p, pinit, disp, disp_calmethod);
+  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
 
   // ->> output <<- //
   FILE *fp=fopen(fname_out, "wb");
@@ -67,6 +67,7 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
 
 double tk_interp(Interpar *tf, double k){
+
   double tk_b, tk, dk;
 
   if(k<=tf->min)  {
@@ -161,9 +162,9 @@ Interpar *transfer_func_init(char *fname) {
 
 
 
+// ->> free interpolator <<- //
 void transfer_func_finalize(Interpar *tf){
   int i;
-
   for(i=0; i<3; i++)
     myinterp_free(&tf[i]);
 
@@ -173,23 +174,24 @@ void transfer_func_finalize(Interpar *tf){
 
 
 /* -> displacement field manipulation  <- */
-void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, 
-                            float *disp, float *disp_lpt)  {
-
+void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
+                         float *disp_lpt, char *fname_part_init)  {
   // -> get the stochastic term of displacement <<- //
-  int i;
+  double fac;
   char *disp_calmethod="grid_wise";
 
+  // ->> rescaling factor for initial data <<- //
+  fac=Dp(cp, cp->z)/Dp(cp, cp->zinit);
 
   // ->> import initial displacement <<- //
   Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
   load_cita_simulation_position(fname_part_init, pinit, s->npart);
  
   // ->>  get initial displacement <<- //
-  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod);
+  get_real_displacement(s, pinit, pinit, disp_lpt, disp_calmethod, fac);
 
   // ->>  get final displacement <<- //
-  get_real_displacement(s, p, pinit, disp, disp_calmethod);
+  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
 
   free(pinit);
   return;
@@ -197,42 +199,30 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, Pdata_pos *pinit,
 
 
 
-void get_disp_mc(Cospar *cp, SimInfo *s, Interpar *tf){
-  // ->> free <<- //
+
+void disp_stat_separation(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
+                          float *disp_lpt, float *disp_mc, Interpar *tf)  {
+  // ->> For each particle, statistical separate the into  <<- //
+  //     deterministic and stochastic contributions .      <<- //
+  int i;
+  
+  //->> convolve displacement field with transfer function <<- //
+
+
+
+
+
   return;
   }
 
 
 
+
+
+
+
 void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *stat_disp_model_type) {
-  // ->> obtain statistical displacement model <<- //
-  float *disp, *disp_model;
-  Pdata_pos *pinit;
-
-  disp=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
-  disp_model=(float *)fftwf_malloc(sizeof(float)*s->ngrid*s->ngrid*s->ngrid*3);
-
-  // ->> obtain real displacement <<- //
-  char *disp_calmethod="grid_wise";
-
-  if(strcmp(disp_calmethod, "direct_subtraction")==0 ) {
-    // ->> load initial position <<- //
-    pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
-    load_cita_simulation_position(fname_part_init, pinit, s->npart);
-    }
-  get_real_displacement(s, p, pinit, disp, disp_calmethod);
-
-
-  // ->> obtain model displacement <<- //
-  char *model_type;
-  if(stat_disp_model_type==NULL) {
-    sprintf(model_type, "ZA");
-    }
-  else {
-    model_type=stat_disp_model_type;
-    }
-  get_model_displacement(s, p, d, disp_model, model_type);
 
 
   // ->> construct model <<- //

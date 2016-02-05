@@ -307,6 +307,7 @@
 
     // ->> Obtain displacement field <<- //
     float *drec, *d_disp, *d_shift;
+    float *disp, *disp_lpt, *disp_mc;  // ->> displacement field <<- //
 
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
@@ -341,12 +342,13 @@
         Interpar *tf=transfer_func_init(rc.displacement_tf_fname);
 
         // ->> load various displacement field  <<- //
-        float *disp_lpt, *disp;
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
         disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
          
+        load_displacement(&cp, &s, p, disp, disp_lpt, disp_mc, tf);
 
-
+        // ->> 
 
 
 
@@ -354,7 +356,7 @@
 
         // ->> free <<- //
         transfer_func_finalize(tf);
-	free(disp);  free(disp_lpt);
+	free(disp);  free(disp_lpt);  free(disp_mc);
         }
 
       }
