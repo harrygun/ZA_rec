@@ -3,7 +3,6 @@
 #include <string.h>
 #include <math.h>
 
-#include "cospara.h"
 #include "io.h"
 
 
