@@ -214,7 +214,7 @@ void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt,
 
   // ->> now get the mode-coupling term <<- //
   #ifdef _OMP_
-  #pragma omp parallel for private(ip)
+  #pragma omp parallel for private(ip,i)
   #endif
   for(ip=0; ip<s->npart; ip++) 
     for(i=0; i<3; i++)    {
