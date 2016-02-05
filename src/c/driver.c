@@ -123,6 +123,7 @@
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
       cp.z = iniparser_getdouble(dict, "Rect:redshift", 0) ;
+      cp.zinit = iniparser_getdouble(dict, "Rect:initial_redshift", 0) ;
 
       // ->> 
       s.smooth_R=cp.R;
@@ -339,7 +340,12 @@
         // ->> initialization  <<- //
         Interpar *tf=transfer_func_init(rc.displacement_tf_fname);
 
+        // ->> import initial displacement <<- //
+        Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
+        load_cita_simulation_position(fname_pinit, pinit, s->npart);
 
+        // ->>  
+         
 
 
 

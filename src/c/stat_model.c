@@ -173,6 +173,18 @@ void transfer_func_finalize(Interpar *tf){
 
 
 
+void get_disp_mc(Cospar *cp, SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, Interpar *tf){
+
+  // -> get the stochastic term of displacement <<- //
+ 
+
+
+
+
+  return;
+  }
+
+
 
 void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *stat_disp_model_type) {

@@ -73,6 +73,19 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
 
 
 
+
+void load_cita_simulation_position(Cospar *cp, char *fname, Pdata_pos *p, 
+                                             long long npart, double z) {
+  double ;
+
+
+  }
+
+
+
+
+
+
 void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){
   int size;
   FILE *fp=fopen(fname, "r");
