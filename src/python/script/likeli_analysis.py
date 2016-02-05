@@ -47,6 +47,7 @@ param_dict={
     'cal_rect_transfer_func':    True,
     'disp_transfunc_fname':   'rk.dat',
     'raw_disp_field_fname':       'a.dat',
+    'stat_disp_field_fname':       'a.dat',
     }
 
 prog_control={
@@ -60,6 +61,7 @@ prog_control={
     #-------------------------------#
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
+    'py_stat_model_PDF':   True,
     }
 
 
@@ -114,9 +116,31 @@ if __name__=='__main__':
 
 
 
-    if (p.do_likelihood_testing==True):
-        pass
+    if (p.py_stat_model_PDF==True):
 
+        nblock=9
+        dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+        disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
+
+
+        nplt, ncol = 3, 2
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                              gap_size=0.5,return_figure=True)
+        n_bin=500
+        color=['g', 'r', 'b', 'y']
+    
+        drange=[-20,20]
+    
+        for i in range(3):
+            ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
+                       histtype='step', color=color[0])
+            ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                     range=drange, histtype='step', color=color[1])
+            ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
+                     range=drange, histtype='step', color=color[2])
+
+        pl.tight_layout()
+        pl.show()
 
 
 
