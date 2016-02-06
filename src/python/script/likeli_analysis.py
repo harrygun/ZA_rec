@@ -135,7 +135,7 @@ if __name__=='__main__':
 
 
 
-        if False:
+        if True:
             nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
                                   gap_size=0.5,return_figure=True)
@@ -146,11 +146,11 @@ if __name__=='__main__':
     
             for i in range(3):
                 ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
-                           histtype='step', color=color[0])
-                #ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
-                #         range=drange, histtype='step', color=color[1])
-                #ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
-                #         range=drange, histtype='step', color=color[2])
+                         normed=True, histtype='step', color=color[0])
+                ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                         normed=True, range=drange, histtype='step', color=color[1])
+                ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
+                        normed=True, range=drange, histtype='step', color=color[2])
 
             pl.tight_layout()
             pl.show()
