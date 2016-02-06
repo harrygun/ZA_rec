@@ -142,7 +142,7 @@ if __name__=='__main__':
             n_bin=500
             color=['g', 'r', 'b', 'y']
     
-            drange=[-20,20]
+            drange=[-10,10]
     
             for i in range(3):
                 ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
