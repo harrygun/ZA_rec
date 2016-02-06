@@ -120,15 +120,22 @@ if __name__=='__main__':
 
         nblock=9
         dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
-        disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
+
+        #disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
+        bd=10
+        disp = dd[:3,bd:-bd,bd:-bd,bd:-bd]
+	disp_lpt=dd[3:6,bd:-bd,bd:-bd,bd:-bd]
+	disp_mc=dd[6:,bd:-bd,bd:-bd,bd:-bd]
 
 	print 'disp shape:', disp.shape, disp_lpt.shape, disp_mc.shape
 
-	#print disp_lpt
+	print disp.min(), disp.max()
+	print disp_lpt.min(), disp_lpt.max()
+	print disp_mc.min(), disp_mc.max()
 
 
 
-        if True:
+        if False:
             nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
                                   gap_size=0.5,return_figure=True)
@@ -140,10 +147,10 @@ if __name__=='__main__':
             for i in range(3):
                 ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
                            histtype='step', color=color[0])
-                ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
-                         range=drange, histtype='step', color=color[1])
-                ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
-                         range=drange, histtype='step', color=color[2])
+                #ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                #         range=drange, histtype='step', color=color[1])
+                #ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
+                #         range=drange, histtype='step', color=color[2])
 
             pl.tight_layout()
             pl.show()
@@ -159,7 +166,11 @@ if __name__=='__main__':
                 
             cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
             cb2=ax[1].imshow(disp_lpt[axis,15:-15,15:-15,nsl])
-            cb2=ax[2].imshow(disp_mc[axis,15:-15,15:-15,nsl])
+            cb3=ax[2].imshow(disp_mc[axis,15:-15,15:-15,nsl])
+
+	    pl.colorbar(cb1)
+	    pl.colorbar(cb2)
+	    pl.colorbar(cb3)
 
                 
             pl.tight_layout()

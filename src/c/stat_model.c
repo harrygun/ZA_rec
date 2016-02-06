@@ -207,10 +207,10 @@ void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt,
   long long ip, i, j, k;
   
   //->> convolve displacement field with transfer function <<- //
-  for(i=0; i<3; i++) {
-    smooth_field(&ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, 0), s->boxsize, s->ngrid, 
-                                  _ANISOTROPIC_INTERPOLATOR_SMOOTH_, s->smooth_R, tf);
-    }
+  //for(i=0; i<3; i++) {
+  //  smooth_field(&ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, 0), s->boxsize, s->ngrid, 
+  //                          _ANISOTROPIC_INTERPOLATOR_SMOOTH_, s->smooth_R, &tf[i]);
+  //  }
 
   // ->> now get the mode-coupling term <<- //
   #ifdef _OMP_

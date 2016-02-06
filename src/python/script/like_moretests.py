@@ -189,6 +189,9 @@ if __name__=='__main__':
 
     di=dd[-1,...]
 
+    #
+    print 'mean:', disp.min(), disp_model.min()
+
     #->> final density <<- #
     df=rd.rblock(p.original_density_fname, p.ngrid**3, \
                  dtype='float').reshape(p.ngrid, p.ngrid, p.ngrid)
@@ -201,7 +204,7 @@ if __name__=='__main__':
     # ->> get the divergence of the displacement field <<- #
     
     #->> 
-    if True:
+    if False:
         print 'disp rk fname:', p.disp_transfunc_fname
 
         nplt, ncol = 1, 1
@@ -236,19 +239,19 @@ if __name__=='__main__':
 
 
 
-    if False:
+    if True:
         nplt, ncol = 2, 2
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
 
         nsl=100
-	axis=2
+	axis=0
 
         cb1=ax[0].imshow(disp[axis,:,:,nsl])
         cb2=ax[1].imshow(disp_model[axis,:,:,nsl])
 
-	#pl.colorbar(cb1)
-	#pl.colorbar(cb2)
+	pl.colorbar(cb1)
+	pl.colorbar(cb2)
 
         pl.show()
 

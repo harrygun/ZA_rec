@@ -101,8 +101,7 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
           W=1./(1.-exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.)); 
 	  }
 	else if(smooth_type==_ANISOTROPIC_INTERPOLATOR_SMOOTH_) {
-          //W=myinterp(&sw[0], ki[0])*myinterp(&sw[1], ki[1])*myinterp(&sw[2], ki[2]);
-	  W=tk_interp(&sw[0], ki[0])*tk_interp(&sw[1], ki[1])*tk_interp(&sw[2], ki[2]);
+	  W=tk_interp(sw, sqrt(sin2x+sin2y+sin2z));
           //printf("W[%lg, %lg, %lg]=%lg\n", ki[0], ki[1], ki[2], W);
 	  }
         else { 
