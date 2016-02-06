@@ -4,11 +4,27 @@
   #include <string.h>
   #include <fftw3.h>
 
-  #include "myinterpolate.h"
-
   #include "const.h"
+  #include "varb.h"
+  #include "mymath.h"
+  #include "myerr.h"
+  #include "matrix.h"
+  #include "init.h"
+  #include "power.h"
+  #include "cospara.h"
+  #include "myinterpolate.h"
+  #include "readfile.h"
+
+
   #include "parvar.h"
+  #include "io.h"
+  #include "cic.h"
+  #include "misc.h"
   #include "poisson.h"
+  #include "fourier.h"
+  #include "backward_displacement.h"
+
+  #include "stat_model.h"
 
 
   #define pi M_PI
@@ -87,6 +103,7 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
 	else if(smooth_type==_ANISOTROPIC_INTERPOLATOR_SMOOTH_) {
           //W=myinterp(&sw[0], ki[0])*myinterp(&sw[1], ki[1])*myinterp(&sw[2], ki[2]);
 	  W=tk_interp(&sw[0], ki[0])*tk_interp(&sw[1], ki[1])*tk_interp(&sw[2], ki[2]);
+          //printf("W[%lg, %lg, %lg]=%lg\n", ki[0], ki[1], ki[2], W);
 	  }
         else { 
           printf("smooth_field window function error.\n");  fflush(stdout);

@@ -77,7 +77,7 @@ if __name__=='__main__':
 
 
 
-    if (p.cal_rect_transfer_func):
+    if (p.cal_rect_transfer_func==True):
         nblock=7
         dd=rd.rblock(p.raw_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
@@ -122,25 +122,50 @@ if __name__=='__main__':
         dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
         disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
 
+	print 'disp shape:', disp.shape, disp_lpt.shape, disp_mc.shape
 
-        nplt, ncol = 3, 2
-        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
-                              gap_size=0.5,return_figure=True)
-        n_bin=500
-        color=['g', 'r', 'b', 'y']
-    
-        drange=[-20,20]
-    
-        for i in range(3):
-            ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
-                       histtype='step', color=color[0])
-            ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
-                     range=drange, histtype='step', color=color[1])
-            ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
-                     range=drange, histtype='step', color=color[2])
+	#print disp_lpt
 
-        pl.tight_layout()
-        pl.show()
+
+
+        if True:
+            nplt, ncol = 3, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+            color=['g', 'r', 'b', 'y']
+    
+            drange=[-20,20]
+    
+            for i in range(3):
+                ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
+                           histtype='step', color=color[0])
+                ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                         range=drange, histtype='step', color=color[1])
+                ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
+                         range=drange, histtype='step', color=color[2])
+
+            pl.tight_layout()
+            pl.show()
+
+
+        if True:
+            # ->>  <<- #
+
+            nplt, ncol = 3, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=0, 100
+                
+            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
+            cb2=ax[1].imshow(disp_lpt[axis,15:-15,15:-15,nsl])
+            cb2=ax[2].imshow(disp_mc[axis,15:-15,15:-15,nsl])
+
+                
+            pl.tight_layout()
+            pl.show()
+
+
 
 
 
