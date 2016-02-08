@@ -147,11 +147,12 @@ void disp_potential(SimInfo *s, float *disp, float *disp_phi){
   int i; 
   float *phi, *phi_i, *phi_ij;
 
+
   for(i=0; i<3; i++) {
 
-  ArrayAccess2D_n2(disp, 3, s->npart, i, 0)
+    ArrayAccess2D_n2(disp, 3, s->npart, i, 0)
 
-  poisson_solver_float(ArrayAccess2D_n2(disp, 3, s->npart, i, 0), phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
+    poisson_solver_float(ArrayAccess2D_n2(disp, 3, s->npart, i, 0), phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
     }
 
 
