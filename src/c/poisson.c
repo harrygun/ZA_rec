@@ -213,6 +213,9 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
 
 
 
+
+
+/*->> tester <<-*/
 void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname) {
 
   float *phi, *phi_i, *phi_ij;
