@@ -142,3 +142,9 @@ void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, cha
 
 
 
+/* ->> some  <<- */
+void disp_potential(SimInfo *){
+
+  return;
+  }
+
