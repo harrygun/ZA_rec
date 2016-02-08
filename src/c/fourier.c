@@ -34,6 +34,27 @@
   #endif
 
 
+
+
+
+void divergence(float *disp, double boxsize, int ngrid){
+  long long dksize, dsize, l, m, n, i, j;
+  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin;
+  float fac=1.0/(float)(ngrid*ngrid*ngrid);
+  kmin=2.*pi/boxsize;
+
+  return;
+  }
+
+
+
+
+
+
+
+
+
+
 void smooth_field(float *d, double boxsize, int ngrid, int smooth_type, 
                                           double smooth_R, Interpar *sw)  {
   /* ->> smooth field with FFT <<- */
@@ -132,12 +153,6 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
   printf("->> FFT is Done <<- \n\n");
   return;
   }
-
-
-
-
-
-
 
 
 
