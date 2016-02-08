@@ -136,6 +136,7 @@ if __name__=='__main__':
 
 
         if True:
+	    # ->> 1D histogram <<- #
             nplt, ncol = 3, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
                                   gap_size=0.5,return_figure=True)
@@ -157,6 +158,23 @@ if __name__=='__main__':
 
 
         if True:
+	    # ->>  2D histogram <<- #
+            nplt, ncol = 3, 3
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+            color=['g', 'r', 'b', 'y']
+            drange=[[-3,3], [-8,8]]
+
+            for i in range(3):
+                ax[i].hist2d(disp_mc[i].flatten(), disp_lpt[i].flatten(), 
+                           bins=n_bin, range=drange, normed=True)
+
+            pl.tight_layout()
+            pl.show()
+
+
+        if False:
             # ->>  <<- #
 
             nplt, ncol = 3, 2
