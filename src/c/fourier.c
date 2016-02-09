@@ -39,7 +39,7 @@
 
 void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   //->> return both the potential and the curl-free part of give vector field <<- //
-  int rank, howmany, ;
+  int rank, howmany, *ndim;
   long long dksize, dsize, l, m, n, i, j;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
@@ -52,13 +52,15 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   if(fftwf_init_threads()==0) abort();
   #endif
 
+  // ->>  <<- //
+  howmany=3;
 
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
   fftwf_complex *dk;
 
-  dk=(fftwf_complex *)fftwf_malloc(dksize);
+  dk=(fftwf_complex *)fftwf_malloc(3*dksize);
 
   // ->> multi-threads initialization <<- //
   #ifdef _OMP_
@@ -68,6 +70,9 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   fftwf_plan pforward, pbackward;
   
   rank=3;
+  ndim=(int *)malloc(3*sizeof(int));
+  ndim[0]=ngrid; ndim[1]=ngrid; ndim[2]=ngrid;
+
   pforward=fftwf_plan_many_dft_r2c(rank, ndim, howmany, dkij, inembed, istride, idist, phi_ij, onembed, ostride, odist, FFTW_ESTIMATE);
 
   //pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
