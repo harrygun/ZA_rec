@@ -65,6 +65,7 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   fftwf_plan_with_nthreads(omp_get_max_threads());
   #endif
 
+  //->> forward FFT <<- //
   fftwf_plan pforward, pbackward;
   
   rank=3;
@@ -78,10 +79,8 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   istride=1; ostride=1;
   inembed=NULL; onembed=NULL;
 
-
   pforward=fftwf_plan_many_dft_r2c(rank, ndim, howmany, dki, inembed, istride, idist, phi_ij, onembed, ostride, odist, FFTW_ESTIMATE);
 
-  //pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, d, dk, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
 
   
