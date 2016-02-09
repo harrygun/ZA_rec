@@ -143,6 +143,7 @@ void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, cha
 
 
 /* ->> some manupulations of displacement fields <<- */
+/*
 void disp_potential(SimInfo *s, float *disp, float *disp_phi){
   int i; 
   float *phi, *phi_i, *phi_ij;
@@ -150,7 +151,7 @@ void disp_potential(SimInfo *s, float *disp, float *disp_phi){
 
   for(i=0; i<3; i++) {
 
-    ArrayAccess2D_n2(disp, 3, s->npart, i, 0)
+    //ArrayAccess2D_n2(disp, 3, s->npart, i, 0);
 
     poisson_solver_float(ArrayAccess2D_n2(disp, 3, s->npart, i, 0), phi, disp, phi_ij, s->boxsize, s->ngrid, s->smooth_type_flag, s->smooth_R, fft_return_type);
     }
@@ -159,6 +160,7 @@ void disp_potential(SimInfo *s, float *disp, float *disp_phi){
   return;
   }
 
+*/
 
 
 

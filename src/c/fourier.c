@@ -37,11 +37,16 @@
 
 
 
-void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
-  //->> return both the potential and the curl-free part of give vector field <<- //
+void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi, double boxsize, int ngrid) {
+  /*->> return both the potential and the curl-free part of give vector field <<- */
+  // ->> disp: (input)  original vector field, presumably displacement field 
+  // ->> div:  (output) the divergence of disp 
+  // ->> phi:  (output) the potential field of disp so that \nabla_i phi= disp_i
+  // ->> disp_phi: (output)  the curl-free part of disp 
+
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   long long dksize, dsize, l, m, n, i, j;
-  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin;
+  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin, k2;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
@@ -56,9 +61,11 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   // ->> initialization <<- //
   dsize=ngrid*ngrid*ngrid*sizeof(float);
   dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
-  fftwf_complex *dki;
+  fftwf_complex *dki, *dkdiv, *dkphi;
 
   dki=(fftwf_complex *)fftwf_malloc(3*dksize);
+  dkdiv=(fftwf_complex *)fftwf_malloc(dksize);
+  dkphi=(fftwf_complex *)fftwf_malloc(dksize);
 
   // ->> multi-threads initialization <<- //
   #ifdef _OMP_
@@ -68,8 +75,8 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   //->> forward FFT <<- //
   fftwf_plan pforward, pbackward;
   
-  rank=3;
-  howmany=3;
+  rank=3; howmany=3;
+
   ndim=(int *)malloc(3*sizeof(int));
   ndim[0]=ngrid; ndim[1]=ngrid; ndim[2]=ngrid;
 
@@ -79,12 +86,13 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
   istride=1; ostride=1;
   inembed=NULL; onembed=NULL;
 
-  pforward=fftwf_plan_many_dft_r2c(rank, ndim, howmany, dki, inembed, istride, idist, phi_ij, onembed, ostride, odist, FFTW_ESTIMATE);
+  pforward=fftwf_plan_many_dft_r2c(rank, ndim, howmany, disp, inembed, istride, idist, dki, onembed, ostride, odist, FFTW_ESTIMATE);
 
   fftwf_execute(pforward);  
+  //->> end of forward FFT <<-//
 
   
-  /* smooth with FFT */
+  /* ->> taking the divergence, potential, and curl-free vector <<- */
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid/2+1; n++){
@@ -104,25 +112,74 @@ void potential_curlfree_vec(float *disp, double boxsize, int ngrid){
 	ki[0]=2.*sin(kx/2.);
 	ki[1]=2.*sin(ky/2.);
 	ki[2]=2.*sin(kz/2.);
-	
 
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*=W;
-        ArrayAccess3D_n3(dk, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*=W;
+        k2=sin2x+sin2y+sin2z;
+     
+        //->> divergence <<- //
+        ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
+               -ki[0]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[1]+
+               -ki[1]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[1]+
+               -ki[2]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 2, l, m, n)[1];
+
+        ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]=
+                ki[0]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[0]+
+                ki[1]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[0]+
+                ki[2]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 2, l, m, n)[0];
+
+        // ->> potential <<- //
+        ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
+                  ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]/(-k2);
+        ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]=
+                  ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]/(-k2);
+
+	//->> get the curl-free vector <<- //
+	for(i=0; i<3; i++) {
+          ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[0]=
+                 -ki[i]*ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+          ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[1]=
+                  ki[i]*ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+	  }
+
         }
   
-    /* inverse FFT */
-    pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dk, d, FFTW_ESTIMATE);
-    fftwf_execute(pbackward);
-    fftwf_destroy_plan(pbackward);
+  /* ->> inverse FFT <<- */
 
-  
+  // ->> get divergence first <<- //
+  pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkdiv, div, FFTW_ESTIMATE);
+  fftwf_execute(pbackward);
+  fftwf_destroy_plan(pbackward);
+
+  // ->> then the potential phi <<- //
+  pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkphi, phi, FFTW_ESTIMATE);
+  fftwf_execute(pbackward);
+  fftwf_destroy_plan(pbackward);
+
+  // ->> finally the curl-free vector field <<- //
+  idist=ngrid*ngrid*(ngrid/2+1);
+  odist=ngrid*ngrid*ngrid;
+
+  pbackward=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dki, inembed, istride, idist, disp_phi, onembed, ostride, odist, FFTW_ESTIMATE);
+
+  fftwf_execute(pbackward);
+  fftwf_destroy_plan(pbackward);
+
+
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
-      for (n=0; n<ngrid; n++) 
-        ArrayAccess3D(d, ngrid, l, m, n)*=fac;
+      for (n=0; n<ngrid; n++) {
+        ArrayAccess3D(div, ngrid, l, m, n)*=fac;
+        ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
 
-  fftwf_free(dk);
+        for(i=0; i<3; i++)
+          ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
+	}
+
+
+
+  // ->> free <<- //
+  fftwf_free(dki); fftwf_free(dkdiv); fftwf_free(dkphi);
+  free(ndim);
 
   fftwf_destroy_plan(pforward);
   fftwf_cleanup();
@@ -227,8 +284,9 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
-      for (n=0; n<ngrid; n++) 
+      for (n=0; n<ngrid; n++) {
         ArrayAccess3D(d, ngrid, l, m, n)*=fac;
+	}
 
   fftwf_free(dk);
 

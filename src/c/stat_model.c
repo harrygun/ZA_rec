@@ -219,7 +219,7 @@ void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt,
   for(ip=0; ip<s->npart; ip++) 
     for(i=0; i<3; i++)    {
       ArrayAccess2D_n2(disp_mc, 3, s->npart, i, ip)=ArrayAccess2D_n2(disp, 3, s->npart, i, ip)
-                                                 -ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, ip);
+                                                   -ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, ip);
     }
 
   return;
