@@ -61,7 +61,8 @@ prog_control={
     #-------------------------------#
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
-    'py_stat_model_PDF':   True,
+    'py_stat_model_PDF':   False,
+    'py_stat_potential_model_PDF':   True,
     }
 
 
@@ -193,6 +194,31 @@ if __name__=='__main__':
                 
             pl.tight_layout()
             pl.show()
+
+
+    if (p.py_stat_potential_model_PDF==True):
+        # ->> import data <<- #
+        nblock=16
+        dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+
+        #disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
+        bd=10
+        disp = dd[:3,bd:-bd,bd:-bd,bd:-bd]
+        div  = dd[3,bd:-bd,bd:-bd,bd:-bd]
+        phi  = dd[4,bd:-bd,bd:-bd,bd:-bd]
+        disp_phi = dd[5:8,bd:-bd,bd:-bd,bd:-bd]
+
+        disp_lpt = dd[8:11,bd:-bd,bd:-bd,bd:-bd]
+        div_lpt  = dd[11,bd:-bd,bd:-bd,bd:-bd]
+        phi_lpt  = dd[12,bd:-bd,bd:-bd,bd:-bd]
+
+	disp_mc=dd[13:,bd:-bd,bd:-bd,bd:-bd]
+
+	#->>
+	print disp.shape, div.shape, phi.shape, disp_phi.shape, 
+	print disp_lpt.shape, div.lpt.shape, phi_lpt.shape, disp_mc.shape
+
+        #->> 
 
 
 

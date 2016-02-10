@@ -60,7 +60,7 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
-  printf("\n->> Smoothing field with FFT.\n");
+  printf("\n->> Obtain potential field with FFT.\n");
 
   // ->> initialize OpenMP <<- //
   #ifdef _OMP_
@@ -158,34 +158,43 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
   /* ->> inverse FFT <<- */
 
   // ->> get divergence first <<- //
-  pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkdiv, div, FFTW_ESTIMATE);
-  fftwf_execute(pbackward);
-  fftwf_destroy_plan(pbackward);
+  if(do_div==TRUE) {
+    pbackward= fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkdiv, div, FFTW_ESTIMATE);
+    fftwf_execute(pbackward);
+    fftwf_destroy_plan(pbackward);
+    }
 
   // ->> then the potential phi <<- //
-  pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkphi, phi, FFTW_ESTIMATE);
-  fftwf_execute(pbackward);
-  fftwf_destroy_plan(pbackward);
+  if(do_phi==TRUE) {
+    pbackward = fftwf_plan_dft_c2r_3d(ngrid, ngrid, ngrid, dkphi, phi, FFTW_ESTIMATE);
+    fftwf_execute(pbackward);
+    fftwf_destroy_plan(pbackward);
+    }
 
   // ->> finally the curl-free vector field <<- //
-  idist=ngrid*ngrid*(ngrid/2+1);
-  odist=ngrid*ngrid*ngrid;
+  if(do_disp_phi==TRUE) {
+    idist=ngrid*ngrid*(ngrid/2+1);
+    odist=ngrid*ngrid*ngrid;
 
-  pbackward=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dki, inembed, istride, idist, disp_phi, onembed, ostride, odist, FFTW_ESTIMATE);
+    pbackward=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dki, inembed, istride, idist, disp_phi, onembed, ostride, odist, FFTW_ESTIMATE);
 
-  fftwf_execute(pbackward);
-  fftwf_destroy_plan(pbackward);
+    fftwf_execute(pbackward);
+    fftwf_destroy_plan(pbackward);
+    }
 
 
   // ->> renormalize <<- //
   for (l=0; l<ngrid; l++)
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid; n++) {
-        ArrayAccess3D(div, ngrid, l, m, n)*=fac;
-        ArrayAccess3D(phi, ngrid, l, m, n)*=fac;
 
-        for(i=0; i<3; i++)
-          ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
+        if(do_div==TRUE) {ArrayAccess3D(div, ngrid, l, m, n)*=fac;}
+        if(do_phi==TRUE) {ArrayAccess3D(phi, ngrid, l, m, n)*=fac;}
+
+        if(do_disp_phi==TRUE) {
+          for(i=0; i<3; i++)
+            ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
+	  }
 	}
 
 

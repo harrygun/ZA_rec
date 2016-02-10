@@ -13,7 +13,7 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
                                  char *fname_part_init, char *fname_out);
 
 void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, float *disp_mc, Interpar *tf);
-void output_stat_disp_model(SimInfo *s, float *disp, float *disp_lpt, float *disp_mc, char *fname_out);
+
 
 
 // ->> transfer function <<- //
@@ -22,5 +22,16 @@ Interpar *transfer_func_init(char *fname);
 void transfer_func_finalize(Interpar *tf);
 
 //void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, char *stat_disp_model_type);
+
+
+
+// ->> output <<- //
+void output_stat_disp_model(SimInfo *s, float *disp, float *disp_lpt, 
+                             float *disp_mc, char *fname_out);
+
+void output_stat_disp_potential_model(SimInfo *s, float *disp, float *div, float *phi,
+                            float *disp_phi, float *disp_lpt, float *div_lpt, 
+                            float *phi_lpt, float *disp_mc, char *fname_out);
+
 
 #endif
