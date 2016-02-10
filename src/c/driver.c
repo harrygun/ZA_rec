@@ -368,9 +368,7 @@
  
         // ->> output displacement field <<- //
         //output_stat_disp_model(&s, disp, disp_lpt, disp_mc, stat_disp_fname);
-	//
-        // ->> output <<- //
-
+        disp, div, phi, disp_phi, disp_lpt, div_lpt, phi_lpt, disp_mc
 
 
 

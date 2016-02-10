@@ -256,3 +256,24 @@ void output_stat_disp_model(SimInfo *s, float *disp, float *disp_lpt, float *dis
   fclose(fp);
   return;
   }
+
+
+
+void output_stat_disp_potential_model(SimInfo *s, float *disp, float *div, float *phi,
+                            float *disp_phi, float *disp_lpt, float *div_lpt, 
+                            float *phi_lpt, float *disp_mc, char *fname_out)  {
+  // ->> write displacement field into files <<- //
+  //
+  longlong
+  FILE *fp=fopen(fname_out, "wb");
+  fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+
+
+  fwrite(disp_lpt, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+
+
+  fwrite(disp_mc, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+
+  fclose(fp);
+  return;
+  }
