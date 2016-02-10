@@ -310,6 +310,7 @@
     // ->> Obtain displacement field <<- //
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc;  // ->> displacement field <<- //
+    float *div, *phi, *disp_phi, *div_lpt, *phi_lpt;
 
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
@@ -347,14 +348,30 @@
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
         disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+	// ->> 
+	div=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+	phi=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+	div_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+	phi_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
+	disp_phi=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit);
 
         // ->> statistical separate LPT & mode-coupling term <<- //
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
+
+
+        // ->> get potential field <<- //
+        potential_curlfree_vec(disp, div, phi, disp_phi, s.boxsize, s.ngrid);
+        potential_curlfree_vec(disp_lpt, div_lpt, phi_lpt, NULL, s.boxsize, s.ngrid);
  
         // ->> output displacement field <<- //
-        output_stat_disp_model(&s, disp, disp_lpt, disp_mc, stat_disp_fname);
+        //output_stat_disp_model(&s, disp, disp_lpt, disp_mc, stat_disp_fname);
+	//
+        // ->> output <<- //
+
+
 
 
 

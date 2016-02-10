@@ -44,6 +44,16 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
   // ->> phi:  (output) the potential field of disp so that \nabla_i phi= disp_i
   // ->> disp_phi: (output)  the curl-free part of disp 
 
+  int do_phi, do_div, do_disp_phi;
+
+  do_phi=TRUE; do_div=TRUE, do_disp_phi=TRUE;
+  if(div==NULL) { do_div=FALSE; }
+  if(phi==NULL) { do_phi=FALSE; }
+  if(disp_phi==NULL) { do_disp_phi=FALSE; }
+  
+  if( (do_div==FALSE)&&(do_phi==FALSE)&&(do_disp_phi==FALSE) )
+    return FALSE;
+
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   long long dksize, dsize, l, m, n, i, j;
   float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin, k2;
@@ -116,6 +126,9 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
         k2=sin2x+sin2y+sin2z;
      
         //->> divergence <<- //
+	
+
+
         ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
                -ki[0]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[1]+
                -ki[1]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[1]+
