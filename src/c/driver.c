@@ -22,6 +22,7 @@
   #include "parvar.h"
   #include "io.h"
   #include "cic.h"
+  #include "misc.h"
   #include "poisson.h"
   #include "reconstruction_partmoving.h"
   #include "test_likelihood.h"
@@ -308,8 +309,11 @@
       }
 
     // ->> Obtain displacement field <<- //
+    size_t ng_trimmed, ntrim;
+    ntrim=10; ng_trimmed=s.ngrid-2*ntrim;
+
     float *drec, *d_disp, *d_shift;
-    float *disp, *disp_lpt, *disp_mc;  // ->> displacement field <<- //
+    float *disp, *disp_lpt, *disp_mc, *disp_lpt_trim, *disp_trim;  //->>displacement field
     float *div, *phi, *disp_phi, *div_lpt, *phi_lpt;
 
     if(rc.do_rect==TRUE){
@@ -348,13 +352,17 @@
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
         disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
-	// ->> 
-	div=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-	phi=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-	div_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-	phi_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid);
-	disp_phi=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 
+	// ->> allocate memory <<- //
+	//
+        disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed*3);
+        disp_trim=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed*3);
+	// ->> 
+	div=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed);
+	phi=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed);
+	div_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed);
+	phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed);
+	disp_phi=(float *)fftwf_malloc(sizeof(float)*ng_trimmed*ng_trimmed*ng_trimmed*3);
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit);
 
@@ -362,19 +370,31 @@
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
 
 
+	// ->> trim the boundary of original data <<- //
+	for(i=0; i<3; i++) {
+          cubic_trim(disp[], disp_trim, s.ngrid, ntrim);
+          cubic_trim(disp_lpt[], disp_lpt_trim, s.ngrid, ntrim);
+	  }
+	 
         // ->> get potential field <<- //
         potential_curlfree_vec(disp, div, phi, disp_phi, s.boxsize, s.ngrid);
         potential_curlfree_vec(disp_lpt, div_lpt, phi_lpt, NULL, s.boxsize, s.ngrid);
  
-        // ->> output displacement field <<- //
-        //output_stat_disp_model(&s, disp, disp_lpt, disp_mc, stat_disp_fname);
-        output_stat_disp_potential_model(&s, disp, div, phi, disp_phi, disp_lpt, 
-                                     div_lpt, phi_lpt, disp_mc, stat_disp_fname);
 
+        // ->> output displacement field <<- //
+        //output_stat_disp_model(disp, disp_lpt, disp_mc, stat_disp_fname, 
+	//                       s.ngrid, ng_trimmed);
+        output_stat_disp_potential_model(disp, div, phi, disp_phi, disp_lpt, 
+                  div_lpt, phi_lpt, disp_mc, s.ngrid, ng_trimmed, stat_disp_fname);
 
         // ->> free <<- //
         transfer_func_finalize(tf);
 	free(disp);  free(disp_lpt);  free(disp_mc);
+
+        free(disp_lpt_trim); free(disp_trim); 
+        free(div);  free(phi);  free(disp_phi); 
+	free(div_lpt); free(phi_lpt);
+
         }
 
       }

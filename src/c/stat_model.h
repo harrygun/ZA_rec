@@ -26,12 +26,10 @@ void transfer_func_finalize(Interpar *tf);
 
 
 // ->> output <<- //
-void output_stat_disp_model(SimInfo *s, float *disp, float *disp_lpt, 
-                             float *disp_mc, char *fname_out);
+void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc, 
+                      size_t ngrid, size_t ngrid_trimmed, char *fname_out);
 
-void output_stat_disp_potential_model(SimInfo *s, float *disp, float *div, float *phi,
-                            float *disp_phi, float *disp_lpt, float *div_lpt, 
-                            float *phi_lpt, float *disp_mc, char *fname_out);
-
-
+void output_stat_disp_potential_model(float *disp, float *div, float *phi, 
+             float *disp_phi, float *disp_lpt, float *div_lpt, float *phi_lpt, 
+	     float *disp_mc, size_t ngrid, size_t ngrid_trimmed, char *fname_out);
 #endif

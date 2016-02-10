@@ -14,6 +14,9 @@
   #include "cospara.h"
   #include "myinterpolate.h"
 
+  #ifdef _OMP_
+  #include <omp.h>
+  #endif
 
 
 void mat_inv_3d_float(float mat[3][3], float imat[3][3]){
@@ -76,3 +79,24 @@ void mat_multiply_3d_float(float mat[3][3], float x[3], float y[3]){
     }
   return;
   }
+
+
+// ->> trim the boundary of cubic <<- //
+void cubic_trim(float *mi, float *mo, size_t ngrid, size_t ntrim){
+  size_t i, j, k, nt;
+
+  nt=ngrid-2*ntrim; 
+
+  #ifdef _OMP_
+  #pragma omp parallel for private(i,j,k)
+  #endif
+  for(i=0; i<nt; i++)
+    for(j=0; j<nt; j++)
+      for(k=0; k<nt; k++) {
+        mo[] = mi ;
+
+        }
+
+  return;
+  }
+
