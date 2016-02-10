@@ -238,8 +238,8 @@ if __name__=='__main__':
             cb2=ax[1].imshow(disp_lpt[axis,15:-15,15:-15,nsl])
             #cb3=ax[2].imshow(disp_phi[axis,15:-15,15:-15,nsl])
 
-            cb3=ax[2].imshow(div[15:-15,15:-15,nsl])
-            cb4=ax[3].imshow(div_lpt[15:-15,15:-15,nsl])
+            cb3=ax[2].imshow(phi[15:-15,15:-15,nsl])
+            cb4=ax[3].imshow(phi_lpt[15:-15,15:-15,nsl])
 
 	    pl.colorbar(cb1)
 	    pl.colorbar(cb2)
