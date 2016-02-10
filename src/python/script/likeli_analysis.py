@@ -215,13 +215,40 @@ if __name__=='__main__':
 	disp_mc=dd[13:,bd:-bd,bd:-bd,bd:-bd]
 
 	#->>
-	print disp.shape, div.shape, phi.shape, disp_phi.shape, 
-	print disp_lpt.shape, div.lpt.shape, phi_lpt.shape, disp_mc.shape
+	#print disp.shape, div.shape, phi.shape, disp_phi.shape, 
+	#print disp_lpt.shape, div_lpt.shape, phi_lpt.shape, disp_mc.shape
 
         #->> 
 
+        print 'div min/max:', div.min(), div.max()
+        print 'div_lpt min/max:', div_lpt.min(), div_lpt.max()
 
+        print 'phi min/max:', phi.min(), phi.max()
+        print 'phi_lpt min/max:', phi_lpt.min(), phi_lpt.max()
 
+        if True:
+            # ->>  <<- #
+
+            nplt, ncol = 4, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=0, 20
+                
+            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
+            cb2=ax[1].imshow(disp_lpt[axis,15:-15,15:-15,nsl])
+            #cb3=ax[2].imshow(disp_phi[axis,15:-15,15:-15,nsl])
+
+            cb3=ax[2].imshow(div[15:-15,15:-15,nsl])
+            cb4=ax[3].imshow(div_lpt[15:-15,15:-15,nsl])
+
+	    pl.colorbar(cb1)
+	    pl.colorbar(cb2)
+	    pl.colorbar(cb3)
+	    pl.colorbar(cb4)
+
+                
+            pl.tight_layout()
+            pl.show()
 
 
 
