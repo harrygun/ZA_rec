@@ -56,7 +56,7 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
 
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   long long dksize, dsize, l, m, n, i, j;
-  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin, k2;
+  float kx, ky, kz, ki[3], sin2x, sin2y, sin2z, W, kmin, greens;
   float fac=1.0/(float)(ngrid*ngrid*ngrid);
   kmin=2.*pi/boxsize;
 
@@ -123,12 +123,7 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
 	ki[1]=2.*sin(ky/2.);
 	ki[2]=2.*sin(kz/2.);
 
-        k2=sin2x+sin2y+sin2z;
-     
         //->> divergence <<- //
-	
-
-
         ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
                -ki[0]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 0, l, m, n)[1]+
                -ki[1]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 1, l, m, n)[1]+
@@ -140,10 +135,14 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
                 ki[2]*ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), 2, l, m, n)[0];
 
         // ->> potential <<- //
+        if ((l==0) && (m==0) && (n==0)) greens = 0.;
+        else greens = -1./(sin2x+sin2y+sin2z);
+
         ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]=
-                  ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]/(-k2);
+                ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[0]*greens;
         ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]=
-                  ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]/(-k2);
+                ArrayAccess3D_n3(dkdiv, ngrid, ngrid, (ngrid/2+1), l, m, n)[1]*greens;
+
 
 	//->> get the curl-free vector <<- //
 	for(i=0; i<3; i++) {
