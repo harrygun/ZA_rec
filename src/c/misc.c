@@ -83,8 +83,8 @@ void mat_multiply_3d_float(float mat[3][3], float x[3], float y[3]){
 
 // ->> trim the boundary of cubic <<- //
 void cubic_trim(float *mi, float *mo, size_t ngrid, size_t ntrim){
+  /*->> trim the cubic  <<-*/
   size_t i, j, k, nt;
-
   nt=ngrid-2*ntrim; 
 
   #ifdef _OMP_
@@ -93,8 +93,7 @@ void cubic_trim(float *mi, float *mo, size_t ngrid, size_t ntrim){
   for(i=0; i<nt; i++)
     for(j=0; j<nt; j++)
       for(k=0; k<nt; k++) {
-        mo[] = mi ;
-
+        ArrayAccess3D(mo, nt, i, j, k)=ArrayAccess3D(mi, ngrid, i+ntrim, j+ntrim, k+ntrim);
         }
 
   return;

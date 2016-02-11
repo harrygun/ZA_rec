@@ -261,22 +261,26 @@ void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc,
 
 
 
-void output_stat_disp_potential_model(float *disp, float *div, float *phi, 
-             float *disp_phi, float *disp_lpt, float *div_lpt, float *phi_lpt, 
-	     float *disp_mc, size_t ngrid, size_t ngrid_trimmed, char *fname_out)  {
+void output_stat_disp_potential_model(float *disp, float *disp_lpt, float *disp_mc, 
+                          float *div, float *phi, float *disp_phi, float *div_lpt, 
+                      float *phi_lpt, size_t ngrid, size_t ngrid_trim, char *fname_out){
   // ->> write displacement field into files <<- //
   //
-  size_t tng=ngrid*ngrid*ngrid;
+  size_t ng, tng;
+  ng=ngrid*ngrid*ngrid;
+  tng=ngrid_trim*ngrid_trim*ngrid_trim;
+
   FILE *fp=fopen(fname_out, "wb");
 
-  fwrite(disp, sizeof(float), tng*3, fp);
+  fwrite(disp, sizeof(float), ng*3, fp);
+  fwrite(disp_lpt, sizeof(float), ng*3, fp);
+  fwrite(disp_mc, sizeof(float), ng*3, fp);
+
   fwrite(div, sizeof(float), tng, fp);
   fwrite(phi, sizeof(float), tng, fp);
   fwrite(disp_phi, sizeof(float), tng*3, fp);
-  fwrite(disp_lpt, sizeof(float), tng*3, fp);
   fwrite(div_lpt, sizeof(float), tng, fp);
   fwrite(phi_lpt, sizeof(float), tng, fp);
-  fwrite(disp_mc, sizeof(float), tng*3, fp);
 
   fclose(fp);
   return;
