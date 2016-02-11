@@ -30,6 +30,7 @@ void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc,
                       size_t ngrid, size_t ngrid_trimmed, char *fname_out);
 
 void output_stat_disp_potential_model(float *disp, float *disp_lpt, float *disp_mc, 
-                          float *div, float *phi, float *disp_phi, float *div_lpt,
-                      float *phi_lpt, size_t ngrid, size_t ngrid_trim, char *fname_out);
+                          float *div, float *phi, float *disp_phi, float *div_lpt, float *phi_lpt, 
+			  float *disp_phi_lpt,  size_t ngrid, size_t ngrid_trim, char *fname_out);
+
 #endif

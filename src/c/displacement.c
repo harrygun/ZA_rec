@@ -86,14 +86,18 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
           grid[2]=xmin+k*dx;
 
           for(m=0; m<3; m++){
-            //_disp_=p[ip].pos[2-m]-grid[m];
-	    /*
-	    if(_disp_<-s->boxsize) 
-	      _disp_+=s->boxsize;
-	    if(_disp_>s->boxsize) 
-	      _disp_-=s->boxsize;
-	    */
-            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[2-m]-grid[m])*fscale;
+
+            _disp_=p[ip].pos[2-m]-grid[m];
+
+	    if(_disp_<-(xmax-xmin)) 
+	      _disp_+=xmax-xmin;
+	    if(_disp_>xmax-xmin) 
+	      _disp_-=xmax-xmin;
+
+            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[2-m]-grid[m])*fscale;
+            ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=_disp_*fscale;
+
+
             //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[2-m]-grid[m]);
             //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[m]-grid[2-m])*fscale;
             }

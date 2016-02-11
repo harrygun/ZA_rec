@@ -7,6 +7,7 @@
 
   #include <gsl/gsl_integration.h>
   #include <gsl/gsl_sf.h>
+  #include <gsl/gsl_histogram2d.h>
   #include <iniparser.h>
 
   #include "const.h"
@@ -311,14 +312,17 @@
     // ->> Obtain displacement field <<- //
     size_t ng_trim, ntrim;
     double bsize_trim;
-    ntrim=10; ng_trim=s.ngrid-2*ntrim;
-
+    //ntrim=10; 
+    ntrim=0; 
+    ng_trim=s.ngrid-2*ntrim;
     bsize_trim=s.boxsize*(double)ng_trim/(double)s.ngrid;
-
 
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc, *disp_lpt_trim, *disp_trim;  //->>displacement field
-    float *div, *phi, *disp_phi, *div_lpt, *phi_lpt;
+    float *div, *phi, *disp_phi, *div_lpt, *phi_lpt, *disp_phi_lpt;
+
+    //->> histogram <<- //
+     
 
     if(rc.do_rect==TRUE){
       // ->> if do reconstruction <<- //
@@ -367,6 +371,7 @@
 	div_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
 	phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
 	disp_phi=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
+	disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit);
 
@@ -382,14 +387,19 @@
 	 
         // ->> get potential field <<- //
         potential_curlfree_vec(disp_trim, div, phi, disp_phi, bsize_trim, ng_trim);
-        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
+        //potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
+        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,disp_phi_lpt,bsize_trim, ng_trim);
  
+
+        // ->> now get histogram data <<- //
+         
+
 
         // ->> output displacement field <<- //
         //output_stat_disp_model(disp, disp_lpt, disp_mc, stat_disp_fname, 
 	//                       s.ngrid, ng_trim);
         output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
-                               div_lpt, phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
+                               div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
 
         // ->> free <<- //
         transfer_func_finalize(tf);
