@@ -310,7 +310,11 @@
 
     // ->> Obtain displacement field <<- //
     size_t ng_trim, ntrim;
+    double bsize_trim;
     ntrim=10; ng_trim=s.ngrid-2*ntrim;
+
+    bsize_trim=s.boxsize*(double)ng_trim/(double)s.ngrid;
+
 
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc, *disp_lpt_trim, *disp_trim;  //->>displacement field
@@ -377,8 +381,8 @@
 	  }
 	 
         // ->> get potential field <<- //
-        potential_curlfree_vec(disp_trim, div, phi, disp_phi, s.boxsize, s.ngrid);
-        potential_curlfree_vec(disp_lpt_trim, div_lpt, phi_lpt, NULL, s.boxsize, s.ngrid);
+        potential_curlfree_vec(disp_trim, div, phi, disp_phi, bsize_trim, ng_trim);
+        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
  
 
         // ->> output displacement field <<- //
