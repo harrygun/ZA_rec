@@ -198,21 +198,27 @@ if __name__=='__main__':
 
     if (p.py_stat_potential_model_PDF==True):
         # ->> import data <<- #
-        nblock=16
-        dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+        nb1, nb2=9, 7 
+	ntrim=10
 
-        #disp, disp_lpt, disp_mc=dd[:3,...], dd[3:6,...], dd[6:,...]
-        bd=10
-        disp = dd[:3,bd:-bd,bd:-bd,bd:-bd]
-        div  = dd[3,bd:-bd,bd:-bd,bd:-bd]
-        phi  = dd[4,bd:-bd,bd:-bd,bd:-bd]
-        disp_phi = dd[5:8,bd:-bd,bd:-bd,bd:-bd]
+	ng=p.ngrid
+	tng=p.ngrid-2*ntrim
 
-        disp_lpt = dd[8:11,bd:-bd,bd:-bd,bd:-bd]
-        div_lpt  = dd[11,bd:-bd,bd:-bd,bd:-bd]
-        phi_lpt  = dd[12,bd:-bd,bd:-bd,bd:-bd]
+        dd=rd.rblock(p.stat_disp_field_fname, ng**3*nb1+tng**3*nb2, dtype='float')
+        dd1=dd[:ng**3*nb1].reshape(nb1,ng,ng,ng)
+        dd2=dd[ng**3*nb1:].reshape(nb2,tng,tng,tng)
 
-	disp_mc=dd[13:,bd:-bd,bd:-bd,bd:-bd]
+        bd=ntrim
+        disp = dd1[:3,bd:-bd,bd:-bd,bd:-bd]
+        disp_lpt = dd1[3:6,bd:-bd,bd:-bd,bd:-bd]
+	disp_mc=dd1[6:,bd:-bd,bd:-bd,bd:-bd]
+
+        div, phi = dd2[0], dd2[1]
+        disp_phi=dd2[2:5]
+        div_lpt,phi_lpt =dd2[5], dd2[6]
+
+	disp_phimc=disp_phi-disp_lpt
+	disp_rot=disp-disp_phi
 
 	#->>
 	#print disp.shape, div.shape, phi.shape, disp_phi.shape, 
@@ -220,13 +226,66 @@ if __name__=='__main__':
 
         #->> 
 
-        print 'div min/max:', div.min(), div.max()
-        print 'div_lpt min/max:', div_lpt.min(), div_lpt.max()
+        #print 'div min/max:', div.min(), div.max()
+        #print 'div_lpt min/max:', div_lpt.min(), div_lpt.max()
+        #print 'phi min/max:', phi.min(), phi.max()
+        #print 'phi_lpt min/max:', phi_lpt.min(), phi_lpt.max()
+	#print 'disp_phi', disp_phi.min(), disp_phi.max()
 
-        print 'phi min/max:', phi.min(), phi.max()
-        print 'phi_lpt min/max:', phi_lpt.min(), phi_lpt.max()
 
-        if True:
+	if True:
+	    # ->> 2D histogram <<- #
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+
+            drange_div=[[-3,3], [-3,3]]
+            drange_phi=[[-10,10], [-200,200]]
+
+            ax[0].hist2d((div-div_lpt).flatten(), div_lpt.flatten(), 
+                           bins=n_bin, range=drange_div, normed=True)
+
+            ax[1].hist2d((phi-phi_lpt).flatten(), phi_lpt.flatten(), 
+                           bins=n_bin, normed=True, range=drange_phi) 
+
+            pl.tight_layout()
+            pl.show()
+
+
+
+
+        if False:
+	    # ->> 1D histogram <<- #
+            nplt, ncol = 4, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+            color=['g', 'r', 'b', 'y', 'k', 'm']
+    
+            drange=[-10,10]
+    
+            for i in range(3):
+                ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
+                         normed=True, histtype='step', color=color[0])
+                ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                         normed=True, range=drange, histtype='step', color=color[1])
+                ax[i].hist((disp_mc[i]).flatten(), bins=n_bin, \
+                        normed=True, range=drange, histtype='step', color=color[2])
+                ax[i].hist((disp_phi[i]).flatten(), bins=n_bin, \
+                        normed=True, range=drange, histtype='step', color=color[3])
+                ax[i].hist((disp_phimc[i]).flatten(), bins=n_bin, \
+                        normed=True, range=drange, histtype='step', color=color[4])
+                ax[i].hist((disp_rot[i]).flatten(), bins=n_bin, \
+                        normed=True, range=drange, histtype='step', color=color[5])
+
+
+            pl.tight_layout()
+            pl.show()
+
+
+
+        if False:
             # ->>  <<- #
 
             nplt, ncol = 4, 2
@@ -234,17 +293,20 @@ if __name__=='__main__':
             	                      gap_size=0.5,return_figure=True)
             axis, nsl=0, 20
                 
-            cb1=ax[0].imshow(disp[axis,15:-15,15:-15,nsl])
-            cb2=ax[1].imshow(disp_lpt[axis,15:-15,15:-15,nsl])
-            #cb3=ax[2].imshow(disp_phi[axis,15:-15,15:-15,nsl])
+            cb1=ax[0].imshow(disp[axis,:,:,nsl])
+            cb2=ax[1].imshow(disp_lpt[axis,:,:,nsl])
+            cb2=ax[2].imshow(disp_phi[axis,:,:,nsl])
 
-            cb3=ax[2].imshow(phi[15:-15,15:-15,nsl])
-            cb4=ax[3].imshow(phi_lpt[15:-15,15:-15,nsl])
+            #cb3=ax[2].imshow(phi[...,nsl])
+            #cb4=ax[3].imshow(phi_lpt[...,nsl])
 
-	    pl.colorbar(cb1)
-	    pl.colorbar(cb2)
-	    pl.colorbar(cb3)
-	    pl.colorbar(cb4)
+            #cb3=ax[2].imshow(div[...,nsl])
+            #cb4=ax[3].imshow(div_lpt[...,nsl])
+
+	    #pl.colorbar(cb1)
+	    #pl.colorbar(cb2)
+	    #pl.colorbar(cb3)
+	    #pl.colorbar(cb4)
 
                 
             pl.tight_layout()

@@ -396,7 +396,6 @@
 	free(disp);  free(disp_lpt);  free(disp_mc);
 	free(disp_trim);   free(disp_lpt_trim);
 
-        free(disp_lpt_trim); free(disp_trim); 
         free(div);  free(phi);  free(disp_phi); 
 	free(div_lpt); free(phi_lpt);
         }

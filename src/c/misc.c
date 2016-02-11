@@ -14,6 +14,8 @@
   #include "cospara.h"
   #include "myinterpolate.h"
 
+  #include "parvar.h"
+
   #ifdef _OMP_
   #include <omp.h>
   #endif
