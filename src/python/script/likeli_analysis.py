@@ -199,7 +199,7 @@ if __name__=='__main__':
     if (p.py_stat_potential_model_PDF==True):
         # ->> import data <<- #
         nb1, nb2=9, 10
-	ntrim=0
+	ntrim=10
 
 	ng=p.ngrid
 	tng=p.ngrid-2*ntrim

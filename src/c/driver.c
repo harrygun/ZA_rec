@@ -312,8 +312,8 @@
     // ->> Obtain displacement field <<- //
     size_t ng_trim, ntrim;
     double bsize_trim;
-    //ntrim=10; 
-    ntrim=0; 
+    ntrim=10; //ntrim=0; 
+
     ng_trim=s.ngrid-2*ntrim;
     bsize_trim=s.boxsize*(double)ng_trim/(double)s.ngrid;
 
@@ -322,7 +322,7 @@
     float *div, *phi, *disp_phi, *div_lpt, *phi_lpt, *disp_phi_lpt;
 
     //->> histogram <<- //
-    Histopar2d hist;
+    //Histopar2d hist;
      
 
     if(rc.do_rect==TRUE){
@@ -393,11 +393,13 @@
  
 
         // ->> now get histogram data <<- //
+	/*
 	for(i=0; i<2; i++) {
           hist.grid[i]=100;
           hist.boundary[0][i]=200*pow(-1.,i);
           hist.boundary[1][i]=10*pow(-1.,i); }
         histogram2d_init(&hist);
+	*/
 
         // ->> 
 
@@ -417,7 +419,7 @@
         free(div);  free(phi);  free(disp_phi); 
 	free(div_lpt); free(phi_lpt);
 
-        histogram2d_free(&hist);
+        //histogram2d_free(&hist);
         }
 
       }
