@@ -395,8 +395,11 @@
         // ->> now get histogram data <<- //
 	for(i=0; i<2; i++) {
           hist.grid[i]=100;
-          hist.boundary[i][0]=100;
-	  }
+          hist.boundary[0][i]=200*pow(-1.,i);
+          hist.boundary[1][i]=10*pow(-1.,i); }
+        histogram2d_init(&hist);
+
+        // ->> 
 
 
 
@@ -404,7 +407,7 @@
         //output_stat_disp_model(disp, disp_lpt, disp_mc, stat_disp_fname, 
 	//                       s.ngrid, ng_trim);
         output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
-                               div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
+                   div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
 
         // ->> free <<- //
         transfer_func_finalize(tf);
@@ -413,6 +416,8 @@
 
         free(div);  free(phi);  free(disp_phi); 
 	free(div_lpt); free(phi_lpt);
+
+        histogram2d_free(&hist);
         }
 
       }

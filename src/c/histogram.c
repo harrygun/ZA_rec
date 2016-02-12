@@ -69,4 +69,9 @@ void histogram2d_free(Histopar2d *his) {
 
 
 
-//void 
+void generate_hist2d(Histopar2d *his, float *d1, float *d2){
+  // ->> 
+
+
+  return;
+  }
