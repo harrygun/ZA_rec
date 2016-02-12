@@ -322,6 +322,7 @@
     float *div, *phi, *disp_phi, *div_lpt, *phi_lpt, *disp_phi_lpt;
 
     //->> histogram <<- //
+    Histopar2d hist;
      
 
     if(rc.do_rect==TRUE){
@@ -392,7 +393,11 @@
  
 
         // ->> now get histogram data <<- //
-         
+	for(i=0; i<2; i++) {
+          hist.grid[i]=100;
+          hist.boundary[i][0]=100;
+	  }
+
 
 
         // ->> output displacement field <<- //
