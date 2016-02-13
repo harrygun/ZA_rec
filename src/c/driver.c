@@ -119,7 +119,7 @@
       RectCtrl rc;
 
       //double boxsize;
-      char *smooth_type, *particle_fname, *droot, *plin_name;
+      char *smooth_type, *particle_fname, *pid_fname, *droot, *plin_name;
       char *oden_fname, *main_dtype, *rec_name, *fname_pinit;
       char *raw_disp_fname, *stat_disp_fname;
       int do_density, import_density, save_odensity;
@@ -156,6 +156,7 @@
       droot=iniparser_getstring(dict,"Rect:data_root", "~/");
       particle_fname=iniparser_getstring(dict,"Rect:particle_file_name", "x.dat");
       //printf("particle fname: %s\n", particle_fname);
+      pid_fname=iniparser_getstring(dict,"Rect:particle_id_file_name", "x.dat");
 
       fname_pinit=iniparser_getstring(dict,"Rect:init_particle_file_name", "x.dat");
       raw_disp_fname=iniparser_getstring(dict,"Rect:raw_disp_field_fname", "x.dat");
@@ -218,7 +219,7 @@
     -----------------------------------------------------*/
     //  ->> loading particle data <<- //
     Pdata_pos *p=(Pdata_pos *)malloc(s.npart*sizeof(Pdata_pos));
-    load_cita_simulation_position(particle_fname, p, s.npart);
+    load_cita_simulation_position_pid(particle_fname, pid_fname, p, s.npart);
 
     // ->> initialize the boundary of particles <<- //
     s.pmin=(double *)malloc(3*sizeof(double));

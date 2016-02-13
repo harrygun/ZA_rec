@@ -68,12 +68,51 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
     fread(vel, sizeof(float), 3, fd);
     }
 
+
+  fclose(fd);
+  return;
+  }
+
+void load_cita_simulation_pid(char *fname, Pdata_pos *p, long long npart){
+  FILE *fd;
+  long long n, npt;
+  float dummy[11];
+    
+  // ->> start to read <<- //
+  if(!(fd=fopen(fname, "r"))) {
+    printf("can't open file `%s`\n", fname);
+    exit(0);
+    }
+ 
+  printf("reading `%s' ...\n", fname);
+  fflush(stdout);
+
+  fread(&npt, 4, 1, fd);
+  printf("npt=%d, npart=%d\n", npt, npart);
+  if((int)npart!=(int)npt) {printf("npart error.\n"); exit(0);}
+
+  fread(dummy, sizeof(float), 11, fd);
+
+  //->> loading position & velocity <<- //
+  for(n=0; n<npart; n++) {
+    fread(&p[n].pid, sizeof(long long), 1, fd); }
+
+  fclose(fd);
   return;
   }
 
 
-void load_cita_simulation_pid(){
 
+// ->> load position & PID together <<- //
+void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_pos *p, long long npart){
+
+  // ->> load position first <<- //
+  load_cita_simulation_position(fname_pos, p, npart);
+
+  // ->> then PID <<- //
+  load_cita_simulation_pid(fname_pid, p, npart);
+
+  return;
   }
 
 
