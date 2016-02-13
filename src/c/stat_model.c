@@ -175,7 +175,7 @@ void transfer_func_finalize(Interpar *tf){
 
 /* -> displacement field manipulation  <- */
 void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
-                         float *disp_lpt, char *fname_part_init)  {
+               float *disp_lpt, char *fname_part_init, char *fname_pid_init)  {
   // -> get the stochastic term of displacement <<- //
   double fac;
   char *disp_calmethod="grid_wise";
@@ -185,7 +185,7 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
 
   // ->> import initial displacement <<- //
   Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
-  load_cita_simulation_position(fname_part_init, pinit, s->npart);
+  load_cita_simulation_position_pid(fname_part_init, fname_pid_init, pinit, s->npart);
  
   // ->>  get initial displacement <<- //
   get_real_displacement(s, pinit, pinit, disp_lpt, disp_calmethod, fac);
@@ -242,6 +242,17 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
   return;
   }
 
+
+
+void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){
+  FILE *fp=fopen(fname_out, "wb");
+
+  fwrite(disp, sizeof(float), ngrid*ngrid*ngrid*3, fp);
+  fwrite(disp_lpt, sizeof(float), ngrid*ngrid*ngrid*3, fp);
+
+  fclose(fp);
+  return;
+  }
 
 
 

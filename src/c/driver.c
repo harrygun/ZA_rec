@@ -120,7 +120,7 @@
 
       //double boxsize;
       char *smooth_type, *particle_fname, *pid_fname, *droot, *plin_name;
-      char *oden_fname, *main_dtype, *rec_name, *fname_pinit;
+      char *oden_fname, *main_dtype, *rec_name, *fname_pinit, *fname_pid_init;
       char *raw_disp_fname, *stat_disp_fname;
       int do_density, import_density, save_odensity;
 
@@ -159,6 +159,9 @@
       pid_fname=iniparser_getstring(dict,"Rect:particle_id_file_name", "x.dat");
 
       fname_pinit=iniparser_getstring(dict,"Rect:init_particle_file_name", "x.dat");
+      fname_pid_init=iniparser_getstring(dict,"Rect:init_particle_id_file_name","x.dat");
+
+
       raw_disp_fname=iniparser_getstring(dict,"Rect:raw_disp_field_fname", "x.dat");
       stat_disp_fname=iniparser_getstring(dict,"Rect:stat_disp_field_fname", "x.dat");
 
@@ -375,7 +378,12 @@
 	disp_phi=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
 	disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
          
-        load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit);
+        load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
+
+
+        // ->> 
+        output_stat_disp_potential_model(disp, disp_lpt, s.ngrid, stat_disp_fname);
+	goto local_free;
 
         // ->> statistical separate LPT & mode-coupling term <<- //
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
@@ -412,8 +420,11 @@
         output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
                    div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
 
-        // ->> free <<- //
+
         transfer_func_finalize(tf);
+
+        local_free:
+        // ->> free <<- //
 	free(disp);  free(disp_lpt);  free(disp_mc);
 	free(disp_trim);   free(disp_lpt_trim);
 

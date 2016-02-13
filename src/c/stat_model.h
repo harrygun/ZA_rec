@@ -7,7 +7,7 @@ Interpar *transfer_func_init(char *fname);
 
 // ->> displacement field manipulation <<- //
 void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
-                         float *disp_lpt, char *fname_part_init);
+               float *disp_lpt, char *fname_part_init, char *fname_pid_init);
 
 void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d, 
                                  char *fname_part_init, char *fname_out);
@@ -26,6 +26,8 @@ void transfer_func_finalize(Interpar *tf);
 
 
 // ->> output <<- //
+void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out);
+
 void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc, 
                       size_t ngrid, size_t ngrid_trimmed, char *fname_out);
 
