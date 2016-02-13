@@ -72,6 +72,9 @@ void load_cita_simulation_position(char *fname, Pdata_pos *p, long long npart) {
   }
 
 
+void load_cita_simulation_pid(){
+
+  }
 
 
 
