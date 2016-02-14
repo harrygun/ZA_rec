@@ -62,7 +62,7 @@ def read_cita_simulation(fn, npt):
     numpy_type= np.float32
 
     head=F.read(48)
-    d = arr.array('f')
+    #d = arr.array('f')
     #d.fromfile(F, npt**3*6)
 
     d=np.fromfile(F, dtype=np.dtype(numpy_type)).astype(numpy_type)
@@ -78,7 +78,19 @@ def read_cita_simulation(fn, npt):
     return np.array(d).reshape(npt**3,6)[...,:3], np.array(d).reshape(npt**3,6)[...,3:6]
 
 
+def read_cita_simulation_pid(fn, npt):
+    print 'importing data...'
+    F=open(fn, 'rb')
 
+    numpy_type= np.int64
+
+    head=F.read(48)
+    #pid = arr.array('d')
+    pid=np.fromfile(F, dtype=np.dtype(numpy_type)).astype(numpy_type)
+    F.close()
+    print 'file closed.'
+
+    return pid
 
 
 
