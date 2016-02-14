@@ -79,16 +79,17 @@ def read_cita_simulation(fn, npt):
 
 
 def read_cita_simulation_pid(fn, npt):
-    print 'importing data...'
-    F=open(fn, 'rb')
 
+    print 'importing PID data ...'
+    F=open(fn, 'rb')
     numpy_type= np.int64
 
     head=F.read(48)
-    #pid = arr.array('d')
+
     pid=np.fromfile(F, dtype=np.dtype(numpy_type)).astype(numpy_type)
     F.close()
-    print 'file closed.'
+
+    print 'PID file closed.'
 
     return pid
 

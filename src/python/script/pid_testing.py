@@ -88,7 +88,7 @@ if __name__=='__main__':
         pid=mio.read_cita_simulation_pid(fn_pid, p.ngrid)
 
         #->>  <<-#
-        print pid
+        print pid.shape(), pid.min(), pid.max()
 
 
 
