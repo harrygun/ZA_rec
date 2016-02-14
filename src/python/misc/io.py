@@ -84,7 +84,7 @@ def read_cita_simulation_pid(fn, ngrid):
     F=open(fn, 'rb')
     numpy_type=np.int64
 
-    #head=F.read(48)
+    head=F.read(48)
     pid=np.fromfile(F, dtype=np.dtype(numpy_type), count=ngrid**3).astype(numpy_type)
     F.close()
 
