@@ -186,6 +186,7 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
   // ->> import initial displacement <<- //
   Pdata_pos *pinit=(Pdata_pos *)malloc(s->npart*sizeof(Pdata_pos));
   load_cita_simulation_position_pid(fname_part_init, fname_pid_init, pinit, s->npart);
+
  
   // ->>  get initial displacement <<- //
   get_real_displacement(s, pinit, pinit, disp_lpt, disp_calmethod, fac);
