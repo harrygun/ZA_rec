@@ -79,11 +79,13 @@ if __name__=='__main__':
         fn_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/100.000xv0.dat'
 	fn_pid='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/PID0.ic'
 
+	print 'read fn_pid ', fn_pid
+
         #->> position <<- #
         pos, vel=mio.read_cita_simulation(fn_part, p.ngrid)
 	del vel
 	#->> pid <<- #
-        pid=mio.read_cita_simulation_pid(fn_pid, npt)
+        pid=mio.read_cita_simulation_pid(fn_pid, p.ngrid)
 
         #->>  <<-#
         print pid
