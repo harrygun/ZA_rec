@@ -78,15 +78,15 @@ def read_cita_simulation(fn, npt):
     return np.array(d).reshape(npt**3,6)[...,:3], np.array(d).reshape(npt**3,6)[...,3:6]
 
 
-def read_cita_simulation_pid(fn, npt):
+def read_cita_simulation_pid(fn, ngrid):
 
     print 'importing PID data ...'
     F=open(fn, 'rb')
-    numpy_type= np.int_
+    numpy_type=np.int64
 
     head=F.read(48)
 
-    pid=np.fromfile(F, dtype=np.dtype(numpy_type)).astype(numpy_type)
+    pid=np.fromfile(F, dtype=np.dtype(numpy_type), count=ngrid**3).astype(numpy_type)
     F.close()
 
     print 'PID file closed.'
