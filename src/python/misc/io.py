@@ -78,13 +78,20 @@ def read_cita_simulation(fn, npt):
     return np.array(d).reshape(npt**3,6)[...,:3], np.array(d).reshape(npt**3,6)[...,3:6]
 
 
-def read_cita_simulation_pid(fn, ngrid):
+def read_cita_simulation_pid(fn, ngrid, head_size='default'):
     print 'importing PID data ..., ngrid=', ngrid
 
     F=open(fn, 'rb')
     numpy_type=np.int64
 
-    head=F.read(48)
+    if (head_size=='default'):
+        head=F.read(48)
+    else:
+        if isinstance(head_size, int):
+            head=F.read(head_size)
+        else:
+	    raise Exception
+
     pid=np.fromfile(F, dtype=np.dtype(numpy_type), count=ngrid**3).astype(numpy_type)
     F.close()
 

@@ -95,7 +95,8 @@ void load_cita_simulation_pid(char *fname, Pdata_pos *p, long long npart){
 
   //->> loading position & velocity <<- //
   for(n=0; n<npart; n++) {
-    fread(&p[n].pid, sizeof(long long), 1, fd); }
+    fread(&p[n].pid, sizeof(long long), 1, fd); 
+    }
 
   fclose(fd);
   return;

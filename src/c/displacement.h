@@ -3,6 +3,8 @@
 
 
 
+void pidtogrid(long long pid, long long ngrid, long long idx[3]);
+
 void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *disp, 
                            char *disp_calmethod, double fscale);
 

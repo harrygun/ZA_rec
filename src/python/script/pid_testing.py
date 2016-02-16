@@ -73,13 +73,14 @@ if __name__=='__main__':
 
     root=p.folder
 
-    do_simulation_test=True
+    do_simulation_test=False
+    do_displacement_test=True
 
     if do_simulation_test:
         #->> 
         fn_part='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/100.000xv0.dat'
-	#fn_pid='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/PID0.ic'
-	fn_pid='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/0.000PID0.dat'
+	fn_pid='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/PID0.ic'
+	#fn_pid='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/node0/0.000PID0.dat'
 
 	print 'read fn_pid ', fn_pid
 
@@ -87,10 +88,44 @@ if __name__=='__main__':
         #pos, vel=mio.read_cita_simulation(fn_part, p.ngrid)
 	#del vel
 	#->> pid <<- #
-        pid=mio.read_cita_simulation_pid(fn_pid, p.ngrid)
+        pid=mio.read_cita_simulation_pid(fn_pid, p.ngrid, head_size=4)
 
         #->>  <<-#
         print len(pid), pid.min(), pid.max()
+
+	ll=np.arange(len(pid))+1
+        err=ll-pid
+
+	print 'len of non-zeros: ', len(np.where(err!=0)[0])
+
+
+    if do_displacement_test:
+        #->> 
+	fn_disp='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/rec_data/stat_disp_0_100.dat'
+        nblock=6
+        dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+	print dd.shape
+
+        disp, disp_lpt=dd[:3], dd[3:]
+
+        if True:
+            # ->>  <<- #
+	    bd=10
+
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=1, 100
+                
+            cb1=ax[0].imshow(disp[axis,:,:,nsl])
+            cb1=ax[1].imshow(disp_lpt[axis,:,:,nsl])
+
+	    #pl.colorbar(cb1)
+	    #pl.colorbar(cb2)
+
+                
+            pl.tight_layout()
+            pl.show()
 
 
 

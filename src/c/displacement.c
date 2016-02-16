@@ -32,11 +32,14 @@
 
 void pidtogrid(long long pid, long long ngrid, long long idx[3]) {
   // ->> return grid index of  <<- //
-  long long i, j, k;
-
+  //
   idx[0]=(long long)(pid/(ngrid*ngrid));
   idx[1]=(long long)(pid/ngrid)-idx[0]*ngrid;
   idx[2]=pid-ngrid*idx[1]-ngrid*ngrid*idx[0];  
+
+  //idx[0]=((double)pid/pow((double)ngrid,2.));
+  //idx[1]=((double)pid/ngrid)-idx[0]*ngrid;
+  //idx[2]=pid-ngrid*idx[1]-ngrid*ngrid*idx[0];  
 
   return;
   }
@@ -47,13 +50,14 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   // ->> get real displacement field from simulation directly <<- //
   // ->> fscale == factor of rescaling displacement field <<- //
 
-  long long ip, i, j, k, m, idx[3];
+  long long ip, i, j, k, m, idx[3], pid;
   float grid[3], xmin, xmax, dx;
-  double _disp_;
+  double disp_;
 
   // ->> box boundary <<- //
   dx=s->boxsize/(float)s->ngrid;
-  xmin=0.5; xmax=s->ngrid*dx;
+  xmin=0.5; xmax=(s->ngrid-1)*dx;
+  //xmin=0.; xmax=(s->ngrid-1)*dx;
 
 
   double *pmin, *pmax, *dpart;
@@ -84,7 +88,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
     // ->> re-arrange data into grid <<- //
     #ifdef _OMP_
-    #pragma omp parallel for private(i,j,k,m,ip,grid)
+    #pragma omp parallel for private(i,j,k,m,ip,grid,disp_)
     #endif
     for(i=0; i<s->ngrid; i++)
       for(j=0; j<s->ngrid; j++)
@@ -98,18 +102,8 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
           grid[2]=xmin+k*dx;
 
           for(m=0; m<3; m++){
-            _disp_=p[ip].pos[2-m]-grid[m];
-            /*
-	    if(_disp_<-(xmax-xmin)) 
-	      _disp_+=xmax-xmin;
-	    if(_disp_>xmax-xmin) 
-	      _disp_-=xmax-xmin;
-	    */
+            //disp_=p[ip].pos[2-m]-grid[m];
             ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[2-m]-grid[m])*fscale;
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=_disp_*fscale;
-
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[2-m]-grid[m]);
-            //ArrayAccess2D_n2(disp, 3, s->npart, m, ip)=(p[ip].pos[m]-grid[2-m])*fscale;
             }
 
           }
@@ -118,18 +112,26 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
     printf("grid-PID calculation for real_displacement.\n"); fflush(stdout);
 
     #ifdef _OMP_
-    #pragma omp parallel for private(ip,i)
+    #pragma omp parallel for private(ip,i,idx,grid,pid,disp_)
     #endif
     for(ip=0; ip<s->npart; ip++) {
-
       //->> get the index <<- //
-      pidtogrid(p[ip].pid, s->ngrid, idx);
+      pid=p[ip].pid-1;
+      pidtogrid(pid, s->ngrid, idx);
 
       for(i=0; i<3; i++) {
         grid[i]=xmin+idx[i]*dx;
-        ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=(p[ip].pos[2-i]-grid[i])*fscale;
+        disp_=p[ip].pos[2-i]-grid[i];
+
+        if(disp_<-(xmax-xmin))
+          disp_+=xmax-xmin;
+        if(disp_>(xmax-xmin)) 
+          disp_-=xmax-xmin;
+
+        ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
         }
       }
+
 
     }
   else {abort();}
@@ -141,7 +143,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
 
 
-void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *fname_part_init, char *model_disp_type){
+void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *fname_part_init, char *modeldisp_type){
 
   int model_from_init_pos=TRUE;
 
@@ -157,10 +159,10 @@ void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, cha
     }
 
 
-  if(strcmp(model_disp_type, "ZA")==0 ) {
+  if(strcmp(modeldisp_type, "ZA")==0 ) {
     za_displacement(s, d, disp);
     }
-  else if(strcmp(model_disp_type, "2LPT")==0 ) {
+  else if(strcmp(modeldisp_type, "2LPT")==0 ) {
     displacement_2lpt(s, d, disp);
     }
   else abort();
