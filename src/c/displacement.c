@@ -104,6 +104,19 @@ void get_real_displacement_pid(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float
 
 
 
+void pidtogrid(long long pid, long long ngrid, long long idx[3]) {
+  // ->> return grid index of  <<- //
+  long long i, j, k;
+
+  idx[0]=(long long)((float)pid/(float)(ngrid*ngrid));
+  idx[1]=(long long)(((float)pid/(float)ngrid-idx[0]*ngrid));
+  idx[2]=pid-(long long)(pid/pow(ngrid,2));
+
+
+  return;
+  }
+
+
 void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *disp, 
                            char *disp_calmethod, double fscale) {
   // ->> get real displacement field from simulation directly <<- //
@@ -126,7 +139,6 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   get_particle_boundary(p, s->boxsize, s->npart, s->ngrid_xyz, pmin, pmax, dpart);
   printf("->> xmin %f ymin %f zmin %f\n",pmin[0], pmin[1], pmin[2]);
   printf("->> xmax %f ymax %f zmax %f\n",pmax[0], pmax[1], pmax[2]);
-
 
 
   // ->>
@@ -178,7 +190,23 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
           }
     }
+  else if( strcmp(disp_calmethod, "grid_PID")==0 ){
+    printf("grid-wise calculation for real_displacement.\n"); fflush(stdout);
 
+    #ifdef _OMP_
+    #pragma omp parallel for private(ip,i)
+    #endif
+    for(ip=0; ip<s->npart; ip++) {
+      //->>
+      p[ip].pid= ;
+
+      for(i=0; i<3; i++) {
+        ArrayAccess2D_n2(disp, 3, s->npart, i, ip)=(p[ip].pos[i]-pinit[ip].pos[i])*fscale;
+        }
+      }
+
+    }
+  else {abort();}
 
   return;
   }
