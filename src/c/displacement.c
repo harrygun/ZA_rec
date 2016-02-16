@@ -108,10 +108,9 @@ void pidtogrid(long long pid, long long ngrid, long long idx[3]) {
   // ->> return grid index of  <<- //
   long long i, j, k;
 
-  idx[0]=(long long)((float)pid/(float)(ngrid*ngrid));
-  idx[1]=(long long)(((float)pid/(float)ngrid-idx[0]*ngrid));
-  idx[2]=pid-(long long)(pid/pow(ngrid,2));
-
+  idx[0]=(long long)(pid/(ngrid*ngrid));
+  idx[1]=(long long)(pid/ngrid)-idx[0]*ngrid;
+  idx[2]=pid-ngrid*idx[1]-ngrid*ngrid*idx[0];  
 
   return;
   }
