@@ -3,6 +3,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "readfile.h"
 #include "io.h"
 
 
@@ -117,6 +118,17 @@ void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_p
   }
 
 
+void load_simulation_offset(char *fname, double *offset){
+  FILE *fp=fopen(fname, "r");  
+
+  // ->> importing data <<- //
+  int i;
+  //line=countFILEline(fp);
+
+  fscanf(fp, "%lg  %lg ", &ArrayAccess2D_n2(k, 3, line, j, i), &ArrayAccess2D_n2(tfk, 3, line, j, i));
+
+  return;
+  }
 
 
 

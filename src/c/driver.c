@@ -134,7 +134,10 @@
       s.boxsize = iniparser_getdouble(dict, "Rect:boxsize", 0) ;
       s.ngrid=iniparser_getint(dict, "Rect:ngrid", 0);
       s.npart=pow(s.ngrid,3);
-      printf("boxsize=%lg, ngrid=%d, npart=%d\n",s.boxsize,s.ngrid,s.npart);
+      // ->> position drift <<- //
+      for(i=0; i<3; i++) {s.drift[i]=iniparser_getdouble(dict, "Rect:position_drift", 0);}
+      printf("boxsize=%lg, ngrid=%d, npart=%d, drift=[%f,%f,$f]\n",s.boxsize,s.ngrid,s.npart,
+             s.drift[0], s.drift[1], s.drift[2]);
 
       if(strcmp( s.smooth_type, "Tophat")==0 ) {
         //cp.flg[0]= _TOPHAT_SMOOTH_ ;
