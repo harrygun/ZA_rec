@@ -359,7 +359,8 @@
 
       else if(strcmp(rc.displacement_type, "likelihood_reconstruction")==0) {
         // ->> initialization of transfer function <<- //
-        Interpar *tf=transfer_func_init(rc.displacement_tf_fname);
+	
+        Interpar *tf;//=transfer_func_init(rc.displacement_tf_fname);
 
         // ->> load various displacement field  <<- //
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
@@ -380,9 +381,8 @@
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
 
-
         // ->> 
-        output_stat_disp_potential_model(disp, disp_lpt, s.ngrid, stat_disp_fname);
+        output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
 	goto local_free;
 
         // ->> statistical separate LPT & mode-coupling term <<- //

@@ -178,7 +178,7 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
                float *disp_lpt, char *fname_part_init, char *fname_pid_init)  {
   // -> get the stochastic term of displacement <<- //
   double fac;
-  char *disp_calmethod="grid_wise";
+  char *disp_calmethod="grid_PID";  //"grid_wise";
 
   // ->> rescaling factor for initial data <<- //
   fac=Dp(cp, cp->z)/Dp(cp, cp->zinit);

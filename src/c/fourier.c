@@ -52,7 +52,7 @@ void potential_curlfree_vec(float *disp, float *div, float *phi, float *disp_phi
   if(disp_phi==NULL) { do_disp_phi=FALSE; }
   
   if( (do_div==FALSE)&&(do_phi==FALSE)&&(do_disp_phi==FALSE) )
-    return FALSE;
+    abort();
 
   int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
   long long dksize, dsize, l, m, n, i, j;

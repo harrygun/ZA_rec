@@ -15,7 +15,7 @@
 
 typedef struct simulation_info{
   // ->> simulation information <<- //
-  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];
+  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];
   double *pmin, *pmax, *dpart;
   int smooth_type_flag;
   long long ngrid, ngrid_xyz[3], npart;
