@@ -120,7 +120,7 @@
 
       //double boxsize;
       char *smooth_type, *particle_fname, *pid_fname, *droot, *plin_name;
-      char *oden_fname, *main_dtype, *rec_name, *fname_pinit, *fname_pid_init;
+      char *oden_fname, *main_dtype, *rec_name, *fname_pinit, *fname_pid_init, *fname_offset;
       char *raw_disp_fname, *stat_disp_fname;
       int do_density, import_density, save_odensity;
 
@@ -134,10 +134,14 @@
       s.boxsize = iniparser_getdouble(dict, "Rect:boxsize", 0) ;
       s.ngrid=iniparser_getint(dict, "Rect:ngrid", 0);
       s.npart=pow(s.ngrid,3);
-      // ->> position drift <<- //
-      for(i=0; i<3; i++) {s.drift[i]=iniparser_getdouble(dict, "Rect:position_drift", 0);}
-      printf("boxsize=%lg, ngrid=%d, npart=%d, drift=[%f,%f,$f]\n",s.boxsize,s.ngrid,s.npart,
-             s.drift[0], s.drift[1], s.drift[2]);
+
+      // ->> simulation box drift <<- //
+      fname_offset=iniparser_getdouble(dict, "Rect:simbox_drift_file_name", "x.dat");
+      load_simulation_offset(fname_offset, s.drift);
+
+      //->> 
+      printf("boxsize=%lg, ngrid=%d, npart=%d\n",s.boxsize,s.ngrid,s.npart);
+      printf("drift: [%lg  %lg  %lg]\n", s.drift[0], s.drift[1], s.drift[2]);
 
       if(strcmp( s.smooth_type, "Tophat")==0 ) {
         //cp.flg[0]= _TOPHAT_SMOOTH_ ;
