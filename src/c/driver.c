@@ -136,7 +136,7 @@
       s.npart=pow(s.ngrid,3);
 
       // ->> simulation box drift <<- //
-      fname_offset=iniparser_getdouble(dict, "Rect:simbox_drift_file_name", "x.dat");
+      fname_offset=iniparser_getstring(dict, "Rect:simbox_drift_file_name", "x.dat");
       load_simulation_offset(fname_offset, s.drift);
 
       //->> 

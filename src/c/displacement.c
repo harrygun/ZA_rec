@@ -51,13 +51,20 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   // ->> fscale == factor of rescaling displacement field <<- //
 
   long long ip, i, j, k, m, idx[3], pid;
-  float grid[3], xmin, xmax, dx;
+  float grid[3], xmin[3], xmax[3], maxdisp[3], dx;
   double disp_;
 
   // ->> box boundary <<- //
   dx=s->boxsize/(float)s->ngrid;
-  xmin=0.5; xmax=(s->ngrid-1)*dx;
-  //xmin=0.; xmax=(s->ngrid-1)*dx;
+
+  printf("max disp:  ");
+  for(i=0; i<3; i++){
+    //xmin[i]=s->drift[i]; 
+    //xmax[i]=xmin[i]+(s->ngrid-1)*dx;
+    maxdisp[i]=min(s->boxsize-s->drift[i], s->boxsize+s->drift[i]);
+    printf("%lg  ", maxdisp[i]);
+    }
+  printf("\n"); fflush(stdout);
 
 
   double *pmin, *pmax, *dpart;
@@ -97,9 +104,9 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
           // ->> grid index <<- //
           ip=MemIdx3D(s->ngrid, i, j, k);
 
-          grid[0]=xmin+i*dx;
-          grid[1]=xmin+j*dx;
-          grid[2]=xmin+k*dx;
+          grid[0]=xmin[0]+i*dx;
+          grid[1]=xmin[1]+j*dx;
+          grid[2]=xmin[2]+k*dx;
 
           for(m=0; m<3; m++){
             //disp_=p[ip].pos[2-m]-grid[m];
@@ -120,13 +127,13 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
       pidtogrid(pid, s->ngrid, idx);
 
       for(i=0; i<3; i++) {
-        grid[i]=xmin+idx[i]*dx;
+        grid[i]=xmin[i]+idx[i]*dx;
         disp_=p[ip].pos[2-i]-grid[i];
 
-        if(disp_<-(xmax-xmin))
-          disp_+=xmax-xmin;
-        if(disp_>(xmax-xmin)) 
-          disp_-=xmax-xmin;
+        if(disp_<-(xmax[i]-xmin[i]))
+          disp_+=xmax[i]-xmin[i];
+        if(disp_>(xmax[i]-xmin[i])) 
+          disp_-=xmax[i]-xmin[i];
 
         ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
         }
