@@ -50,18 +50,21 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   // ->> get real displacement field from simulation directly <<- //
   // ->> fscale == factor of rescaling displacement field <<- //
 
-  long long ip, i, j, k, m, idx[3], pid;
+  long long ip, i, j, k, m, idx[3], pid, lenfac;
   float grid[3], xmin[3], xmax[3], maxdisp[3], dx;
-  double disp_;
+  double disp_, fac;
+
+  lenfac=5;
 
   // ->> box boundary <<- //
   dx=s->boxsize/(float)s->ngrid;
 
   printf("max disp:  ");
   for(i=0; i<3; i++){
-    //xmin[i]=s->drift[i]; 
-    //xmax[i]=xmin[i]+(s->ngrid-1)*dx;
-    maxdisp[i]=min(s->boxsize-s->drift[i], s->boxsize+s->drift[i]);
+    xmin[i]=0.; //s->drift[i];
+    xmax[i]=xmin[i]+(s->ngrid)*dx;
+
+    maxdisp[i]=min(s->boxsize-s->drift[i]*dx, s->boxsize+s->drift[i]*dx);
     printf("%lg  ", maxdisp[i]);
     }
   printf("\n"); fflush(stdout);
@@ -128,12 +131,46 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
       for(i=0; i<3; i++) {
         grid[i]=xmin[i]+idx[i]*dx;
-        disp_=p[ip].pos[2-i]-grid[i];
+        disp_=(p[ip].pos[2-i]-pmin[2-i])-grid[i];
 
-        if(disp_<-(xmax[i]-xmin[i]))
-          disp_+=xmax[i]-xmin[i];
-        if(disp_>(xmax[i]-xmin[i])) 
-          disp_-=xmax[i]-xmin[i];
+	//if( ((p[ip].pos[2-i]-pmin[2-i])<=0)||(p[ip].pos[2-i]-pmin[2-i])>=s->boxsize) 
+	//  printf("out bound: %lg %lg %lg\n", disp_, grid[i], p[ip].pos[2-i]-pmin[2-i]);
+
+        if(disp_<=-maxdisp[i]*fac)
+          disp_+=maxdisp[i]*fac;
+        if(disp_>=maxdisp[i]*fac) 
+          disp_-=maxdisp[i]*fac;
+
+        ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
+        }
+      }
+    }
+  else if( strcmp(disp_calmethod, "init_pos_PID")==0 ){
+    printf("init_pos-PID calculation for real_displacement.\n"); fflush(stdout);
+
+    #ifdef _OMP_
+    #pragma omp parallel for private(ip,i,j,idx,pid,disp_)
+    #endif
+    for(ip=0; ip<s->npart; ip++) {
+      //->> get the index <<- //
+      pid=p[ip].pid-1;
+      pidtogrid(pid, s->ngrid, idx);
+
+      for(i=0; i<3; i++) {
+        //grid[i]=xmin[i]+idx[i]*dx;
+        //disp_=(p[ip].pos[2-i]-pmin[2-i])-pinit[ip].pos[2-i];
+
+        disp_=p[ip].pos[2-i]-pinit[pid].pos[2-i];
+
+        for(j=0; j<lenfac; j++){
+          fac=1-j*0.01;
+
+          if(disp_<=-maxdisp[i]*fac)
+            disp_+=maxdisp[i]*fac;
+          if(disp_>=maxdisp[i]*fac) 
+            disp_-=maxdisp[i]*fac;
+
+	  }
 
         ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
         }
@@ -141,6 +178,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
 
     }
+
   else {abort();}
 
   return;

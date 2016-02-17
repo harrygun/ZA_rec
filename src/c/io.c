@@ -120,7 +120,7 @@ void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_p
 
 void load_simulation_offset(char *fname, double *offset){
   int i;
-  double z;
+  double z, off_i[3], off_f[3];
   FILE *fp=fopen(fname, "r");  
 
   fscanf(fp, "%lg ", &z);

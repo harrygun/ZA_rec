@@ -108,6 +108,30 @@ if __name__=='__main__':
 
         disp, disp_lpt=dd[:3], dd[3:]
 
+        for i in range(3):
+	    print 'disp :', i, disp[i].min(), disp[i].max()
+
+
+        if True:
+	    # ->> 1D histogram <<- #
+            nplt, ncol = 3, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+            color=['g', 'r', 'b', 'y']
+    
+            #drange=[-10,10]
+    
+            for i in range(3):
+                ax[i].hist(disp[i].flatten(), bins=n_bin,  \
+                         histtype='step', color=color[0])
+                #ax[i].hist(disp_lpt[i].flatten(), bins=n_bin, \
+                #         histtype='step', color=color[1])
+
+            pl.tight_layout()
+            pl.show()
+
+
         if True:
             # ->>  <<- #
 	    bd=10
@@ -115,7 +139,7 @@ if __name__=='__main__':
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
-            axis, nsl=1, 100
+            axis, nsl=2, 100
                 
             cb1=ax[0].imshow(disp[axis,:,:,nsl])
             cb1=ax[1].imshow(disp_lpt[axis,:,:,nsl])
