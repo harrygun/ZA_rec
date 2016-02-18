@@ -253,6 +253,7 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
 
 
 void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){
+  //->> only write full and LPT displacement field <<- //
   FILE *fp=fopen(fname_out, "wb");
 
   fwrite(disp, sizeof(float), ngrid*ngrid*ngrid*3, fp);

@@ -366,19 +366,23 @@
 
       else if(strcmp(rc.displacement_type, "likelihood_reconstruction")==0) {
         // ->> initialization of transfer function <<- //
+
+	// ->> allocate memory for LPT and full displacement field <<- //
+        disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+        disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 	
         Interpar *tf;
 	if (transfer_func_init(tf, rc.displacement_tf_fname)!=TRUE){
           // ->> if there's no transfer function file, generate necessary data for <<- //
-          goto local_free;
+          output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
+
+	  free(disp);  free(disp_lpt)   
+          goto stop;
 	  }
 
-        // ->> load various displacement field  <<- //
-        disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
-        disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+	// ->> allocate memory <<- //
 	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 
-	// ->> allocate memory <<- //
 	//
         disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
         disp_trim=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
@@ -392,9 +396,6 @@
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
 
-        // ->>  testing <<- //
-        //output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
-	//goto local_free;
 
         // ->> statistical separate LPT & mode-coupling term <<- //
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
