@@ -182,7 +182,7 @@
       rc.displacement_type=iniparser_getstring(dict,"Rect:displacement_type", "backward");
       rc.displacement_order=iniparser_getstring(dict,"Rect:displacement_order", "1LPT");
 
-      rc.displacement_tf_fname=iniparser_getstring(dict,"Rect:disp_transfunc_fname", "s.dat");
+      rc.displacement_tf_fname=iniparser_getstring(dict,"Rect:disp_transfunc_fname", "None");
 
       // ->> other controller <<- //
       do_density=iniparser_getboolean(dict, "Rect:do_density", INIFALSE);
@@ -367,7 +367,11 @@
       else if(strcmp(rc.displacement_type, "likelihood_reconstruction")==0) {
         // ->> initialization of transfer function <<- //
 	
-        Interpar *tf;//=transfer_func_init(rc.displacement_tf_fname);
+        Interpar *tf;
+	if (transfer_func_init(tf, rc.displacement_tf_fname)!=TRUE){
+          // ->> if there's no transfer function file, generate necessary data for <<- //
+          goto local_free;
+	  }
 
         // ->> load various displacement field  <<- //
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
@@ -388,9 +392,9 @@
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
 
-        // ->> 
-        output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
-	goto local_free;
+        // ->>  testing <<- //
+        //output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
+	//goto local_free;
 
         // ->> statistical separate LPT & mode-coupling term <<- //
         disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
@@ -428,10 +432,10 @@
                    div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
 
 
+        // ->> free all <<- //
+        local_free:
         transfer_func_finalize(tf);
 
-        local_free:
-        // ->> free <<- //
 	free(disp);  free(disp_lpt);  free(disp_mc);
 	free(disp_trim);   free(disp_lpt_trim);
 

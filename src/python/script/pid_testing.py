@@ -139,7 +139,7 @@ if __name__=='__main__':
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
-            axis, nsl=2, 100
+            axis, nsl=0, 100
                 
             cb1=ax[0].imshow(disp[axis,:,:,nsl])
             cb1=ax[1].imshow(disp_lpt[axis,:,:,nsl])

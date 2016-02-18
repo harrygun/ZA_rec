@@ -94,10 +94,16 @@ double tk_interp(Interpar *tf, double k){
 
 
 
-Interpar *transfer_func_init(char *fname) {
+//Interpar *transfer_func_init(char *fname) {
+int transfer_func_init(Interpar *tf, char *fname) {
+
   // ->> import transfer function and interpolate <<- //
-  Interpar *tf= (Interpar *)malloc(3*sizeof(Interpar));
-  FILE *fp = fopen(fname, "r"); 
+  tf= (Interpar *)malloc(3*sizeof(Interpar));
+  FILE *fp;
+
+  if(!(fd=fopen(fname, "r"))) {
+    return FALSE; 
+    }
 
   // ->> importing data <<- //
   int i, j, line, extdidx=15;
@@ -157,7 +163,7 @@ Interpar *transfer_func_init(char *fname) {
 
   free(k); free(tfk);
 
-  return tf;
+  return TRUE;
   }
 
 

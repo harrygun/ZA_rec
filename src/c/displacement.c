@@ -54,7 +54,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   float grid[3], xmin[3], xmax[3], maxdisp[3], dx;
   double disp_, fac;
 
-  lenfac=5;
+  lenfac=12;
 
   // ->> box boundary <<- //
   dx=s->boxsize/(float)s->ngrid;
@@ -163,7 +163,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
         disp_=p[ip].pos[2-i]-pinit[pid].pos[2-i];
 
         for(j=0; j<lenfac; j++){
-          fac=1-j*0.01;
+          fac=1-j*0.005;
 
           if(disp_<=-maxdisp[i]*fac)
             disp_+=maxdisp[i]*fac;

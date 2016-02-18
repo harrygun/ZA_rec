@@ -18,7 +18,11 @@ void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, 
 
 // ->> transfer function <<- //
 double tk_interp(Interpar *tf, double k);
-Interpar *transfer_func_init(char *fname);
+
+
+//Interpar *transfer_func_init(char *fname);
+int transfer_func_init(Interpar *tf, char *fname);
+
 void transfer_func_finalize(Interpar *tf);
 
 //void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, char *stat_disp_model_type);
