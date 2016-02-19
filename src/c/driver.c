@@ -374,9 +374,9 @@
         Interpar *tf;
 	if (transfer_func_init(tf, rc.displacement_tf_fname)!=TRUE){
           // ->> if there's no transfer function file, generate necessary data for <<- //
-          output_real_disp_field(disp, disp_lpt, s.ngrid, stat_disp_fname);
+          output_real_disp_field(disp, disp_lpt, s.ngrid, raw_disp_fname);
 
-	  free(disp);  free(disp_lpt)   
+	  free(disp);  free(disp_lpt);
           goto stop;
 	  }
 

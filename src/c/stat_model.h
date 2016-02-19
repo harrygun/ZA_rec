@@ -1,7 +1,6 @@
 #ifndef _H_STAT_MODEL_
 #define _H_STAT_MODEL_
 
-Interpar *transfer_func_init(char *fname);
 
 
 

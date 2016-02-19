@@ -79,12 +79,13 @@ if __name__=='__main__':
 
 
     if (p.cal_rect_transfer_func==True):
-        nblock=7
+        nblock=6
         dd=rd.rblock(p.raw_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
 	#->> discard boundary data <<- #
-        bd=10
-        disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
+        #bd=10
+        #disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
+        disp, disp_model = dd[:3], dd[3:]
 
 
 	_cd_k, _cd_p=[], []

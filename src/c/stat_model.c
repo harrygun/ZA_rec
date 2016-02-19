@@ -101,7 +101,7 @@ int transfer_func_init(Interpar *tf, char *fname) {
   tf= (Interpar *)malloc(3*sizeof(Interpar));
   FILE *fp;
 
-  if(!(fd=fopen(fname, "r"))) {
+  if(!(fp=fopen(fname, "r"))) {
     return FALSE; 
     }
 
@@ -254,6 +254,10 @@ void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_in
 
 void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){
   //->> only write full and LPT displacement field <<- //
+
+  printf("output displacement field:  %s\n", fname_out); 
+  fflush(stdout);
+
   FILE *fp=fopen(fname_out, "wb");
 
   fwrite(disp, sizeof(float), ngrid*ngrid*ngrid*3, fp);
