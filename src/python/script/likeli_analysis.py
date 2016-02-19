@@ -62,7 +62,7 @@ prog_control={
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
     'py_stat_model_PDF':   False,
-    'py_stat_potential_model_PDF':   True,
+    'py_stat_potential_model_PDF':   False,
     }
 
 
@@ -83,18 +83,30 @@ if __name__=='__main__':
         dd=rd.rblock(p.raw_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
 	#->> discard boundary data <<- #
-        #bd=10
-        #disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
-        disp, disp_model = dd[:3], dd[3:]
+        bd=10
+        disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
+        #disp, disp_model = dd[:3], dd[3:]
 
+        lw1=['k-', 'r-', 'b-', 'g-']
+        lw2=['k--', 'r--', 'b--', 'g--']
+
+        nplt, ncol = 1, 1
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+	                          gap_size=0.5,return_figure=True)
 
 	_cd_k, _cd_p=[], []
         for i in range(3):
+            #print disp_model[i]
+	    print disp[i]
+
+
             k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
             k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
             k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
 
 	    cr=pk1/np.sqrt(pk3*pk2)
+
+	    #print pk1
 
 	    _cd_k.append(k1)
 	    _cd_p.append(cr)
@@ -112,9 +124,13 @@ if __name__=='__main__':
                 f.write(strr)
 	    f.write("\n")
 
+            #ax[0].semilogx(k1, pk1/np.sqrt(pk3*pk2), lw1[i])
+	    #ax[0].set_ylim([0, 1.05])
 
-	f.close()
         # ->> close <<- #
+	f.close()
+
+        #pl.show()
 
 
 
