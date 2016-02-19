@@ -83,7 +83,7 @@ if __name__=='__main__':
         dd=rd.rblock(p.raw_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 
 	#->> discard boundary data <<- #
-        bd=10
+        bd=5
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
         #disp, disp_model = dd[:3], dd[3:]
 
@@ -96,17 +96,11 @@ if __name__=='__main__':
 
 	_cd_k, _cd_p=[], []
         for i in range(3):
-            #print disp_model[i]
-	    print disp[i]
-
-
             k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
             k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
             k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
 
 	    cr=pk1/np.sqrt(pk3*pk2)
-
-	    #print pk1
 
 	    _cd_k.append(k1)
 	    _cd_p.append(cr)
@@ -124,13 +118,13 @@ if __name__=='__main__':
                 f.write(strr)
 	    f.write("\n")
 
-            #ax[0].semilogx(k1, pk1/np.sqrt(pk3*pk2), lw1[i])
-	    #ax[0].set_ylim([0, 1.05])
+            ax[0].semilogx(k1, pk1/np.sqrt(pk3*pk2), lw1[j])
+	    ax[0].set_ylim([0, 1.05])
 
         # ->> close <<- #
 	f.close()
 
-        #pl.show()
+        pl.show()
 
 
 
