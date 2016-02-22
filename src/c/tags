@@ -107,7 +107,7 @@ _RETURN_PHI_ONLY_	poisson.h	/^  #define _RETURN_PHI_ONLY_ /;"	d
 _TOPHAT_SMOOTH_	parvar.h	/^  #define _TOPHAT_SMOOTH_ /;"	d
 allocate_memory	gadget_read_snapshot.c	/^int allocate_memory(void)$/;"	f
 boundary	histogram.h	/^    double boundary[2][2];$/;"	m	struct:__anon1
-boxsize	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+boxsize	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
 cic_density	cic.c	/^double cic_density(Pdata_pos *p, float *d, double boxsize, $/;"	f
 cubic_trim	misc.c	/^void cubic_trim(float *mi, float *mo, size_t ngrid, size_t ntrim){$/;"	f
 density	cic.c	/^double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],$/;"	f
@@ -122,6 +122,7 @@ displacement_type	parvar.h	/^  char *rec_type, *displacement_type, *displacement
 do_disp_perturb	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
 do_rect	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
 dpart	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
+drift	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
 fftw_tester	poisson.c	/^void fftw_tester(SimInfo *s, float *d, char *fftw_return_type, char *test_fname) {$/;"	f
 fill	gadget_read_snapshot.c	/^  char fill[256 - 6 * 4 - 6 * 8 - 2 * 8 - 2 * 4 - 6 * 4 - 2 * 4 - 4 * 8];	\/* fills to 256 Bytes *\/$/;"	m	struct:io_header_1	file:
 flag_cooling	gadget_read_snapshot.c	/^  int flag_cooling;$/;"	m	struct:io_header_1	file:
@@ -129,7 +130,7 @@ flag_feedback	gadget_read_snapshot.c	/^  int flag_feedback;$/;"	m	struct:io_head
 flag_sfr	gadget_read_snapshot.c	/^  int flag_sfr;$/;"	m	struct:io_header_1	file:
 forward_displacement_one_iteration	forward_displacement.c	/^void forward_displacement_one_iteration(SimInfo *s, float *d, float *disp_input, $/;"	f
 generate_hist2d	histogram.c	/^void generate_hist2d(Histopar2d *his, float *d1, float *d2){$/;"	f
-get_model_displacement	displacement.c	/^void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *fname_part_init, char *model_disp_type){$/;"	f
+get_model_displacement	displacement.c	/^void get_model_displacement(SimInfo *s, Pdata_pos *p, float *d, float *disp, char *fname_part_init, char *modeldisp_type){$/;"	f
 get_particle_boundary	cic.c	/^void get_particle_boundary(Pdata_pos *p, double boxsize, long long npart, $/;"	f
 get_real_displacement	displacement.c	/^void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *disp, $/;"	f
 get_rhom	cic.c	/^double get_rhom(Cospar *cp, double z){$/;"	f
@@ -147,6 +148,7 @@ load_cita_simulation_position	io.c	/^void load_cita_simulation_position(char *fn
 load_cita_simulation_position_pid	io.c	/^void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_pos *p, long long npart){$/;"	f
 load_displacement	stat_model.c	/^void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, $/;"	f
 load_scalar_map	io.c	/^void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){$/;"	f
+load_simulation_offset	io.c	/^void load_simulation_offset(char *fname, double *offset){$/;"	f
 load_snapshot	gadget_read_snapshot.c	/^int load_snapshot(char *fname, int files)$/;"	f
 main	driver.c	/^  int main( int argc, char *argv[])  {$/;"	f
 main	test_driver.c	/^  int main( int argc, char *argv[])  {$/;"	f
@@ -162,19 +164,21 @@ npart	gadget_read_snapshot.c	/^  int npart[6];$/;"	m	struct:io_header_1	file:
 npart	parvar.h	/^  long long ngrid, ngrid_xyz[3], npart;$/;"	m	struct:simulation_info
 npartTotal	gadget_read_snapshot.c	/^  int npartTotal[6];$/;"	m	struct:io_header_1	file:
 num_files	gadget_read_snapshot.c	/^  int num_files;$/;"	m	struct:io_header_1	file:
+output_real_disp_field	stat_model.c	/^void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){$/;"	f
 output_stat_disp_model	stat_model.c	/^void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc, $/;"	f
 output_stat_disp_potential_model	stat_model.c	/^void output_stat_disp_potential_model(float *disp, float *disp_lpt, float *disp_mc, $/;"	f
 p	histogram.h	/^    gsl_histogram2d_pdf *p; $/;"	m	struct:__anon1
 part_mass	cic.c	/^double part_mass(Cospar *cp, double z, double boxsize, int ngrid){$/;"	f
 particle_data	gadget_read_snapshot.c	/^struct particle_data$/;"	s	file:
 particle_data	io.h	/^typedef struct particle_data {$/;"	s
-particle_mass	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+particle_mass	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
 particle_pos_data	io.h	/^typedef struct particle_pos_data {$/;"	s
 pi	fourier.c	/^  #define pi /;"	d	file:
 pi	poisson.c	/^  #define pi /;"	d	file:
 pi	test_fftw.c	/^  #define pi /;"	d	file:
 pid	io.h	/^  long long pid;$/;"	m	struct:particle_data
 pid	io.h	/^  long long pid;$/;"	m	struct:particle_pos_data
+pidtogrid	displacement.c	/^void pidtogrid(long long pid, long long ngrid, long long idx[3]) {$/;"	f
 pmax	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
 pmin	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
 poisson_solver_float	poisson.c	/^void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij, $/;"	f
@@ -188,7 +192,7 @@ rect_controller	parvar.h	/^typedef struct rect_controller{$/;"	s
 redshift	gadget_read_snapshot.c	/^  double redshift;$/;"	m	struct:io_header_1	file:
 reordering	gadget_read_snapshot.c	/^int reordering(void)$/;"	f
 simulation_info	parvar.h	/^typedef struct simulation_info{$/;"	s
-smooth_R	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+smooth_R	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
 smooth_field	fourier.c	/^void smooth_field(float *d, double boxsize, int ngrid, int smooth_type, $/;"	f
 smooth_type	parvar.h	/^  char *smooth_type, *test_fname;$/;"	m	struct:simulation_info
 smooth_type_flag	parvar.h	/^  int smooth_type_flag;$/;"	m	struct:simulation_info
@@ -200,12 +204,12 @@ testing_fftw	test_driver.c	/^void testing_fftw(SimInfo *s, float *d, float *phi,
 time	gadget_read_snapshot.c	/^  double time;$/;"	m	struct:io_header_1	file:
 tk_interp	stat_model.c	/^double tk_interp(Interpar *tf, double k){$/;"	f
 transfer_func_finalize	stat_model.c	/^void transfer_func_finalize(Interpar *tf){$/;"	f
-transfer_func_init	stat_model.c	/^Interpar *transfer_func_init(char *fname) {$/;"	f
+transfer_func_init	stat_model.c	/^int transfer_func_init(Interpar *tf, char *fname) {$/;"	f
 trilinear	partmove.c	/^float trilinear(float pos[3], float dp[3], float v[2][2][2]){$/;"	f
 unit_conversion	gadget_read_snapshot.c	/^int unit_conversion(void)$/;"	f
 vel	io.h	/^  float vel[3];$/;"	m	struct:particle_data
-xmax	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
-xmin	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3];$/;"	m	struct:simulation_info
+xmax	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
+xmin	parvar.h	/^  double boxsize, smooth_R, particle_mass, xmin[3], xmax[3], drift[3];$/;"	m	struct:simulation_info
 za_displacement	backward_displacement.c	/^void za_displacement(SimInfo *s, float *d, float *disp) {$/;"	f
 za_displacement	za_reconstruction.c	/^void za_displacement(SimInfo *s, float *d, float *disp) {$/;"	f
 za_displacement_pert	backward_displacement.c	/^void za_displacement_pert(SimInfo *s, float *d, float *disp) {$/;"	f

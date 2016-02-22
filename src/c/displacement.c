@@ -174,8 +174,8 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 	  }
 	*/
 
-        if(disp_<=-maxdisp[i]*fac) disp_=0.;
-        if(disp_>=maxdisp[i]*fac) disp_=0.;
+        if(disp_<=-maxdisp[i]) disp_=0.;
+        if(disp_>=maxdisp[i]) disp_=0.;
 
         ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
         }
