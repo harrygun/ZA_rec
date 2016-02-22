@@ -87,6 +87,11 @@ if __name__=='__main__':
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
         #disp, disp_model = dd[:3], dd[3:]
 
+	print disp
+	print disp_model
+
+	quit()
+
         lw1=['k-', 'r-', 'b-', 'g-']
         lw2=['k--', 'r--', 'b--', 'g--']
 
@@ -105,6 +110,9 @@ if __name__=='__main__':
 	    _cd_k.append(k1)
 	    _cd_p.append(cr)
 	
+	    print '->> ', i, pk1
+	    print '    ', pk2
+	    print '    ', pk3
 
 	cd_k=np.array(_cd_k)
 	cd_p=np.array(_cd_p)
