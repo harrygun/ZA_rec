@@ -183,10 +183,6 @@ void transfer_func_finalize(Interpar *tf){
 /* -> displacement field manipulation  <- */
 void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
                float *disp_lpt, char *fname_part_init, char *fname_pid_init)  {
-
-   printf("INITIAL displacement field was WRONG, CHECK !!\n"); 
-   fflush(stdout); abort();
-
   // -> get the stochastic term of displacement <<- //
   double fac;
   //char *disp_calmethod="grid_PID";  //"grid_wise";

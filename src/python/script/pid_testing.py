@@ -101,9 +101,10 @@ if __name__=='__main__':
 
     if do_displacement_test:
         #->> 
-	fn_disp='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/rec_data/stat_disp_0_100.dat'
+	#fn_disp='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/rec_data/stat_disp_0_100.dat'
+	fn_disp='/mnt/scratch-lustre/xwang/data/baorec/cubep3m_dm_sml_pid/rec_data/disp_0_100.dat'
         nblock=6
-        dd=rd.rblock(p.stat_disp_field_fname, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
+        dd=rd.rblock(fn_disp, p.ngrid**3*nblock, dtype='float').reshape(nblock,p.ngrid,p.ngrid,p.ngrid)
 	print dd.shape
 
         disp, disp_lpt=dd[:3], dd[3:]
@@ -142,10 +143,10 @@ if __name__=='__main__':
             axis, nsl=0, 100
                 
             cb1=ax[0].imshow(disp[axis,:,:,nsl])
-            cb1=ax[1].imshow(disp_lpt[axis,:,:,nsl])
+            cb2=ax[1].imshow(disp_lpt[axis,:,:,nsl])
 
-	    #pl.colorbar(cb1)
-	    #pl.colorbar(cb2)
+	    pl.colorbar(cb1)
+	    pl.colorbar(cb2)
 
                 
             pl.tight_layout()
