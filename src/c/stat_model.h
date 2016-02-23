@@ -11,8 +11,9 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
 void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d, 
                                  char *fname_part_init, char *fname_out);
 
-void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, float *disp_mc, Interpar *tf);
-
+//void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, float *disp_mc, Interpar *tf);
+void disp_stat_separation(Cospar *cp, float *disp, float *disp_lpt, float *disp_mc, 
+                      Interpar *tf, float boxsize, long long npart, long long ngrid);
 
 
 // ->> transfer function <<- //

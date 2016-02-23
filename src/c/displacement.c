@@ -55,6 +55,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
   double disp_, fac;
 
   lenfac=12;
+  fac=0.95;
 
   // ->> box boundary <<- //
   dx=s->boxsize/(float)s->ngrid;
@@ -65,7 +66,7 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
     xmax[i]=xmin[i]+(s->ngrid)*dx;
 
     maxdisp[i]=min(s->boxsize-s->drift[i]*dx, s->boxsize+s->drift[i]*dx);
-    printf("%lg  ", maxdisp[i]);
+    printf("%lg  (%lg)  ", maxdisp[i], maxdisp[i]*fac);
     }
   printf("\n"); fflush(stdout);
 
@@ -173,9 +174,9 @@ void get_real_displacement(SimInfo *s, Pdata_pos *p, Pdata_pos *pinit, float *di
 
 	  }
 	*/
-
-        if(disp_<=-maxdisp[i]) disp_=0.;
-        if(disp_>=maxdisp[i]) disp_=0.;
+        fac=0.95;
+        if(fabs(disp_)>=maxdisp[i]*fac) disp_=0.;
+	
 
         ArrayAccess2D_n2(disp, 3, s->npart, i, pid)=disp_*fscale;
         }

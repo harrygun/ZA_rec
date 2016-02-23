@@ -44,7 +44,7 @@ param_dict={
     'particle_file_name':  'z.dat',
     'py_import_density_field':   True,
     'power_spectrum_fname': '/home/xwang/workspace/general-data/power/fiducial_matterpower.dat',
-    'cal_rect_transfer_func':    True,
+    'cal_rect_transfer_func':    False,
     'disp_transfunc_fname':   'rk.dat',
     'raw_disp_field_fname':       'a.dat',
     'stat_disp_field_fname':       'a.dat',
@@ -84,13 +84,34 @@ if __name__=='__main__':
 
 	#->> discard boundary data <<- #
         bd=5
+	bsize=p.boxsize-2.*bd*p.boxsize/float(p.ngrid)
+	#bsize=p.boxsize
+	print 'bsize:', bsize
+
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
         #disp, disp_model = dd[:3], dd[3:]
 
-	print disp
-	print disp_model
+        if True:
+            nplt, ncol = 2, 2
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+            	                      gap_size=0.5,return_figure=True)
+            axis, nsl=0, 20
+                
+            cb1=ax[0].imshow(disp[axis,:,:,nsl])
+            cb2=ax[1].imshow(disp_model[axis,:,:,nsl])
+
+
+	    pl.colorbar(cb1)
+	    pl.colorbar(cb2)
+
+                
+            pl.tight_layout()
+            pl.show()
+
 
 	quit()
+
+
 
         lw1=['k-', 'r-', 'b-', 'g-']
         lw2=['k--', 'r--', 'b--', 'g--']
@@ -101,19 +122,15 @@ if __name__=='__main__':
 
 	_cd_k, _cd_p=[], []
         for i in range(3):
-            k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=p.boxsize)
-            k2, pk2=psor.pk(disp_model[i], boxsize=p.boxsize)
-            k3, pk3=psor.pk(disp[i], boxsize=p.boxsize)
+            k1, pk1=psor.cross(disp[i], disp_model[i], boxsize=bsize)
+            k2, pk2=psor.pk(disp_model[i], boxsize=bsize)
+            k3, pk3=psor.pk(disp[i], boxsize=bsize)
 
 	    cr=pk1/np.sqrt(pk3*pk2)
 
 	    _cd_k.append(k1)
 	    _cd_p.append(cr)
 	
-	    print '->> ', i, pk1
-	    print '    ', pk2
-	    print '    ', pk3
-
 	cd_k=np.array(_cd_k)
 	cd_p=np.array(_cd_p)
 
@@ -133,6 +150,7 @@ if __name__=='__main__':
 	f.close()
 
         pl.show()
+
 
 
 
@@ -217,6 +235,7 @@ if __name__=='__main__':
 
     if (p.py_stat_potential_model_PDF==True):
         # ->> import data <<- #
+        '''
         nb1, nb2=9, 10
 	ntrim=10
 
@@ -231,15 +250,30 @@ if __name__=='__main__':
         #disp = dd1[:3,bd:-bd,bd:-bd,bd:-bd]
         #disp_lpt = dd1[3:6,bd:-bd,bd:-bd,bd:-bd]
 	#disp_mc=dd1[6:,bd:-bd,bd:-bd,bd:-bd]
+
         disp = dd1[:3]
         disp_lpt = dd1[3:6]
 	disp_mc=dd1[6:]
-
 
         div, phi = dd2[0], dd2[1]
         disp_phi=dd2[2:5]
         div_lpt,phi_lpt =dd2[5], dd2[6]
 	disp_phi_lpt=dd2[7:]
+        '''
+
+        nb=19
+	ntrim=5
+	tng=p.ngrid-2*ntrim
+        dd=rd.rblock(p.stat_disp_field_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
+
+        disp, disp_lpt, disp_mc = dd[:3], dd[3:6], dd[6:9]
+
+        div, phi = dd[9+0], dd[9+1]
+        disp_phi=dd[9+2:9+5]
+        div_lpt,phi_lpt =dd[9+5], dd[9+6]
+	disp_phi_lpt=dd[9+7:]
+
+        ''' ->> end of data importing <<- '''
 
 	disp_phimc=disp_phi-disp_lpt
 	disp_rot=disp-disp_phi
@@ -299,7 +333,8 @@ if __name__=='__main__':
             color=['g', 'r', 'b', 'y', 'k', 'm']
     
             #drange=[-10,10]
-            drange=[-20,20]
+            drange=[-80,80]
+            #drange=[-20,20]
     
             for i in range(3):
                 ax[i].hist(disp[i].flatten(), bins=n_bin, range=drange, \
@@ -335,8 +370,8 @@ if __name__=='__main__':
             #cb2=ax[1].imshow(disp_lpt[axis,:,:,nsl])
             cb2=ax[1].imshow(disp_phi[axis,:,:,nsl])
 
-            cb2=ax[2].imshow(disp_phi_lpt[axis,:,:,nsl])
-            cb2=ax[3].imshow(disp_lpt[axis,:,:,nsl])
+            cb3=ax[2].imshow(disp_phi_lpt[axis,:,:,nsl])
+            cb4=ax[3].imshow(disp_lpt[axis,:,:,nsl])
 
 
             #cb3=ax[2].imshow(phi[...,nsl])
@@ -346,9 +381,9 @@ if __name__=='__main__':
             #cb4=ax[3].imshow(div_lpt[...,nsl])
 
 	    pl.colorbar(cb1)
-	    #pl.colorbar(cb2)
-	    #pl.colorbar(cb3)
-	    #pl.colorbar(cb4)
+	    pl.colorbar(cb2)
+	    pl.colorbar(cb3)
+	    pl.colorbar(cb4)
 
                 
             pl.tight_layout()
@@ -356,7 +391,7 @@ if __name__=='__main__':
 
 
 
-        if True:
+        if False:
 	    # ->> test boundary <<- #
             nplt, ncol = 3, 3
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\

@@ -98,7 +98,7 @@ double tk_interp(Interpar *tf, double k){
 int transfer_func_init(Interpar *tf, char *fname) {
 
   // ->> import transfer function and interpolate <<- //
-  tf= (Interpar *)malloc(3*sizeof(Interpar));
+  //tf= (Interpar *)malloc(3*sizeof(Interpar));
   FILE *fp;
 
   if(!(fp=fopen(fname, "r"))) {
@@ -138,12 +138,13 @@ int transfer_func_init(Interpar *tf, char *fname) {
     dtf=log(ArrayAccess2D_n2(tfk, 3, line, j, line-extdidx/2))-log(ArrayAccess2D_n2(tfk, 3, line, j, line-extdidx));
     tf[j].slop_max=dtf/dk;
 
-    //printf("tf boundary:  %lg   %lg  %lg  %lg\n", tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
+    printf("tf boundary [%d]:  %lg   %lg  %lg  %lg\n", j, tf[j].min, tf[j].max, tf[j].slop_min, tf[j].slop_max);
     }
 
   fclose(fp);
 
 
+  //#define _DO_TF_TEST_
   #ifdef _DO_TF_TEST_
   fp=fopen("result/test_tf.dat", "w");
   for(i=0; i<line; i++) {
@@ -182,6 +183,10 @@ void transfer_func_finalize(Interpar *tf){
 /* -> displacement field manipulation  <- */
 void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
                float *disp_lpt, char *fname_part_init, char *fname_pid_init)  {
+
+   printf("INITIAL displacement field was WRONG, CHECK !!\n"); 
+   fflush(stdout); abort();
+
   // -> get the stochastic term of displacement <<- //
   double fac;
   //char *disp_calmethod="grid_PID";  //"grid_wise";
@@ -208,26 +213,26 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
 
 
 
-void disp_stat_separation(Cospar *cp, SimInfo *s, float *disp, float *disp_lpt, 
-                                                float *disp_mc, Interpar *tf)  {
+void disp_stat_separation(Cospar *cp, float *disp, float *disp_lpt, float *disp_mc, 
+                      Interpar *tf, float boxsize, long long npart, long long ngrid)  {
   // ->> For each particle, statistical separate the into  <<- //
   //     deterministic and stochastic contributions .      <<- //
   long long ip, i, j, k;
   
   //->> convolve displacement field with transfer function <<- //
   for(i=0; i<3; i++) {
-    smooth_field(&ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, 0), s->boxsize, s->ngrid, 
-                            _ANISOTROPIC_INTERPOLATOR_SMOOTH_, s->smooth_R, &tf[i]);
+    smooth_field(&ArrayAccess2D_n2(disp_lpt, 3, npart, i, 0), boxsize, ngrid, 
+                            _ANISOTROPIC_INTERPOLATOR_SMOOTH_, 0., &tf[i]);
     }
 
   // ->> now get the mode-coupling term <<- //
   #ifdef _OMP_
   #pragma omp parallel for private(ip,i)
   #endif
-  for(ip=0; ip<s->npart; ip++) 
+  for(ip=0; ip<npart; ip++) 
     for(i=0; i<3; i++)    {
-      ArrayAccess2D_n2(disp_mc, 3, s->npart, i, ip)=ArrayAccess2D_n2(disp, 3, s->npart, i, ip)
-                                                   -ArrayAccess2D_n2(disp_lpt, 3, s->npart, i, ip);
+      ArrayAccess2D_n2(disp_mc, 3, npart, i, ip)=ArrayAccess2D_n2(disp, 3, npart, i, ip)
+                                                   -ArrayAccess2D_n2(disp_lpt, 3, npart, i, ip);
     }
 
   return;
@@ -297,9 +302,13 @@ void output_stat_disp_potential_model(float *disp, float *disp_lpt, float *disp_
 
   FILE *fp=fopen(fname_out, "wb");
 
-  fwrite(disp, sizeof(float), ng*3, fp);
-  fwrite(disp_lpt, sizeof(float), ng*3, fp);
-  fwrite(disp_mc, sizeof(float), ng*3, fp);
+  //fwrite(disp, sizeof(float), ng*3, fp);
+  //fwrite(disp_lpt, sizeof(float), ng*3, fp);
+  //fwrite(disp_mc, sizeof(float), ng*3, fp);
+  //
+  fwrite(disp, sizeof(float), tng*3, fp);
+  fwrite(disp_lpt, sizeof(float), tng*3, fp);
+  fwrite(disp_mc, sizeof(float), tng*3, fp);
 
   fwrite(div, sizeof(float), tng, fp);
   fwrite(phi, sizeof(float), tng, fp);

@@ -321,15 +321,17 @@
       }
 
     // ->> Obtain displacement field <<- //
-    size_t ng_trim, ntrim;
+    size_t ng_trim, ntrim, npart_trim;
     double bsize_trim;
-    ntrim=10; //ntrim=0; 
+    ntrim=5; //ntrim=0; 
 
     ng_trim=s.ngrid-2*ntrim;
+    npart_trim=ng_trim*ng_trim*ng_trim;
     bsize_trim=s.boxsize*(double)ng_trim/(double)s.ngrid;
 
     float *drec, *d_disp, *d_shift;
-    float *disp, *disp_lpt, *disp_mc, *disp_lpt_trim, *disp_trim;  //->>displacement field
+    float *disp, *disp_lpt, *disp_mc;   //->>displacement field
+    float *disp_lpt_trim, *disp_trim, *disp_mc_trim;  // ->> trimmed displacement field
     float *div, *phi, *disp_phi, *div_lpt, *phi_lpt, *disp_phi_lpt;
 
     //->> histogram <<- //
@@ -371,7 +373,7 @@
         disp_lpt=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
         disp=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 	
-        Interpar *tf;
+        Interpar *tf=(Interpar *)malloc(3*sizeof(Interpar));
 	if (transfer_func_init(tf, rc.displacement_tf_fname)!=TRUE){
           // ->> if there's no transfer function file, generate necessary data for <<- //
 	  printf("Transfer function initialization failed, output displacement instead.\n"); 
@@ -384,36 +386,39 @@
 	  }
 
 	// ->> allocate memory <<- //
-	disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
+	//disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
 
 	//
-        disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
-        disp_trim=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
+        disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+        disp_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+        disp_mc_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
 	// ->> 
-	div=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
-	phi=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
-	div_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
-	phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim);
-	disp_phi=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
-	disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*ng_trim*ng_trim*ng_trim*3);
+	div=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	phi=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	div_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	disp_phi=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+	disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
          
         load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
 
 
-        // ->> statistical separate LPT & mode-coupling term <<- //
-        disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
-
-
 	// ->> trim the boundary of original data <<- //
 	for(i=0; i<3; i++) {
-          cubic_trim(&disp[i*s.ngrid*s.ngrid*s.ngrid], &disp_trim[i*ng_trim*ng_trim*ng_trim], s.ngrid, ntrim);
-          cubic_trim(&disp_lpt[i*s.ngrid*s.ngrid*s.ngrid], &disp_lpt_trim[i*ng_trim*ng_trim*ng_trim], s.ngrid, ntrim);
+          cubic_trim(&disp[i*s.ngrid*s.ngrid*s.ngrid], &disp_trim[i*npart_trim], s.ngrid, ntrim);
+          cubic_trim(&disp_lpt[i*s.ngrid*s.ngrid*s.ngrid], &disp_lpt_trim[i*npart_trim], s.ngrid, ntrim);
 	  }
 	 
+        // ->> statistical separate LPT & mode-coupling term <<- //
+        //disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
+        disp_stat_separation(&cp, disp_trim, disp_lpt_trim, disp_mc_trim, tf, 
+	                     bsize_trim, npart_trim, ng_trim);
+
+
         // ->> get potential field <<- //
         potential_curlfree_vec(disp_trim, div, phi, disp_phi, bsize_trim, ng_trim);
+        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,disp_phi_lpt,bsize_trim,ng_trim);
         //potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
-        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,disp_phi_lpt,bsize_trim, ng_trim);
  
 
         // ->> now get histogram data <<- //
@@ -425,22 +430,23 @@
         histogram2d_init(&hist);
 	*/
 
-        // ->> 
-
 
 
         // ->> output displacement field <<- //
         //output_stat_disp_model(disp, disp_lpt, disp_mc, stat_disp_fname, 
 	//                       s.ngrid, ng_trim);
-        output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
-                   div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
+        //output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
+        //           div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
+        output_stat_disp_potential_model(disp_trim, disp_lpt_trim, disp_mc_trim, div, 
+	                                phi, disp_phi, div_lpt, phi_lpt, disp_phi_lpt, 
+				        s.ngrid, ng_trim, stat_disp_fname);
 
 
         // ->> free all <<- //
         local_free:
         transfer_func_finalize(tf);
 
-	free(disp);  free(disp_lpt);  free(disp_mc);
+	free(disp);  free(disp_lpt);  free(disp_mc_trim);
 	free(disp_trim);   free(disp_lpt_trim);
 
         free(div);  free(phi);  free(disp_phi); 
