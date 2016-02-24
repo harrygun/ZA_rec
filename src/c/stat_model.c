@@ -96,9 +96,7 @@ double tk_interp(Interpar *tf, double k){
 
 //Interpar *transfer_func_init(char *fname) {
 int transfer_func_init(Interpar *tf, char *fname) {
-
   // ->> import transfer function and interpolate <<- //
-  //tf= (Interpar *)malloc(3*sizeof(Interpar));
   FILE *fp;
 
   if(!(fp=fopen(fname, "r"))) {
@@ -180,6 +178,64 @@ void transfer_func_finalize(Interpar *tf){
 
 
 
+/* ->> max likelihood curve <<- */
+int phi_mlik_init(Interpar *mlik, char *fname){
+
+  FILE *fp;
+  if(!(fp=fopen(fname, "r"))) {
+    return FALSE; }
+
+  // ->> importing data <<- //
+  int i, j, line;
+  line=countFILEline(fp);
+
+  double *phi, *mlik_phi, *smlik_phi, p, ml;
+  phi=(double *)malloc(line*sizeof(double));
+  mlik_phi=(double *)malloc(line*sizeof(double));
+  smlik_phi=(double *)malloc(line*sizeof(double));
+
+  for(i=0; i<line; i++) 
+    fscanf(fp, "%lg  %lg  %lg\n", &phi[i], &mlik_phi[i], &smlik_phi[i]);
+
+
+  // ->> initialize interpolator <<- //
+  myinterp_init(mlik, phi, smlik_phi, line);
+
+  mlik->min=phi[0];
+  mlik->max=phi[line-1];
+
+
+
+  #define _DO_MLIK_TEST_
+  #ifdef _DO_MLIK_TEST_
+  fp=fopen("result/test_mlik.dat", "w");
+
+  for(i=0; i<500; i++) {
+    p=-300+i*600./500.; 
+    printf("%lg  %lg\n", p, mlik_interp(mlik, p) );
+    fprintf(fp, "%lg  %lg\n", p, mlik_interp(mlik, p) );
+    }
+  fclose(fp);
+  #endif
+
+  abort();
+
+
+  return TRUE;
+  }
+
+
+
+double mlik_interp(Interpar *mlik, double p){
+
+
+
+  return;
+  }
+
+
+
+
 /* -> displacement field manipulation  <- */
 void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp, 
                float *disp_lpt, char *fname_part_init, char *fname_pid_init)  {
@@ -238,21 +294,17 @@ void disp_stat_separation(Cospar *cp, float *disp, float *disp_lpt, float *disp_
 
 
 
-
-
 void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, 
                           char *stat_disp_model_type) {
-
-
   // ->> construct model <<- //
-
-
 
   return;
   }
 
 
 
+
+/* ->> output fields <<- */
 void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){
   //->> only write full and LPT displacement field <<- //
 

@@ -27,6 +27,9 @@ void transfer_func_finalize(Interpar *tf);
 
 //void get_stat_disp_model(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init, char *stat_disp_model_type);
 
+// -> 
+int phi_mlik_init(Interpar *mlik, char *fname);
+double mlik_interp(Interpar *mlik, double p);
 
 
 // ->> output <<- //

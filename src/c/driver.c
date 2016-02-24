@@ -389,76 +389,62 @@
           goto stop;
 	  }
 
-        // ->> 
-	printf("re-orgnize the following code, and initialize the phi_mlik interpolator\n"); 
-	abort();
-	// ->> allocate memory <<- //
-	//disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
-	//
-        disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
-        disp_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
-        disp_mc_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
-	// ->> 
-	div=(float *)fftwf_malloc(sizeof(float)*npart_trim);
-	phi=(float *)fftwf_malloc(sizeof(float)*npart_trim);
-	div_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
-	phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
-	disp_phi=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
-	disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
-         
-        load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
+        // ->> phi max-likelihood interpolator <<- //
+        Interpar *phi_mlik=(Interpar *)malloc(sizeof(Interpar));
+        if(phi_mlik_init(phi_mlik, phi_mlik_fname)!=TRUE) {
+	  printf("max likelihood function initialization failed, output statistic displacement field instead.\n"); 
+	  fflush(stdout);
 
+	  // ->> allocate memory <<- //
+          disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+          disp_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+          disp_mc_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+	  // ->> 
+	  div=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	  phi=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	  div_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	  phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim);
+	  disp_phi=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+	  disp_phi_lpt=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
+           
+          load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
 
-	// ->> trim the boundary of original data <<- //
-	for(i=0; i<3; i++) {
-          cubic_trim(&disp[i*s.ngrid*s.ngrid*s.ngrid], &disp_trim[i*npart_trim], s.ngrid, ntrim);
-          cubic_trim(&disp_lpt[i*s.ngrid*s.ngrid*s.ngrid], &disp_lpt_trim[i*npart_trim], s.ngrid, ntrim);
+	  // ->> trim the boundary of original data <<- //
+	  for(i=0; i<3; i++) {
+            cubic_trim(&disp[i*s.ngrid*s.ngrid*s.ngrid], 
+	               &disp_trim[i*npart_trim], s.ngrid, ntrim);
+            cubic_trim(&disp_lpt[i*s.ngrid*s.ngrid*s.ngrid], 
+	               &disp_lpt_trim[i*npart_trim], s.ngrid, ntrim);
+	    }
+
+          // ->> statistical separate LPT & mode-coupling term <<- //
+          disp_stat_separation(&cp, disp_trim, disp_lpt_trim, disp_mc_trim, tf, 
+	                       bsize_trim, npart_trim, ng_trim);
+
+          // ->> get potential field <<- //
+          potential_curlfree_vec(disp_trim, div, phi, disp_phi, bsize_trim, ng_trim);
+          potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,disp_phi_lpt,bsize_trim,ng_trim);
+          //potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
+
+          // ->> output displacement field <<- //
+          output_stat_disp_potential_model(disp_trim, disp_lpt_trim, disp_mc_trim, div, 
+                                       phi, disp_phi, div_lpt, phi_lpt, disp_phi_lpt, 
+				       s.ngrid, ng_trim, stat_disp_fname);
+	  free(disp);  free(disp_lpt);  free(disp_mc_trim);
+	  free(disp_trim);   free(disp_lpt_trim);
+
+          free(div);  free(phi);  free(disp_phi); 
+	  free(div_lpt); free(phi_lpt);
 	  }
-	 
-        // ->> statistical separate LPT & mode-coupling term <<- //
-        //disp_stat_separation(&cp, &s, disp, disp_lpt, disp_mc, tf);
-        disp_stat_separation(&cp, disp_trim, disp_lpt_trim, disp_mc_trim, tf, 
-	                     bsize_trim, npart_trim, ng_trim);
 
+        //->> start to  <<- //
 
-        // ->> get potential field <<- //
-        potential_curlfree_vec(disp_trim, div, phi, disp_phi, bsize_trim, ng_trim);
-        potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,disp_phi_lpt,bsize_trim,ng_trim);
-        //potential_curlfree_vec(disp_lpt_trim,div_lpt,phi_lpt,NULL,bsize_trim, ng_trim);
- 
-
-        // ->> now get histogram data <<- //
-	/*
-	for(i=0; i<2; i++) {
-          hist.grid[i]=100;
-          hist.boundary[0][i]=200*pow(-1.,i);
-          hist.boundary[1][i]=10*pow(-1.,i); }
-        histogram2d_init(&hist);
-	*/
-
-
-
-        // ->> output displacement field <<- //
-        //output_stat_disp_model(disp, disp_lpt, disp_mc, stat_disp_fname, 
-	//                       s.ngrid, ng_trim);
-        //output_stat_disp_potential_model(disp, disp_lpt, disp_mc, div, phi, disp_phi, 
-        //           div_lpt, phi_lpt, disp_phi_lpt, s.ngrid, ng_trim, stat_disp_fname);
-        output_stat_disp_potential_model(disp_trim, disp_lpt_trim, disp_mc_trim, div, 
-	                                phi, disp_phi, div_lpt, phi_lpt, disp_phi_lpt, 
-				        s.ngrid, ng_trim, stat_disp_fname);
 
 
         // ->> free all <<- //
         local_free:
         transfer_func_finalize(tf);
 
-	free(disp);  free(disp_lpt);  free(disp_mc_trim);
-	free(disp_trim);   free(disp_lpt_trim);
-
-        free(div);  free(phi);  free(disp_phi); 
-	free(div_lpt); free(phi_lpt);
-
-        //histogram2d_free(&hist);
         }
 
       }
@@ -499,5 +485,21 @@
 
 
     }
+
+
+
+
+
+
+// ->> now get histogram data <<- //
+/*
+for(i=0; i<2; i++) {
+  hist.grid[i]=100;
+  hist.boundary[0][i]=200*pow(-1.,i);
+  hist.boundary[1][i]=10*pow(-1.,i); }
+histogram2d_init(&hist);
+
+//histogram2d_free(&hist);
+*/
 
 
