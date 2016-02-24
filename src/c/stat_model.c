@@ -212,7 +212,7 @@ int phi_mlik_init(Interpar *mlik, char *fname){
   dp=phi[line-extdidx]-phi[line-1]; dm=smlik_phi[line-extdidx]-smlik_phi[line-1];
   mlik->slop_max=dm/dp;
 
-  #define _DO_MLIK_TEST_
+  //#define _DO_MLIK_TEST_
   #ifdef _DO_MLIK_TEST_
   fp=fopen("result/test_mlik.dat", "w");
 
@@ -224,7 +224,6 @@ int phi_mlik_init(Interpar *mlik, char *fname){
   fclose(fp);
   #endif
 
-  abort();
 
 
   return TRUE;
