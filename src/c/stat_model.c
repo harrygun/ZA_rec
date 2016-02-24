@@ -47,10 +47,10 @@ void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d,
 
   // ->>  get initial displacement <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod, 1.);
+  get_real_displacement(s, pinit, pinit, disp_init, s->drift_init, disp_calmethod, 1.);
 
   // ->>  get final displacement <<- //
-  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
+  get_real_displacement(s, p, pinit, disp, s->drift, disp_calmethod, 1.);
 
   // ->> output <<- //
   FILE *fp=fopen(fname_out, "wb");
@@ -196,11 +196,11 @@ void load_displacement(Cospar *cp, SimInfo *s, Pdata_pos *p, float *disp,
   load_cita_simulation_position_pid(fname_part_init, fname_pid_init, pinit, s->npart);
 
   // ->>  get final displacement <<- //
-  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
+  get_real_displacement(s, p, pinit, disp, s->drift, disp_calmethod, 1.);
  
   // ->>  get initial displacement <<- //
   disp_calmethod="grid_wise";
-  get_real_displacement(s, pinit, pinit, disp_lpt, disp_calmethod, fac);
+  get_real_displacement(s, pinit, pinit, disp_lpt, s->drift_init, disp_calmethod, fac);
 
   free(pinit);
   return;

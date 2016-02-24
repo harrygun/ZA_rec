@@ -118,19 +118,28 @@ void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_p
   }
 
 
-void load_simulation_offset(char *fname, double *offset){
+void load_simulation_offset(char *fname, double *offset_f, double *offset_i){
   int i;
-  double z, off_i[3], off_f[3];
+  double zi, zf, off_i[3], off_f[3];
   FILE *fp=fopen(fname, "r");  
 
-  fscanf(fp, "%lg ", &z);
-  printf("read simulation offset file %s at redshift %lg.\n", fname, z);
-  fflush(stdout);
-
+  fscanf(fp, "%lg ", &zf);
   for(i=0; i<3; i++) {
-    fscanf(fp, "%lg ", &offset[i]);
-    printf("%lg ", offset[i]);
-    }
+    fscanf(fp, "%lg ", &offset_f[i]); }
+  fscanf(fp, "\n");
+
+  fscanf(fp, "%lg ", &zi);
+  for(i=0; i<3; i++) {
+    fscanf(fp, "%lg ", &offset_i[i]); }
+
+  printf("read simulation offset file %s at redshift %lg (zi=%lg).\n", fname, zf, zi);
+  for(i=0; i<3; i++) 
+    printf("%lg   ", offset_i[i]);
+  printf("\n");
+
+  for(i=0; i<3; i++) 
+    printf("%lg   ", offset_f[i]);
+  printf("\n");
 
   return;
   }

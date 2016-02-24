@@ -101,7 +101,7 @@ if __name__=='__main__':
             cb2=ax[1].imshow(disp_model[axis,:,:,nsl])
 
 
-	    #pl.colorbar(cb1)
+	    pl.colorbar(cb1)
 	    pl.colorbar(cb2)
 
                 

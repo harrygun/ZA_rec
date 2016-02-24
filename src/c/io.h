@@ -16,7 +16,7 @@ typedef struct particle_pos_data {
   long long pid;
   } Pdata_pos;
 
-void load_simulation_offset(char *fname, double *offset);
+void load_simulation_offset(char *fname, double *offset_f, double *offset_i);
 
 
 void load_cita_simulation(char *fname, Pdata *p, long long npart);

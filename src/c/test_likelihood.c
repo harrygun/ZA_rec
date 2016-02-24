@@ -57,7 +57,7 @@ void test_displacement(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_init
     load_cita_simulation_position(fname_part_init, pinit, s->npart);
     }
 
-  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
+  get_real_displacement(s, p, pinit, disp, s->drift, disp_calmethod, 1.);
 
 
   // ->> smooth the field <<- //
@@ -108,10 +108,10 @@ void test_disp_direct_cal(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_i
 
   // ->>  get initial displacement <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, pinit, pinit, disp_init, disp_calmethod, 1.);
+  get_real_displacement(s, pinit, pinit, disp_init, s->drift_init, disp_calmethod, 1.);
 
   // ->>  get final displacement <<- //
-  get_real_displacement(s, p, pinit, disp, disp_calmethod, 1.);
+  get_real_displacement(s, p, pinit, disp, s->drift, disp_calmethod, 1.);
    
 
   // ->> obtain model displacement <<- //
@@ -171,7 +171,7 @@ void test_disp_vel_comp(SimInfo *s, Pdata_pos *p, float *d, char *fname_part_ini
 
   // ->>  grid-wise displacement field <<- //
   char *disp_calmethod="grid_wise";
-  get_real_displacement(s, p, pos_init, disp_init, disp_calmethod, 1.);
+  get_real_displacement(s, p, pos_init, disp_init, s->drift_init, disp_calmethod, 1.);
 
 
   // ->> ZA <<- //

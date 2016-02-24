@@ -137,11 +137,13 @@
 
       // ->> simulation box drift <<- //
       fname_offset=iniparser_getstring(dict, "Rect:simbox_drift_file_name", "x.dat");
-      load_simulation_offset(fname_offset, s.drift);
+      load_simulation_offset(fname_offset, s.drift, s.drift_init);
 
       //->> 
       printf("boxsize=%lg, ngrid=%d, npart=%d\n",s.boxsize,s.ngrid,s.npart);
       printf("drift: [%lg  %lg  %lg]\n", s.drift[0], s.drift[1], s.drift[2]);
+      printf("initial drift: [%lg  %lg  %lg]\n",s.drift_init[0],s.drift_init[1],s.drift_init[2]);
+
 
       if(strcmp( s.smooth_type, "Tophat")==0 ) {
         //cp.flg[0]= _TOPHAT_SMOOTH_ ;
