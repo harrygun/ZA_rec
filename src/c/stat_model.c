@@ -186,10 +186,10 @@ int phi_mlik_init(Interpar *mlik, char *fname){
     return FALSE; }
 
   // ->> importing data <<- //
-  int i, j, line;
+  int i, j, line, extdidx=10;
   line=countFILEline(fp);
 
-  double *phi, *mlik_phi, *smlik_phi, p, ml;
+  double *phi, *mlik_phi, *smlik_phi, p, dp, dm;
   phi=(double *)malloc(line*sizeof(double));
   mlik_phi=(double *)malloc(line*sizeof(double));
   smlik_phi=(double *)malloc(line*sizeof(double));
@@ -201,10 +201,15 @@ int phi_mlik_init(Interpar *mlik, char *fname){
   // ->> initialize interpolator <<- //
   myinterp_init(mlik, phi, smlik_phi, line);
 
+  //->> linear extrapolation initialization <<- //
   mlik->min=phi[0];
   mlik->max=phi[line-1];
 
+  dp=phi[extdidx]-phi[0]; dm=smlik_phi[extdidx]-smlik_phi[0];
+  mlik.slop_min=dk/dp;
 
+  dp=phi[line-extdidx]-phi[line-1]; dm=smlik_phi[line-extdidx]-smlik_phi[line-1];
+  mlik.slop_max=dk/dp;
 
   #define _DO_MLIK_TEST_
   #ifdef _DO_MLIK_TEST_
@@ -233,13 +238,10 @@ double mlik_interp(Interpar *mlik, double p){
     dp=p-mlik->min; 
     m=myinterp(mlik, mlik->min)+dp*mlik->slop_min;
     }
-
-  else if(k>=tf->max){
-    tk_b=myinterp(tf, tf->max);
-    dk=k-tf->max; 
-    m=exp(log(tk_b)+dk*tf->slop_max);
+  else if(p>=mlik->max)  {
+    dp=p-mlik->max; 
+    m=myinterp(mlik, mlik->max)+dp*mlik->slop_max;
     }
-
   else{
     m=myinterp(mlik, p); 
     }
