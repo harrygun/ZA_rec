@@ -61,6 +61,7 @@ prog_control={
     #-------------------------------#
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
+    'py_cal_max_like_model':  True,
     'py_stat_model_PDF':   False,
     'py_stat_potential_model_PDF':   False,
     }
@@ -91,7 +92,7 @@ if __name__=='__main__':
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
         #disp, disp_model = dd[:3], dd[3:]
 
-        if True:
+        if False:
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
@@ -109,7 +110,7 @@ if __name__=='__main__':
             pl.show()
 
 
-	quit()
+	    quit()
 
 
 
@@ -151,6 +152,44 @@ if __name__=='__main__':
 
         pl.show()
 
+
+
+    if (p.py_cal_max_like_model==True):
+        nb, ntrim = 19, 5
+	tng=p.ngrid-2*ntrim
+        dd=rd.rblock(p.stat_disp_field_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
+        phi = dd[9+1]
+        phi_lpt = dd[9+6]
+
+
+        # ->> calculate the maximum likelihood model<<- #
+        n_bin=200
+
+        drange_phi=[[-200,200],[-10,10]]
+	h, xe, ye=np.histogram2d(phi_lpt.flatten(), (phi-phi_lpt).flatten(), \
+	             bins=n_bin, range=drange_phi, normed=True)
+
+	x, y=(xe[1:]+xe[:-1])/2., (ye[1:]+ye[:-1])/2.
+        print 'histogram shape:', h.shape, xe.shape, ye.shape
+	#print 'x', x
+
+        if False:
+            nplt, ncol = 1, 1
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                      gap_size=0.5,return_figure=True)
+            ax[0].imshow(h)
+            pl.tight_layout()
+            pl.show()
+
+        # ->> now get the maximum <<- #
+        nplt, ncol = 1, 1
+        fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                      gap_size=0.5,return_figure=True)
+	for i in range(len(x)):
+	    #->>
+            ax[0].plot(x, h[i])
+        pl.tight_layout()
+        pl.show()
 
 
 
@@ -287,7 +326,7 @@ if __name__=='__main__':
 	print 'err:', err.min(), err.max()
 
 
-	if False:
+	if True:
 	    # ->> 2D histogram <<- #
             nplt, ncol = 6, 3
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
@@ -324,7 +363,7 @@ if __name__=='__main__':
 
 
 
-        if False:
+        if True:
 	    # ->> 1D histogram <<- #
             nplt, ncol = 3, 3
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
@@ -332,8 +371,8 @@ if __name__=='__main__':
             n_bin=500
             color=['g', 'r', 'b', 'y', 'k', 'm']
     
-            #drange=[-10,10]
-            drange=[-80,80]
+            drange=[-10,10]
+            #drange=[-80,80]
             #drange=[-20,20]
     
             for i in range(3):
