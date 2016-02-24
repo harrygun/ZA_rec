@@ -24,6 +24,7 @@
   #include "backward_displacement.h"
 
   #include "displacement.h"
+  #include "stat_model.h"
 
 
   #ifdef _OMP_
@@ -206,10 +207,10 @@ int phi_mlik_init(Interpar *mlik, char *fname){
   mlik->max=phi[line-1];
 
   dp=phi[extdidx]-phi[0]; dm=smlik_phi[extdidx]-smlik_phi[0];
-  mlik.slop_min=dk/dp;
+  mlik->slop_min=dm/dp;
 
   dp=phi[line-extdidx]-phi[line-1]; dm=smlik_phi[line-extdidx]-smlik_phi[line-1];
-  mlik.slop_max=dk/dp;
+  mlik->slop_max=dm/dp;
 
   #define _DO_MLIK_TEST_
   #ifdef _DO_MLIK_TEST_
@@ -232,7 +233,7 @@ int phi_mlik_init(Interpar *mlik, char *fname){
 
 
 double mlik_interp(Interpar *mlik, double p){
-  double p, m, dp;
+  double m, dp;
 
   if(p<=mlik->min)  {
     dp=p-mlik->min; 
