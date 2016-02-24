@@ -49,7 +49,6 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
 
     online: 
     http://stackoverflow.com/questions/20618804/how-to-smooth-a-curve-in-the-right-way
-    https://en.wikipedia.org/wiki/Savitzky–Golay_filter
     http://scipy.github.io/old-wiki/pages/Cookbook/SavitzkyGolay
     """
 
