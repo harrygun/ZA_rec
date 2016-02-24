@@ -20,6 +20,8 @@ import rect.fourier.psxi as ps
 import rect.misc.file_import as fimp
 import rect.misc.power_update as pu
 
+import rect.misc.filter as ft
+
 #import likeli_test as ltst
 
 
@@ -48,6 +50,7 @@ param_dict={
     'disp_transfunc_fname':   'rk.dat',
     'raw_disp_field_fname':       'a.dat',
     'stat_disp_field_fname':       'a.dat',
+    'stat_phi_mlik_fname':         'a.dat',
     }
 
 prog_control={
@@ -185,11 +188,24 @@ if __name__=='__main__':
         nplt, ncol = 1, 1
         fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
                                       gap_size=0.5,return_figure=True)
+
+        mlik=np.array([ y[np.argmax(h[i])] for i in range(len(x))])
+	smlik=ft.savitzky_golay(mlik, 21, 3)
+	 
+	#->> save file <<- #
+        f=open(p.stat_phi_mlik_fname, "w")
 	for i in range(len(x)):
-	    #->>
-            ax[0].plot(x, h[i])
+            f.write("{0}  {1}  {2}".format(x[i], mlik[i], smlik[i]))
+        # ->> close <<- #
+	f.close()
+
+
+        #->> <<- #
+        ax[0].plot(x, mlik, 'k-')
+        ax[0].plot(x, smlik, 'r-')
         pl.tight_layout()
         pl.show()
+    
 
 
 
