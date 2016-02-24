@@ -121,7 +121,7 @@
       //double boxsize;
       char *smooth_type, *particle_fname, *pid_fname, *droot, *plin_name;
       char *oden_fname, *main_dtype, *rec_name, *fname_pinit, *fname_pid_init, *fname_offset;
-      char *raw_disp_fname, *stat_disp_fname;
+      char *raw_disp_fname, *stat_disp_fname, *phi_mlik_fname;
       int do_density, import_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
@@ -173,6 +173,8 @@
 
       raw_disp_fname=iniparser_getstring(dict,"Rect:raw_disp_field_fname", "x.dat");
       stat_disp_fname=iniparser_getstring(dict,"Rect:stat_disp_field_fname", "x.dat");
+
+      phi_mlik_fname=iniparser_getstring(dict,"Rect:stat_phi_mlik_fname", "x.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
@@ -387,9 +389,11 @@
           goto stop;
 	  }
 
+        // ->> 
+	printf("re-orgnize the following code, and initialize the phi_mlik interpolator\n"); 
+	abort();
 	// ->> allocate memory <<- //
 	//disp_mc=(float *)fftwf_malloc(sizeof(float)*s.ngrid*s.ngrid*s.ngrid*3);
-
 	//
         disp_lpt_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);
         disp_trim=(float *)fftwf_malloc(sizeof(float)*npart_trim*3);

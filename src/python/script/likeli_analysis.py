@@ -195,7 +195,7 @@ if __name__=='__main__':
 	#->> save file <<- #
         f=open(p.stat_phi_mlik_fname, "w")
 	for i in range(len(x)):
-            f.write("{0}  {1}  {2}".format(x[i], mlik[i], smlik[i]))
+            f.write("{0}  {1}  {2}\n".format(x[i], mlik[i], smlik[i]))
         # ->> close <<- #
 	f.close()
 
