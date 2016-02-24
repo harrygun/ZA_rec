@@ -227,10 +227,24 @@ int phi_mlik_init(Interpar *mlik, char *fname){
 
 
 double mlik_interp(Interpar *mlik, double p){
+  double p, m, dp;
 
+  if(p<=mlik->min)  {
+    dp=p-mlik->min; 
+    m=myinterp(mlik, mlik->min)+dp*mlik->slop_min;
+    }
 
+  else if(k>=tf->max){
+    tk_b=myinterp(tf, tf->max);
+    dk=k-tf->max; 
+    m=exp(log(tk_b)+dk*tf->slop_max);
+    }
 
-  return;
+  else{
+    m=myinterp(mlik, p); 
+    }
+
+  return m;
   }
 
 
