@@ -41,16 +41,32 @@
 
 
 
+void load_stat_disp(float *disp, float *disp_model, float *phi, 
+                                float *phi_model, char *fname){
+  FILE *fp;
 
 
-void phi_mlik_displacement(SimInfo *s, Interpar *mlik, float *disp, float *phi
-                             char *stat_disp_fname, int import_disp) {
+  return;
+  }
+
+
+
+
+void phi_mlik_displacement(SimInfo *s, Interpar *mlik, float *disp, float *phi,
+                           float *disp_model, float *phi_model, long long ngrid, 
+	                   char *stat_disp_fname, int import_disp) {
+  long long i, j;
+
+  // ->> load displacement field first <<- //
+  load_stat_disp(disp, disp_model, phi, phi_model, stat_disp_fname);
+
+  //->>  
+
 
 
 
   //->> output reconstructed displacement <<- //
-
-
+   
 
   return;
   }
