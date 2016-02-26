@@ -385,7 +385,7 @@
           load_displacement(&cp, &s, p, disp, disp_lpt, fname_pinit, fname_pid_init);
           output_real_disp_field(disp, disp_lpt, s.ngrid, raw_disp_fname);
 
-	  free(disp);  free(disp_lpt);
+	  fftwf_free(disp);  fftwf_free(disp_lpt);
           goto stop;
 	  }
 
@@ -430,15 +430,16 @@
           output_stat_disp_potential_model(disp_trim, disp_lpt_trim, disp_mc_trim, div, 
                                        phi, disp_phi, div_lpt, phi_lpt, disp_phi_lpt, 
 				       s.ngrid, ng_trim, stat_disp_fname);
-	  free(disp);  free(disp_lpt);  free(disp_mc_trim);
-	  free(disp_trim);   free(disp_lpt_trim);
 
-          free(div);  free(phi);  free(disp_phi); 
-	  free(div_lpt); free(phi_lpt);
+	  fftwf_free(disp);  fftwf_free(disp_lpt);  fftwf_free(disp_mc_trim);
+	  fftwf_free(disp_trim);   fftwf_free(disp_lpt_trim);
+
+          fftwf_free(div);  fftwf_free(phi);  fftwf_free(disp_phi); 
+	  fftwf_free(div_lpt); fftwf_free(phi_lpt);
 	  }
 
         //->> start to potential max-likelihood reconstruction <<- //
-
+        phi_mlik_displacement(&s, phi_mlik, disp, phi, disp_lpt, phi_lpt, ng_trim, stat_disp_fname, TRUE);
          
 
 
