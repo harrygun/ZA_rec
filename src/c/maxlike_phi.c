@@ -44,7 +44,15 @@
 void load_stat_disp(float *disp, float *disp_model, float *phi, 
                                 float *phi_model, char *fname){
   FILE *fp;
+  if(!(fp=fopen(fname, "r"))) {
+    printf("can't open file `%s`\n", fname);
+    exit(0);
+    }
+  //->>  
 
+  float *tmp;
+
+  fread(disp);
 
   return;
   }
