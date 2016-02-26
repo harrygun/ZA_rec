@@ -320,3 +320,111 @@ void smooth_field(float *d, double boxsize, int ngrid, int smooth_type,
 
 
 
+
+
+
+void fft_gradient(float *phi, float *disp_phi, double boxsize, int ngrid) {
+  /*->> return the MINUS of the gradient of the potential field 'phi' <<- */
+  // ->> phi:  (input) the potential field of disp 
+  // ->> disp_phi: (output)  == -\nabla_i phi
+
+  int rank, howmany, *ndim, idist, odist, istride, ostride, *inembed, *onembed;
+  long long dksize, dsize, l, m, n, i, j;
+  float kx, ky, kz, ki[3], W, kmin;
+  float fac=1.0/(float)(ngrid*ngrid*ngrid);
+  kmin=2.*pi/boxsize;
+
+  printf("\n->> Obtain the gradient of potential field with FFT.\n");
+
+  // ->> initialize OpenMP <<- //
+  #ifdef _OMP_
+  if(fftwf_init_threads()==0) abort();
+  #endif
+
+  // ->> initialization <<- //
+  dsize=ngrid*ngrid*ngrid*sizeof(float);
+  dksize=ngrid*ngrid*(ngrid/2+1)*sizeof(fftwf_complex);
+  fftwf_complex *dki, *dkphi;
+
+  dki=(fftwf_complex *)fftwf_malloc(3*dksize);
+  dkphi=(fftwf_complex *)fftwf_malloc(dksize);
+
+  // ->> multi-threads initialization <<- //
+  #ifdef _OMP_
+  fftwf_plan_with_nthreads(omp_get_max_threads());
+  #endif
+
+  //->> forward FFT <<- //
+  fftwf_plan pforward, pbackward;
+
+  pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, phi, dphi, FFTW_ESTIMATE);
+  fftwf_execute(pforward);  
+
+  
+  /* ->> taking the gradient of the potential <<- */
+  for (l=0; l<ngrid; l++)
+    for (m=0; m<ngrid; m++)
+      for (n=0; n<ngrid/2+1; n++){
+
+        if(l<ngrid/2) kx=l*kmin;
+	else kx=(l-ngrid)*kmin;
+
+        if(m<ngrid/2) ky=m*kmin;
+	else ky=(m-ngrid)*kmin;
+
+        if(n<ngrid/2) kz=n*kmin;
+	else kz=(n-ngrid)*kmin;
+
+	ki[0]=2.*sin(kx/2.);
+	ki[1]=2.*sin(ky/2.);
+	ki[2]=2.*sin(kz/2.);
+
+	//->> take the gradient <<- //
+	for(i=0; i<3; i++) {
+          ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[0]=
+                 -ki[i]*ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[1];
+          ArrayAccess4D_n4(dki, 3, ngrid, ngrid, (ngrid/2+1), i, l, m, n)[1]=
+                  ki[i]*ArrayAccess3D_n3(dkphi, ngrid, ngrid, (ngrid/2+1), l, m, n)[0];
+	  }
+
+        }
+  
+  /* ->> inverse FFT <<- */
+  rank=3; howmany=3;
+
+  ndim=(int *)malloc(3*sizeof(int));
+  ndim[0]=ngrid; ndim[1]=ngrid; ndim[2]=ngrid;
+
+  istride=1; ostride=1;
+  inembed=NULL; onembed=NULL;
+
+  idist=ngrid*ngrid*(ngrid/2+1);
+  odist=ngrid*ngrid*ngrid;
+
+  pbackward=fftwf_plan_many_dft_c2r(rank, ndim, howmany, dki, inembed, istride, idist, disp_phi, onembed, ostride, odist, FFTW_ESTIMATE);
+
+  fftwf_execute(pbackward);
+  fftwf_destroy_plan(pbackward);
+
+
+  // ->> renormalize <<- //
+  for (l=0; l<ngrid; l++)
+    for (m=0; m<ngrid; m++)
+      for (n=0; n<ngrid; n++) 
+        for(i=0; i<3; i++) {
+          ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=-fac;
+	  }
+
+
+
+  // ->> free <<- //
+  fftwf_free(dki); fftwf_free(dkphi);
+  free(ndim);
+
+  fftwf_destroy_plan(pforward);
+  fftwf_cleanup();
+ 
+  printf("->> FFT is Done <<- \n\n");
+  return;
+  }
+

@@ -29,6 +29,7 @@
   #include "test_likelihood.h"
 
   #include "stat_model.h"
+  #include "maxlike_phi_rec.h"
 
 
 #ifdef _MPI_
