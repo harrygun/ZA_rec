@@ -440,7 +440,8 @@
 	  }
 
         //->> start to potential max-likelihood reconstruction <<- //
-        phi_mlik_displacement(&s, phi_mlik, disp, phi, disp_lpt, phi_lpt, ng_trim, stat_disp_fname, TRUE);
+	//->> check if I have imported position <<- //
+        phi_mlik_displacement(p, phi_mlik, disp, phi, disp_lpt, phi_lpt, ng_trim, stat_disp_fname, TRUE);
          
 
 
