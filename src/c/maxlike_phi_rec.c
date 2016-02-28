@@ -174,9 +174,11 @@ void phi_maximum_fitting(SimInfo *s, Interpar *mlik, float *phi_model,
 
 
 
-void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp, float *disp_phi, 
-                           float *disp_model, float *phi, float *phi_model, long long ngrid, 
-                           double boxsize, char *stat_disp_fname, int import_disp) {
+void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp, 
+          float *disp_phi, float *disp_model, float *phi, float *phi_model, 
+          long long ngrid, double boxsize, char *stat_disp_fname, int import_disp) {
+  /* ->> wrapper for maximum likelihood reconstruction <<- */
+
   long long i, j, k, npart;
   npart=ngrid*ngrid*ngrid;
 
