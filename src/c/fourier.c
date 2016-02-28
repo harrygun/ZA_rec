@@ -357,7 +357,7 @@ void fft_gradient(float *phi, float *disp_phi, double boxsize, int ngrid) {
   //->> forward FFT <<- //
   fftwf_plan pforward, pbackward;
 
-  pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, phi, dphi, FFTW_ESTIMATE);
+  pforward=fftwf_plan_dft_r2c_3d(ngrid, ngrid, ngrid, phi, dkphi, FFTW_ESTIMATE);
   fftwf_execute(pforward);  
 
   

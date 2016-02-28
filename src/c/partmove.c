@@ -226,10 +226,10 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 
 
 
-
+/*
 
 void general_particle_mover(Pdata_pos *p, float *si, float *moved, double boxsize, long long ngrid, int s_intp){
-  /*-> move particles by 'si', stored in 'moved'<<- */
+  //-> move particles by 'si', stored in 'moved'<<- //
 
   long long i, ip, m, n, l, m1, n1, l1, idx[3], npart;
   float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;
@@ -399,3 +399,5 @@ void move_grid_general(SimInfo *s, float *si, Pdata_pos *moved, double boxsize, 
   printf("->> shifting grid is done.\n");
   return;
   }
+
+*/

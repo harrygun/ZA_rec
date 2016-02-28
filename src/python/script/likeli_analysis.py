@@ -64,9 +64,9 @@ prog_control={
     #-------------------------------#
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
-    'py_cal_max_like_model':  True,
+    'py_cal_max_like_model':  False,
     'py_stat_model_PDF':   False,
-    'py_stat_potential_model_PDF':   False,
+    'py_stat_potential_model_PDF':   True,
     }
 
 
@@ -95,7 +95,7 @@ if __name__=='__main__':
         disp, disp_model = dd[:3,bd:-bd,bd:-bd,bd:-bd], dd[3:,bd:-bd,bd:-bd,bd:-bd],
         #disp, disp_model = dd[:3], dd[3:]
 
-        if False:
+        if True:
             nplt, ncol = 2, 2
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
             	                      gap_size=0.5,return_figure=True)
