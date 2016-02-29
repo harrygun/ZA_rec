@@ -214,7 +214,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   get_particle_boundary(p, boxsize, npart, ngrid_xyz, pmin, pmax, dpart);
 
    
-  p_disp=(Pdata_pos *)malloc(s->npart*sizeof(Pdata));
+  p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
   general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
  
   //->> reconstructed density field <<- //

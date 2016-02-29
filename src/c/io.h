@@ -14,6 +14,9 @@ typedef struct particle_data {
 typedef struct particle_pos_data {
   float pos[3];
   long long pid;
+
+  long long ngrid, npart, ntrim, ng_trim, npart_trim;
+  double bsize, bsize_trim;
   } Pdata_pos;
 
 void load_simulation_offset(char *fname, double *offset_f, double *offset_i);

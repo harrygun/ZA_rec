@@ -21,6 +21,9 @@ typedef struct simulation_info{
   int smooth_type_flag;
   long long ngrid, ngrid_xyz[3], npart;
   char *smooth_type, *test_fname;
+
+  long long ng_trim, ntrim, npart_trim;
+  double bsize_trim;
   } SimInfo;
 
 typedef struct rect_controller{

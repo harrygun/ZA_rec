@@ -227,8 +227,8 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 
 
 /* ->> General particle moving routines <<- */
-void general_particle_mover(Pdata_pos *p, Pdata_pos *moved, float *si, double boxsize, 
-                            long long ngrid, int s_intp)  {
+void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, 
+              float *si, double boxsize, long long ngrid, int s_intp)  {
   //-> move particles by 'si', stored in 'moved'<<- //
   long long i, ip, m, n, l, m1, n1, l1, idx[3], npart;
   float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;

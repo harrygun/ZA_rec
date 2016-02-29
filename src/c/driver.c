@@ -334,6 +334,10 @@
     npart_trim=ng_trim*ng_trim*ng_trim;
     bsize_trim=s.boxsize*(double)ng_trim/(double)s.ngrid;
 
+    // ->> store trim info in 'SimInfo' as well <<- //
+    s.ng_trim=ng_trim; s.ntrim=ntrim;  s.npart_trim=npart_trim;
+    s.bsize_trim=bsize_trim;
+
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc;   //->>displacement field
     float *disp_lpt_trim, *disp_trim, *disp_mc_trim;  // ->> trimmed displacement field
