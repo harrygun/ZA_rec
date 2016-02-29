@@ -227,11 +227,9 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 
 
 /* ->> General particle moving routines <<- */
-
-void general_particle_mover(Pdata_pos *p, float *si, float *moved, double boxsize, 
-                                     long long ngrid, int s_intp)  {
+void general_particle_mover(Pdata_pos *p, Pdata_pos *moved, float *si, double boxsize, 
+                            long long ngrid, int s_intp)  {
   //-> move particles by 'si', stored in 'moved'<<- //
-
   long long i, ip, m, n, l, m1, n1, l1, idx[3], npart;
   float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;
 
@@ -270,9 +268,8 @@ void general_particle_mover(Pdata_pos *p, float *si, float *moved, double boxsiz
       }
 
     // ->> interpolate shift field onto particle position <<- //
-    else if(s_intp==TRUE){  
+    else if(s_intp==TRUE) {
       // ->> ("particle-moving interpolation.\n") <<- //
- 
       // ->> distance to grid <<- //
       for(i=0; i<3; i++) {
         dp[i]=(float)((double)p[ip].pos[i]-s->pmin[i]-idx[i]*s->dpart[i]); 
@@ -343,7 +340,7 @@ void general_particle_mover(Pdata_pos *p, float *si, float *moved, double boxsiz
 
 
 
-void move_grid_general(SimInfo *s, float *si, Pdata_pos *moved, double boxsize, long long ngrid, int s_intp){
+void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, long long ngrid, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
   long long i, j, k, m, ip;
   float grid[3], xmin, xmax, dx, moved_pos;
