@@ -34,4 +34,9 @@ void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_p
 
 
 void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype);
+
+
+void cp_pdata_info(SimInfo *s, Pdata_pos *p);
+
+
 #endif

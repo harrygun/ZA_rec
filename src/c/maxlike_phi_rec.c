@@ -207,20 +207,28 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   fft_gradient(phi_cb, disp_rec, boxsize, ngrid);
 
   //->> move particles <<- //
+  p_trim=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+  p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+
   long long ngrid_xyz[3];
   double pmin[3], pmax[3], dpart[3];
 
+  cp_pdata_info(s, p_trim);
+  cp_pdata_info(s, p_disp);
+
+  // ->> <<- //
   for(i=0; i<3; i++) {ngrid_xyz[i]=ngrid;}
   get_particle_boundary(p, boxsize, npart, ngrid_xyz, pmin, pmax, dpart);
 
    
-  p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+
   general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
  
   //->> reconstructed density field <<- //
-  
+
+
    //->> 
-   printf("chnage move_grid_general");
+   printf("trim Pdata_pos, chnage move_grid_general");
    abort();
    move_grid_general(s, , disp_rec, , si, boxsize, ngrid, FALSE);
   

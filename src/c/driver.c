@@ -339,9 +339,7 @@
     s.bsize_trim=bsize_trim;
 
     //->> store trim info in 'Pdata_pos'
-    p->npart=s.npart;   p->ngrid=s.ngrid; p->bsize=s.boxsize;
-    p->ng_trim=ng_trim; p->ntrim=ntrim;  
-    p->npart_trim=npart_trim; p->bsize_trim=bsize_trim;
+    cp_pdata_info(&s, p);
 
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc;   //->>displacement field

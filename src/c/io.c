@@ -161,3 +161,70 @@ void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){
   fclose(fp);
   return;
   }
+
+
+
+
+void cp_pdata_info(SimInfo *s, Pdata_pos *p) {
+  /* ->> copy information of simulation <<- */
+
+  p->npart=s->npart;   
+  p->ngrid=s->ngrid; 
+  p->bsize=s->boxsize;
+  
+  p->ng_trim=s->ng_trim; 
+  p->ntrim=s->ntrim;  
+  p->npart_trim=s->npart_trim; 
+  p->bsize_trim=s->bsize_trim;
+
+  if(p->ntrim>0)  {p->do_trim=TRUE;}
+  else {p->do_trim=FALSE;}
+
+  return;
+  }
+
+
+
+
+void pdata_access_trim(Pdata_pos *p, Pdata_pos r, size_t ip, size_t i){
+  /*->> call this routine if need to trim data, store returned in 'r' <<- */
+  size_t ip_old; 
+  if(p->do_trim==TRUE)  {
+
+    }
+  else {
+
+    }
+  return;
+  }
+
+
+
+
+void pdata_trim(Pdata_pos *p, Pdata_pos *r){
+  /*->> trim the pdata and stored in 'r' <<- */
+  long long ip, pid, i, idx[3];
+
+  if(p->do_trim!=TRUE) {
+    r=p; return; }
+
+  #ifdef _OMP_
+  #pragma omp parallel for private(ip,i)
+  #endif
+  for(ip=0; ip<p->npart_trim; ip++) {
+
+    pid=
+    pidtogrid(pid, long long ngrid, long long idx[3]);
+
+
+    for(i=0; i<3; i++) {
+
+      }
+
+
+    }
+
+  return;
+  }
+
+

@@ -268,6 +268,7 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
       }
 
     // ->> interpolate shift field onto particle position <<- //
+    /*
     else if(s_intp==TRUE) {
       // ->> ("particle-moving interpolation.\n") <<- //
       // ->> distance to grid <<- //
@@ -315,7 +316,7 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
 	  moved[ip].pos[i]=moved_pos; }
         }
       }
-
+    */
     else{abort();}
 
     }
