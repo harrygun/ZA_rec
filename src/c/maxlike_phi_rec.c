@@ -216,22 +216,15 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   cp_pdata_info(s, p_trim);
   cp_pdata_info(s, p_disp);
 
-  // ->> <<- //
-  for(i=0; i<3; i++) {ngrid_xyz[i]=ngrid;}
-  get_particle_boundary(p, boxsize, npart, ngrid_xyz, pmin, pmax, dpart);
-
-   
-
-  general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
+  // ->> backward-moving the particles from their final positions <<- //
+  //for(i=0; i<3; i++) {ngrid_xyz[i]=ngrid;}
+  //get_particle_boundary(p, boxsize, npart, ngrid_xyz, pmin, pmax, dpart);
+  //general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
  
-  //->> reconstructed density field <<- //
-
-
-   //->> 
-   printf("trim Pdata_pos, chnage move_grid_general");
-   abort();
-   move_grid_general(s, , disp_rec, , si, boxsize, ngrid, FALSE);
+   //->> forward-moving particles from uniform grids <<- //
+   move_grid_general(s, disp_rec, si, boxsize, ngrid, FALSE);
   
+  //->> reconstructed density field <<- //
 
 
   //->> output reconstructed displacement & density <<- //

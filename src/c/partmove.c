@@ -346,8 +346,6 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, 
   long long i, j, k, m, ip;
   float grid[3], xmin, xmax, dx, moved_pos;
 
-  abort();
-
   //->> do not need to interpolate, on grid already <<- //
   s_intp=FALSE;
        
@@ -389,7 +387,7 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, 
 
         // ->> interpolate shift field onto particle position <<- //
         else if(s_intp==TRUE){  
-          printf("grid-moving interpolation NOT supported yet.\n");
+          printf("grid-moving-general interpolation NOT supported yet.\n");
           abort();
           }
         else{abort();}
