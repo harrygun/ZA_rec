@@ -1,6 +1,8 @@
 #ifndef _H_IO_
 #define _H_IO_
 
+#include "const.h"
+
 typedef struct particle_data {
   float pos[3];
   float vel[3];
@@ -17,6 +19,7 @@ typedef struct particle_pos_data {
 
   long long ngrid, npart, ntrim, ng_trim, npart_trim;
   double bsize, bsize_trim;
+  int do_trim=FALSE;
   } Pdata_pos;
 
 void load_simulation_offset(char *fname, double *offset_f, double *offset_i);

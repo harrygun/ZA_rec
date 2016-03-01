@@ -338,6 +338,11 @@
     s.ng_trim=ng_trim; s.ntrim=ntrim;  s.npart_trim=npart_trim;
     s.bsize_trim=bsize_trim;
 
+    //->> store trim info in 'Pdata_pos'
+    p->npart=s.npart;   p->ngrid=s.ngrid; p->bsize=s.boxsize;
+    p->ng_trim=ng_trim; p->ntrim=ntrim;  
+    p->npart_trim=npart_trim; p->bsize_trim=bsize_trim;
+
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc;   //->>displacement field
     float *disp_lpt_trim, *disp_trim, *disp_mc_trim;  // ->> trimmed displacement field
@@ -445,7 +450,8 @@
 
         //->> start to potential max-likelihood reconstruction <<- //
 	//->> check if I have imported position <<- //
-        //phi_mlik_displacement(p, phi_mlik, disp, phi, disp_lpt, phi_lpt, ng_trim, stat_disp_fname, TRUE);
+        //phi_mlik_displacement(&s, p, phi_mlik, disp, phi, disp_lpt, 
+        //                       phi_lpt, ng_trim, stat_disp_fname, TRUE);
           
 
 
