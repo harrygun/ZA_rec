@@ -341,7 +341,7 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
 
 
 
-void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, long long ngrid) {
+void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
   //->> grid moving, no need to generate the grid <<- //
   long long i, j, k, m, ip, npart;
   float grid[3], xmin, xmax, dx, moved_pos;
@@ -349,7 +349,8 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, 
   npart=ngrid*ngrid*ngrid;
 
   // ->> box boundary <<- //
-  xmin=0.; xmax=boxsize;
+  xmin=(s->boxsize-s->bsize_trim)/2.; 
+  xmax=xmin+s->bsize_trim;
   dx=(xmax-xmin)/(float)ngrid;
 
   printf("\n->> shifting uniform grid ...\n");
