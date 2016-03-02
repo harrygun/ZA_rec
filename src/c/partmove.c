@@ -341,59 +341,50 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
 
 
 
-void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, long long ngrid, int s_intp){
+void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, long long ngrid) {
   //->> grid moving, no need to generate the grid <<- //
-  long long i, j, k, m, ip;
+  long long i, j, k, m, ip, npart;
   float grid[3], xmin, xmax, dx, moved_pos;
 
-  //->> do not need to interpolate, on grid already <<- //
-  s_intp=FALSE;
-       
+  npart=ngrid*ngrid*ngrid;
+
   // ->> box boundary <<- //
-  xmin=0.; xmax=s->boxsize;
-  dx=(xmax-xmin)/(float)s->ngrid;
+  xmin=0.; xmax=boxsize;
+  dx=(xmax-xmin)/(float)ngrid;
 
   printf("\n->> shifting uniform grid ...\n");
 
   #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   #endif
-  for(i=0; i<s->ngrid; i++)
-    for(j=0; j<s->ngrid; j++)
-      for(k=0; k<s->ngrid; k++) {
+  for(i=0; i<ngrid; i++)
+    for(j=0; j<ngrid; j++)
+      for(k=0; k<ngrid; k++) {
 
-        // ->> do not interpolate <<- //
-        if(s_intp==FALSE){
-          // ->> grid index <<- //
-          ip=MemIdx3D(s->ngrid, i, j, k);
+        // ->> grid index <<- //
+        ip=MemIdx3D(ngrid, i, j, k);
 
-	  grid[0]=xmin+i*dx;
-	  grid[1]=xmin+j*dx;
-	  grid[2]=xmin+k*dx;
+        grid[0]=xmin+i*dx;
+        grid[1]=xmin+j*dx;
+        grid[2]=xmin+k*dx;
 
-	  for(m=0; m<3; m++)  {
-            moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
+        for(m=0; m<3; m++)  {
+          moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, npart, m, ip);
 
-            // ->> periodic boundary condition <<- //
-	    if(moved_pos<0){
-              moved[ip].pos[m]=moved_pos+xmax; }
-	    else if(moved_pos>=xmax){
-              moved[ip].pos[m]=moved_pos-xmax; }
-	    else{
-	      moved[ip].pos[m]=moved_pos; }
-            }
-
+          // ->> periodic boundary condition <<- //
+          if(moved_pos<0){
+            moved[ip].pos[m]=moved_pos+xmax; }
+          else if(moved_pos>=xmax){
+            moved[ip].pos[m]=moved_pos-xmax; }
+          else{
+            moved[ip].pos[m]=moved_pos; }
           }
-
-        // ->> interpolate shift field onto particle position <<- //
-        else if(s_intp==TRUE){  
-          printf("grid-moving-general interpolation NOT supported yet.\n");
-          abort();
-          }
-        else{abort();}
       }
 
   printf("->> shifting grid is done.\n");
   return;
   }
+
+
+
 

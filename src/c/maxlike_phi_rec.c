@@ -207,8 +207,8 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   fft_gradient(phi_cb, disp_rec, boxsize, ngrid);
 
   //->> move particles <<- //
-  //Pdata_pos *p_trim=(Pdata_pos *)malloc(npart*sizeof(Pdata));
-  //Pdata_pos *p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+  //Pdata_pos *p_trim=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
+  //Pdata_pos *p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
 
   long long ngrid_xyz[3];
   double pmin[3], pmax[3], dpart[3];
@@ -222,13 +222,16 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   //general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
  
    //->> forward-moving particles from uniform grids <<- //
-   move_grid_general(s, disp_rec, si, boxsize, ngrid, FALSE);
+   Pdata_pos *p_mg=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
+   move_grid_general(s, p_mg, disp_rec, boxsize, ngrid);
   
   //->> reconstructed density field <<- //
 
 
   //->> output reconstructed displacement & density <<- //
   output_maxlikelihood_data(float *phi, float *phi_model, float *phi_nl);
+
+
 
 
   // ->> free <<- // 
