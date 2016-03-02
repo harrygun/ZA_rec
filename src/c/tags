@@ -113,6 +113,7 @@ bsize	io.h	/^  double bsize, bsize_trim;$/;"	m	struct:particle_pos_data
 bsize_trim	io.h	/^  double bsize, bsize_trim;$/;"	m	struct:particle_pos_data
 bsize_trim	parvar.h	/^  double bsize_trim;$/;"	m	struct:simulation_info
 cic_density	cic.c	/^double cic_density(Pdata_pos *p, float *d, double boxsize, $/;"	f
+cp_pdata_info	io.c	/^void cp_pdata_info(SimInfo *s, Pdata_pos *p) {$/;"	f
 cubic_trim	misc.c	/^void cubic_trim(float *mi, float *mo, size_t ngrid, size_t ntrim){$/;"	f
 density	cic.c	/^double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[3], double dg[3],$/;"	f
 disp_field_tranfunc_precal	stat_model.c	/^void disp_field_tranfunc_precal(SimInfo *s, Pdata_pos *p, float *d, $/;"	f
@@ -125,6 +126,7 @@ displacement_tf_fname	parvar.h	/^       *displacement_tf_fname;$/;"	m	struct:rec
 displacement_type	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200], $/;"	m	struct:rect_controller
 do_disp_perturb	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
 do_rect	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
+do_trim	io.h	/^  int do_trim=FALSE;$/;"	m	struct:particle_pos_data
 dpart	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
 drift	parvar.h	/^  double xmin[3], xmax[3], drift[3], drift_init[3];$/;"	m	struct:simulation_info
 drift_init	parvar.h	/^  double xmin[3], xmax[3], drift[3], drift_init[3];$/;"	m	struct:simulation_info
@@ -192,6 +194,8 @@ particle_data	gadget_read_snapshot.c	/^struct particle_data$/;"	s	file:
 particle_data	io.h	/^typedef struct particle_data {$/;"	s
 particle_mass	parvar.h	/^  double boxsize, smooth_R, particle_mass;$/;"	m	struct:simulation_info
 particle_pos_data	io.h	/^typedef struct particle_pos_data {$/;"	s
+pdata_access_trim	io.c	/^void pdata_access_trim(Pdata_pos *p, Pdata_pos r, size_t ip, size_t i){$/;"	f
+pdata_trim	io.c	/^void pdata_trim(Pdata_pos *p, Pdata_pos *r){$/;"	f
 phi_maximum_fitting	maxlike_phi_rec.c	/^void phi_maximum_fitting(SimInfo *s, Interpar *mlik, float *phi_model, $/;"	f
 phi_mlik_displacement	maxlike_phi_rec.c	/^void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp, $/;"	f
 phi_mlik_init	maxlike_phi_rec.c	/^int phi_mlik_init(Interpar *mlik, char *fname){$/;"	f
