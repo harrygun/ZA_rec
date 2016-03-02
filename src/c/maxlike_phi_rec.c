@@ -207,14 +207,14 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   fft_gradient(phi_cb, disp_rec, boxsize, ngrid);
 
   //->> move particles <<- //
-  p_trim=(Pdata_pos *)malloc(npart*sizeof(Pdata));
-  p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+  //Pdata_pos *p_trim=(Pdata_pos *)malloc(npart*sizeof(Pdata));
+  //Pdata_pos *p_disp=(Pdata_pos *)malloc(npart*sizeof(Pdata));
 
   long long ngrid_xyz[3];
   double pmin[3], pmax[3], dpart[3];
 
-  cp_pdata_info(s, p_trim);
-  cp_pdata_info(s, p_disp);
+  //cp_pdata_info(s, p_trim);
+  //cp_pdata_info(s, p_disp);
 
   // ->> backward-moving the particles from their final positions <<- //
   //for(i=0; i<3; i++) {ngrid_xyz[i]=ngrid;}
