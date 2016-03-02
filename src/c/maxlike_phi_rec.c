@@ -226,6 +226,8 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
    move_grid_general(s, p_mg, disp_rec, boxsize, ngrid);
   
   //->> reconstructed density field <<- //
+  float *d_rec;
+  density(p_mg, );
 
 
   //->> output reconstructed displacement & density <<- //
