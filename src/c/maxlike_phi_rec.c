@@ -227,13 +227,12 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   
   //->> reconstructed density field <<- //
   float *d_rec;
-  density(p_mg, );
-
+  double dmean;
+  d_rec=(float *)malloc(sizeof(float)*npart);
+  dmean=cic_density(p_mg, d_rec, boxsize, s->particle_mass, npart, ngrid_xyz, s); 
 
   //->> output reconstructed displacement & density <<- //
-  output_maxlikelihood_data(float *phi, float *phi_model, float *phi_nl);
-
-
+  output_maxlikelihood_data(, phi, phi_model, phi_nl);
 
 
   // ->> free <<- // 
@@ -241,6 +240,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   fftwf_free(phi); fftwf_free(phi_model);  
   fftwf_free(phi_nl); fftwf_free(phi_cb); fftwf_free(d_rec);
 
+  free(p_mg);
   return;
   }
 
