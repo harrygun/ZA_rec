@@ -254,7 +254,14 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
 
 
 
-void output_maxlikelihood_data(SimInfo *s, float *disp, float *disp_rec, float *d_rec, long long npart){
+void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp_rec, float *d_rec, long long npart){
+
+  FILE *fp;
+  if(!(fp=fopen(fname, "r"))) {
+    return FALSE; }
+
+  // ->> 
+
 
   return;
   }
