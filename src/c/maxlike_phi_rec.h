@@ -12,7 +12,9 @@ void load_stat_disp(float *disp, float *disp_phi, float *disp_model, float *phi,
 
 
 
-void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp, float *disp_phi, 
-                           float *disp_model, float *phi, float *phi_model, long long ngrid, 
-                           double boxsize, char *stat_disp_fname, int import_disp) ;
+void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp, 
+          float *disp_phi, float *disp_model, float *phi, float *phi_model, 
+          long long ngrid, double boxsize, char *stat_disp_fname, 
+          char *mlik_out_fname, int import_disp) ;
+
 #endif
