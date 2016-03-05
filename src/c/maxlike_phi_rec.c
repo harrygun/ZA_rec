@@ -223,7 +223,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
  
    //->> forward-moving particles from uniform grids <<- //
    Pdata_pos *p_mg=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
-   move_grid_general(s, p_mg, disp_rec, boxsize, ngrid);
+   move_grid_general(s, p_mg, disp_rec);
   
   //->> reconstructed density field <<- //
   float *d_rec;

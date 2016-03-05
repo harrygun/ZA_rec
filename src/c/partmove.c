@@ -230,7 +230,7 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
 void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, 
               float *si, double boxsize, long long ngrid, int s_intp)  {
   //-> move particles by 'si', stored in 'moved'<<- //
-  long long i, ip, m, n, l, m1, n1, l1, idx[3], npart;
+  long long i, ip, m, n, l, m1, n1, l1, idx[3], npart, pid;
   float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;
 
   npart=ngrid*ngrid*ngrid;
@@ -343,10 +343,8 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
 
 void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
   //->> grid moving, no need to generate the grid <<- //
-  long long i, j, k, m, ip, npart;
+  long long i, j, k, m, ip, grid_min, grid_max;
   float grid[3], xmin, xmax, dx, moved_pos;
-
-  npart=ngrid*ngrid*ngrid;
 
   // ->> box boundary <<- //
   xmin=(s->boxsize-s->bsize_trim)/2.; 
@@ -358,9 +356,9 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
   #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   #endif
-  for(i=0; i<ngrid; i++)
-    for(j=0; j<ngrid; j++)
-      for(k=0; k<ngrid; k++) {
+  for(i=s->ntrim; i<s->ngrid_trim; i++)
+    for(j=s->ntrim; j<s->ngrid_trim; j++)
+      for(k=s->ntrim; k<s->ngrid_trim; k++) {
 
         // ->> grid index <<- //
         ip=MemIdx3D(ngrid, i, j, k);
@@ -370,10 +368,10 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
         grid[2]=xmin+k*dx;
 
         for(m=0; m<3; m++)  {
-          moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, npart, m, ip);
+          moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart_trim, m, ip);
 
           // ->> periodic boundary condition <<- //
-          if(moved_pos<0){
+          if(moved_pos<0) {
             moved[ip].pos[m]=moved_pos+xmax; }
           else if(moved_pos>=xmax){
             moved[ip].pos[m]=moved_pos-xmax; }
