@@ -213,9 +213,8 @@ void pdata_trim(Pdata_pos *p, Pdata_pos *r){
   #endif
   for(ip=0; ip<p->npart_trim; ip++) {
 
-    pid=
-    pidtogrid(pid, long long ngrid, long long idx[3]);
-
+    //pid=
+    //pidtogrid(pid, long long ngrid, long long idx[3]);
 
     for(i=0; i<3; i++) {
 

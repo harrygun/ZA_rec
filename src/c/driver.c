@@ -122,7 +122,7 @@
       //double boxsize;
       char *smooth_type, *particle_fname, *pid_fname, *droot, *plin_name;
       char *oden_fname, *main_dtype, *rec_name, *fname_pinit, *fname_pid_init, *fname_offset;
-      char *raw_disp_fname, *stat_disp_fname, *phi_mlik_fname;
+      char *raw_disp_fname, *stat_disp_fname, *phi_mlik_fname, *mlik_rec_out_fname;
       int do_density, import_density, save_odensity;
 
       cp.R = iniparser_getdouble(dict, "Rect:smooth_R", 10.);
@@ -176,6 +176,7 @@
       stat_disp_fname=iniparser_getstring(dict,"Rect:stat_disp_field_fname", "x.dat");
 
       phi_mlik_fname=iniparser_getstring(dict,"Rect:stat_phi_mlik_fname", "x.dat");
+      mlik_rec_out_fname=iniparser_getstring(dict,"Rect:phi_mlik_rec_out_fname", "x.dat");
 
       /*-----------------------------------------------------------------------*/
       // ->> read controller <<- // 
@@ -448,13 +449,9 @@
 
         //->> start to potential max-likelihood reconstruction <<- //
 	//->> check if I have imported position <<- //
-        phi_mlik_displacement(&s, p, phi_mlik, disp, phi, disp_lpt, 
-                         phi_lpt, ng_trim, stat_disp_fname, fname__, TRUE);
+        phi_mlik_displacement(&s, p, phi_mlik, disp, disp_phi, disp_lpt, phi, phi_lpt, 
+                          ng_trim, bsize_trim, stat_disp_fname, mlik_rec_out_fname, TRUE);
           
-
-
-
-
 
 
 

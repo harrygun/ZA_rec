@@ -179,7 +179,6 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
           long long ngrid, double boxsize, char *stat_disp_fname, 
           char *mlik_out_fname, int import_disp) {
   /* ->> wrapper for maximum likelihood reconstruction <<- */
-
   long long i, j, k, npart;
   npart=ngrid*ngrid*ngrid;
 
