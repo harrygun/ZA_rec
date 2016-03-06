@@ -78,6 +78,7 @@ int phi_mlik_init(Interpar *mlik, char *fname){
   dp=phi[line-extdidx]-phi[line-1]; dm=smlik_phi[line-extdidx]-smlik_phi[line-1];
   mlik->slop_max=dm/dp;
 
+
   //#define _DO_MLIK_TEST_
   #ifdef _DO_MLIK_TEST_
   fp=fopen("result/test_mlik.dat", "w");
@@ -97,6 +98,9 @@ int phi_mlik_init(Interpar *mlik, char *fname){
 
 double mlik_interp(Interpar *mlik, double p){
   double m, dp;
+
+  //->> 
+  //printf("mlik=%lg  %lg  %lg  %lg\n", mlik->min, mlik->max, mlik->slop_min, mlik->slop_max);
 
   if(p<=mlik->min)  {
     dp=p-mlik->min; 
@@ -152,27 +156,21 @@ void load_stat_disp(float *disp, float *disp_phi, float *disp_model, float *phi,
 void phi_maximum_fitting(SimInfo *s, Interpar *mlik, float *phi_model, 
                         float *phi_nl, float *phi_cb, long long ngrid)  {
   //->> return the maximum of <<- //
-  //long long i, j, k;
-  int i, j, k;
+  long long i, j, k;
+  //int i, j, k;
   float p;
 
-  //for(i=0; i<s->npart_trim; i++){
-  //  printf("%f", );
-  //  }
-
-  //#ifdef _OMP_
-  //#pragma omp parallel for private(i,j,k,p)
-  //#endif
+  #ifdef _OMP_
+  #pragma omp parallel for private(i,j,k,p)
+  #endif
   for(i=0; i<ngrid; i++)
     for(j=0; j<ngrid; j++)
       for(k=0; k<ngrid; k++) {
         p=ArrayAccess3D(phi_model, ngrid, i, j, k);
-	printf("%d %d %d, p=%f\n", i, j, k, p); fflush(stdout);
+	//printf("%d %d %d, p=%f\n", i, j, k, p); fflush(stdout);
         ArrayAccess3D(phi_nl, ngrid, i, j, k)=mlik_interp(mlik, p);
         ArrayAccess3D(phi_cb, ngrid, i, j, k)=p+ArrayAccess3D(phi_nl, ngrid, i, j, k);
         }
-
-  abort();
 
   return;
   }
@@ -220,6 +218,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
 
   long long ngrid_xyz[3];
   double pmin[3], pmax[3], dpart[3];
+  for(i=0; i<3; i++) {ngrid_xyz[i]=ngrid;}
 
   //cp_pdata_info(s, p_trim);
   //cp_pdata_info(s, p_disp);
@@ -235,7 +234,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   
   //->> reconstructed density field <<- //
   double dmean;
-  dmean=cic_density(p_mg, d_rec, boxsize, s->particle_mass, npart, ngrid_xyz, s); 
+  dmean=cic_density(p_mg, d_rec, boxsize, s->particle_mass, npart, ngrid_xyz, NULL); 
 
   //->> output reconstructed displacement & density <<- //
   output_maxlikelihood_data(s, mlik_out_fname, disp, disp_rec, d_rec, npart);

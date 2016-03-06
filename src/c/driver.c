@@ -445,6 +445,8 @@
 
           fftwf_free(div);  fftwf_free(phi);  fftwf_free(disp_phi); 
 	  fftwf_free(div_lpt); fftwf_free(phi_lpt);
+
+	  goto local_free;
 	  }
 
         //->> start to potential max-likelihood reconstruction <<- //
