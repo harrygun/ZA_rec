@@ -356,12 +356,12 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
   #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   #endif
-  for(i=0; i<s->ngrid_trim; i++)
-    for(j=0; j<s->ngrid_trim; j++)
-      for(k=0; k<s->ngrid_trim; k++) {
+  for(i=0; i<s->ng_trim; i++)
+    for(j=0; j<s->ng_trim; j++)
+      for(k=0; k<s->ng_trim; k++) {
 
         // ->> grid index <<- //
-        ip=MemIdx3D(ngrid, i, j, k);
+        ip=MemIdx3D(s->ng_trim, i, j, k);
 
         grid[0]=xmin+i*dx;
         grid[1]=xmin+j*dx;

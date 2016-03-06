@@ -201,7 +201,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   disp_rec=(float *)fftwf_malloc(sizeof(float)*npart*3);
   d_rec=(float *)fftwf_malloc(sizeof(float)*npart);
 
-  phi_maximum_fitting(mlik, phi_model, phi_nl, phi_cb, ngrid);
+  phi_maximum_fitting(s, mlik, phi_model, phi_nl, phi_cb, ngrid);
 
   // ->> obtain the reconstructed displacement field from phi <<- //
   fft_gradient(phi_cb, disp_rec, boxsize, ngrid);
@@ -226,13 +226,11 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
    move_grid_general(s, p_mg, disp_rec);
   
   //->> reconstructed density field <<- //
-  float *d_rec;
   double dmean;
-  d_rec=(float *)malloc(sizeof(float)*npart);
   dmean=cic_density(p_mg, d_rec, boxsize, s->particle_mass, npart, ngrid_xyz, s); 
 
   //->> output reconstructed displacement & density <<- //
-  output_maxlikelihood_data(s, mlik_out_fname, disp, disp_rec, d_rec);
+  output_maxlikelihood_data(s, mlik_out_fname, disp, disp_rec, d_rec, npart);
 
 
   // ->> free <<- // 
@@ -254,16 +252,17 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
 
 
 
-void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp_rec, float *d_rec, long long npart){
+void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, 
+                             float *disp_rec, float *d_rec, long long npart) {
 
   FILE *fp;
   if(!(fp=fopen(fname, "wb"))) {
-    return FALSE; }
+    abort(); }
 
   // ->> 
-  fwrite(disp, sizeof(float), ngrid*ngrid*ngrid*3, fp);
-  fwrite(disp_rec, sizeof(float), ngrid*ngrid*ngrid*3, fp);
-  fwrite(d_rec, sizeof(float), ngrid*ngrid*ngrid*3, fp);
+  fwrite(disp, sizeof(float), npart*3, fp);
+  fwrite(disp_rec, sizeof(float), npart*3, fp);
+  fwrite(d_rec, sizeof(float), npart, fp);
 
 
   return;
