@@ -347,18 +347,18 @@ void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {
   float grid[3], xmin, xmax, dx, moved_pos;
 
   // ->> box boundary <<- //
-  xmin=(s->boxsize-s->bsize_trim)/2.; 
+  xmin=0.;//(s->boxsize-s->bsize_trim)/2.; 
   xmax=xmin+s->bsize_trim;
-  dx=(xmax-xmin)/(float)ngrid;
+  dx=(xmax-xmin)/(float)s->ng_trim;
 
   printf("\n->> shifting uniform grid ...\n");
 
   #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   #endif
-  for(i=s->ntrim; i<s->ngrid_trim; i++)
-    for(j=s->ntrim; j<s->ngrid_trim; j++)
-      for(k=s->ntrim; k<s->ngrid_trim; k++) {
+  for(i=0; i<s->ngrid_trim; i++)
+    for(j=0; j<s->ngrid_trim; j++)
+      for(k=0; k<s->ngrid_trim; k++) {
 
         // ->> grid index <<- //
         ip=MemIdx3D(ngrid, i, j, k);
