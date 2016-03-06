@@ -152,19 +152,27 @@ void load_stat_disp(float *disp, float *disp_phi, float *disp_model, float *phi,
 void phi_maximum_fitting(SimInfo *s, Interpar *mlik, float *phi_model, 
                         float *phi_nl, float *phi_cb, long long ngrid)  {
   //->> return the maximum of <<- //
-  long long i, j, k;
+  //long long i, j, k;
+  int i, j, k;
   float p;
 
-  #ifdef _OMP_
-  #pragma omp parallel for private(i,j,k,p)
-  #endif
+  //for(i=0; i<s->npart_trim; i++){
+  //  printf("%f", );
+  //  }
+
+  //#ifdef _OMP_
+  //#pragma omp parallel for private(i,j,k,p)
+  //#endif
   for(i=0; i<ngrid; i++)
     for(j=0; j<ngrid; j++)
       for(k=0; k<ngrid; k++) {
         p=ArrayAccess3D(phi_model, ngrid, i, j, k);
+	printf("%d %d %d, p=%f\n", i, j, k, p); fflush(stdout);
         ArrayAccess3D(phi_nl, ngrid, i, j, k)=mlik_interp(mlik, p);
         ArrayAccess3D(phi_cb, ngrid, i, j, k)=p+ArrayAccess3D(phi_nl, ngrid, i, j, k);
         }
+
+  abort();
 
   return;
   }
