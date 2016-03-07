@@ -66,7 +66,8 @@ prog_control={
     'likelihood_test_fname':   'x.dat',
     'py_cal_max_like_model':  False,
     'py_stat_model_PDF':   False,
-    'py_stat_potential_model_PDF':   True,
+    'py_stat_potential_model_PDF':   False,
+    'py_mlike_rec_examine':        True,
     }
 
 
@@ -466,6 +467,11 @@ if __name__=='__main__':
 
             pl.tight_layout()
             pl.show()
+
+
+    if (p.py_mlike_rec_examine==True):
+        #->> check the 
+
 
 
 
