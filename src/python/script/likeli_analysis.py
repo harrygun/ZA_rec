@@ -51,6 +51,7 @@ param_dict={
     'raw_disp_field_fname':       'a.dat',
     'stat_disp_field_fname':       'a.dat',
     'stat_phi_mlik_fname':         'a.dat',
+    'phi_mlik_rec_out_fname':      'b.dat',
     }
 
 prog_control={
@@ -469,9 +470,67 @@ if __name__=='__main__':
             pl.show()
 
 
-    if (p.py_mlike_rec_examine==True):
-        #->> check the 
 
+
+    if (p.py_mlike_rec_examine==True):
+        # ->> check the reconstructed position and density field <<- #
+
+        # ->> import reconstructed displacement field <<- #
+        nb=7
+	ntrim=5
+	tng=p.ngrid-2*ntrim
+        dd=rd.rblock(p.phi_mlik_rec_out_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
+        disp, disp_rec, d_rec=dd[:3], dd[3:6], dd[6]
+	del dd
+
+        # ->> import LPT and others <<- #
+        nb=19
+        dd=rd.rblock(p.stat_disp_field_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
+        disp_lpt= dd[3:6]
+	del dd
+
+
+        if True:
+            # ->> 1D histogram <<- #
+            nplt, ncol = 3, 3
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+            n_bin=500
+            color=['g', 'r', 'b', 'y', 'k', 'm']
+    
+            drange=[-10,10]
+    
+            for i in range(3):
+                ax[i].hist((disp[i]+disp_rec[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[0])
+
+                ax[i].hist((disp[i]-disp_lpt[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[1])
+
+            pl.tight_layout()
+            pl.show()
+
+
+
+	if False:
+	    #->> show figures <<- #
+            nplt, ncol = 7, 3
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+    
+            axis, nsl=1, 20
+
+            for i in range(3):
+                ax[i].imshow(disp[i,:,:,nsl])
+
+            for i in range(3):
+                ax[i+3].imshow(-disp_rec[i,:,:,nsl])
+
+            ax[-1].imshow(d_rec[:,:,nsl]-d_rec.min()+1e-3, norm=colors.LogNorm())
+
+
+            pl.tight_layout()
+            pl.show()
 
 
 
