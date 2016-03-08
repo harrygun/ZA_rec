@@ -488,6 +488,8 @@ if __name__=='__main__':
         nb=19
         dd=rd.rblock(p.stat_disp_field_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
         disp_lpt= dd[3:6]
+        disp_phi=dd[9+2:9+5]
+	disp_phi_lpt=dd[9+7:]
 	del dd
 
 
@@ -502,14 +504,20 @@ if __name__=='__main__':
             drange=[-10,10]
     
             for i in range(3):
-                ax[i].hist((disp[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
-                               normed=True, histtype='step', color=color[0])
+                #ax[i].hist((disp[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
+                #               normed=True, histtype='step', color=color[0])
+                #ax[i].hist((disp[i]-disp_lpt[i]).flatten(), bins=n_bin, range=drange, \
+                #               normed=True, histtype='step', color=color[1])
 
-                ax[i].hist((disp[i]-disp_lpt[i]).flatten(), bins=n_bin, range=drange, \
-                               normed=True, histtype='step', color=color[1])
-
-                ax[i].hist((disp_lpt[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
+                ax[i].hist((disp_phi[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
                                normed=True, histtype='step', color=color[2])
+                ax[i].hist((disp_phi[i]-disp_phi_lpt[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[3])
+
+                ax[i].hist((disp[i]-disp_phi[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[0])
+                ax[i].hist((disp_rec[i]-disp_phi_lpt[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[1])
 
             pl.tight_layout()
             pl.show()
