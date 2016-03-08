@@ -65,10 +65,11 @@ prog_control={
     #-------------------------------#
     'do_likelihood_testing':   True,
     'likelihood_test_fname':   'x.dat',
-    'py_cal_max_like_model':  False,
     'py_stat_model_PDF':   False,
     'py_stat_potential_model_PDF':   False,
-    'py_mlike_rec_examine':        True,
+    #-------------------------------#
+    'py_cal_max_like_model':  False,
+    'py_mlike_rec_examine':   True,
     }
 
 
@@ -501,18 +502,21 @@ if __name__=='__main__':
             drange=[-10,10]
     
             for i in range(3):
-                ax[i].hist((disp[i]+disp_rec[i]).flatten(), bins=n_bin, range=drange, \
+                ax[i].hist((disp[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
                                normed=True, histtype='step', color=color[0])
 
                 ax[i].hist((disp[i]-disp_lpt[i]).flatten(), bins=n_bin, range=drange, \
                                normed=True, histtype='step', color=color[1])
+
+                ax[i].hist((disp_lpt[i]-disp_rec[i]).flatten(), bins=n_bin, range=drange, \
+                               normed=True, histtype='step', color=color[2])
 
             pl.tight_layout()
             pl.show()
 
 
 
-	if False:
+	if True:
 	    #->> show figures <<- #
             nplt, ncol = 7, 3
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
@@ -521,10 +525,10 @@ if __name__=='__main__':
             axis, nsl=1, 20
 
             for i in range(3):
-                ax[i].imshow(disp[i,:,:,nsl])
+                ax[i].imshow(disp_lpt[i,:,:,nsl])
 
             for i in range(3):
-                ax[i+3].imshow(-disp_rec[i,:,:,nsl])
+                ax[i+3].imshow(disp_rec[i,:,:,nsl])
 
             ax[-1].imshow(d_rec[:,:,nsl]-d_rec.min()+1e-3, norm=colors.LogNorm())
 

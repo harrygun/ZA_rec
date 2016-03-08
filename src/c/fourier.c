@@ -412,7 +412,7 @@ void fft_gradient(float *phi, float *disp_phi, double boxsize, int ngrid) {
     for (m=0; m<ngrid; m++)
       for (n=0; n<ngrid; n++) 
         for(i=0; i<3; i++) {
-          ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=-fac;
+          ArrayAccess4D_n4(disp_phi, 3, ngrid, ngrid, ngrid, i, l, m, n)*=fac;
 	  }
 
 
