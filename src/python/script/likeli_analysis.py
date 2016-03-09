@@ -477,11 +477,13 @@ if __name__=='__main__':
         # ->> check the reconstructed position and density field <<- #
 
         # ->> import reconstructed displacement field <<- #
-        nb=7
+        nb=9
 	ntrim=5
 	tng=p.ngrid-2*ntrim
+	bsize_trim=p.boxsize-2.*ntrim*p.boxsize/float(p.ngrid)
+
         dd=rd.rblock(p.phi_mlik_rec_out_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
-        disp, disp_rec, d_rec=dd[:3], dd[3:6], dd[6]
+        disp, disp_rec, d_rec, d_lpt, d_phi =dd[:3], dd[3:6], dd[6], dd[7], dd[8]
 	del dd
 
         # ->> import LPT and others <<- #
@@ -493,7 +495,7 @@ if __name__=='__main__':
 	del dd
 
 
-        if True:
+        if False:
             # ->> 1D histogram <<- #
             nplt, ncol = 3, 3
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
@@ -524,9 +526,9 @@ if __name__=='__main__':
 
 
 
-	if True:
+	if False:
 	    #->> show figures <<- #
-            nplt, ncol = 7, 3
+            nplt, ncol = 8, 4
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
                                   gap_size=0.5,return_figure=True)
     
@@ -538,7 +540,34 @@ if __name__=='__main__':
             for i in range(3):
                 ax[i+3].imshow(disp_rec[i,:,:,nsl])
 
-            ax[-1].imshow(d_rec[:,:,nsl]-d_rec.min()+1e-3, norm=colors.LogNorm())
+            ax[-2].imshow(d_rec[:,:,nsl]-d_rec.min()+1e-3, norm=colors.LogNorm())
+            ax[-1].imshow(d_lpt[:,:,nsl]-d_lpt.min()+1e-3, norm=colors.LogNorm())
+
+
+            pl.tight_layout()
+            pl.show()
+
+
+	if True:
+	    #->> calculate power spectrum <<- #
+             
+            k1, pk1=psor.cross(d_rec, d_lpt, boxsize=bsize_trim)
+            k2, pk2=psor.cross(d_rec, d_phi, boxsize=bsize_trim)
+            k3, pk3=psor.cross(d_lpt, d_phi, boxsize=bsize_trim)
+
+            k10, pk10=psor.pk(d_phi, boxsize=bsize_trim)
+            k11, pk11=psor.pk(d_rec, boxsize=bsize_trim)
+            k12, pk12=psor.pk(d_lpt, boxsize=bsize_trim)
+
+     
+            nplt, ncol = 1, 1
+            fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
+                                  gap_size=0.5,return_figure=True)
+
+
+	    ax[0].plot(k2, pk2/np.sqrt(pk10*pk11), 'k-')
+	    ax[0].plot(k3, pk3/np.sqrt(pk10*pk12), 'r-')
+	    ax[0].plot(k1, pk1/np.sqrt(pk11*pk12), 'b-')
 
 
             pl.tight_layout()
