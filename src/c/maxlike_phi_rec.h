@@ -21,6 +21,6 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
 
 
 void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp_rec, 
-                   float *d_rec, float *d_model, float *d_phi, long long npart) ;
+          float *d_rec, float *d_model, float *d_phi, float *d_real, long long npart) ;
 
 #endif

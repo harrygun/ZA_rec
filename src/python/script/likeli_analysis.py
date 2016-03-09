@@ -477,13 +477,13 @@ if __name__=='__main__':
         # ->> check the reconstructed position and density field <<- #
 
         # ->> import reconstructed displacement field <<- #
-        nb=9
+        nb=10
 	ntrim=5
 	tng=p.ngrid-2*ntrim
 	bsize_trim=p.boxsize-2.*ntrim*p.boxsize/float(p.ngrid)
 
         dd=rd.rblock(p.phi_mlik_rec_out_fname, tng**3*nb, dtype='float').reshape(nb,tng,tng,tng)
-        disp, disp_rec, d_rec, d_lpt, d_phi =dd[:3], dd[3:6], dd[6], dd[7], dd[8]
+        disp, disp_rec, d_rec, d_lpt, d_phi, d_real =dd[:3], dd[3:6], dd[6], dd[7], dd[8], dd[9]
 	del dd
 
         # ->> import LPT and others <<- #
@@ -555,10 +555,16 @@ if __name__=='__main__':
             k2, pk2=psor.cross(d_rec, d_phi, boxsize=bsize_trim)
             k3, pk3=psor.cross(d_lpt, d_phi, boxsize=bsize_trim)
 
+            k4, pk4=psor.cross(d_rec, d_real, boxsize=bsize_trim)
+            k5, pk5=psor.cross(d_lpt, d_real, boxsize=bsize_trim)
+            k6, pk6=psor.cross(d_phi, d_real, boxsize=bsize_trim)
+
+
             k10, pk10=psor.pk(d_phi, boxsize=bsize_trim)
             k11, pk11=psor.pk(d_rec, boxsize=bsize_trim)
             k12, pk12=psor.pk(d_lpt, boxsize=bsize_trim)
 
+            k13, pk13=psor.pk(d_real, boxsize=bsize_trim)
      
             nplt, ncol = 1, 1
             fig,ax=mpl.mysubplots(nplt,ncol_max=ncol,subp_size=5.,\
@@ -568,6 +574,12 @@ if __name__=='__main__':
 	    ax[0].semilogx(k2, pk2/np.sqrt(pk10*pk11), 'k-')
 	    ax[0].semilogx(k3, pk3/np.sqrt(pk10*pk12), 'r-')
 	    ax[0].semilogx(k1, pk1/np.sqrt(pk11*pk12), 'b-')
+
+	    ax[0].semilogx(k4, pk4/np.sqrt(pk13*pk11), 'k--')
+	    ax[0].semilogx(k5, pk5/np.sqrt(pk13*pk12), 'r--')
+
+	    ax[0].semilogx(k6, pk6/np.sqrt(pk13*pk10), 'k:')
+
 
 
             pl.tight_layout()

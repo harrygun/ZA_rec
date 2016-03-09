@@ -200,7 +200,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
     }
 
   // ->> maximum of phi fitting <<- //
-  float *phi_nl, *phi_cb, *disp_rec, *d_rec, *d_model, *d_phi; 
+  float *phi_nl, *phi_cb, *disp_rec, *d_rec, *d_model, *d_phi, *d_real; 
   phi_nl=(float *)fftwf_malloc(sizeof(float)*npart);
   phi_cb=(float *)fftwf_malloc(sizeof(float)*npart);
 
@@ -208,6 +208,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   d_rec=(float *)fftwf_malloc(sizeof(float)*npart);
   d_model=(float *)fftwf_malloc(sizeof(float)*npart);
   d_phi=(float *)fftwf_malloc(sizeof(float)*npart);
+  d_real=(float *)fftwf_malloc(sizeof(float)*npart);
 
   phi_maximum_fitting(s, mlik, phi_model, phi_nl, phi_cb, ngrid);
 
@@ -231,14 +232,16 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   //general_particle_mover(p, p_disp, disp_rec, boxsize, ngrid, FALSE); //->> do not interpolate <<- //
  
    //->> forward-moving particles from uniform grids <<- //
-   Pdata_pos *p_mg, *p_model, *p_phi;
+   Pdata_pos *p_mg, *p_model, *p_phi, *p_real;
    p_mg=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
    p_model=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
    p_phi=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
+   p_real=(Pdata_pos *)malloc(npart*sizeof(Pdata_pos));
 
    move_grid_general(s, p_mg, disp_rec);
    move_grid_general(s, p_model, disp_model);
    move_grid_general(s, p_phi, disp_phi);
+   move_grid_general(s, p_real, disp);
 
   
   //->> reconstructed density field <<- //
@@ -246,10 +249,11 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   dmean=cic_density(p_mg, d_rec, boxsize, s->particle_mass, npart, ngrid_xyz, NULL); 
   dmean=cic_density(p_model, d_model, boxsize, s->particle_mass, npart, ngrid_xyz, NULL); 
   dmean=cic_density(p_phi, d_phi, boxsize, s->particle_mass, npart, ngrid_xyz, NULL); 
+  dmean=cic_density(p_real, d_real, boxsize, s->particle_mass, npart, ngrid_xyz, NULL); 
 
 
   //->> output reconstructed displacement & density <<- //
-  output_maxlikelihood_data(s, mlik_out_fname, disp, disp_rec,d_rec,d_model,d_phi,npart);
+  output_maxlikelihood_data(s, mlik_out_fname, disp, disp_rec,d_rec,d_model,d_phi, d_real, npart);
 
 
   // ->> free <<- // 
@@ -257,9 +261,9 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
   fftwf_free(phi); fftwf_free(phi_model);  
   fftwf_free(phi_nl); fftwf_free(phi_cb); 
 
-  fftwf_free(d_rec); fftwf_free(d_model); fftwf_free(d_phi);
+  fftwf_free(d_rec); fftwf_free(d_model); fftwf_free(d_phi); fftwf_free(d_real);
 
-  free(p_mg); free(p_model); free(p_phi);
+  free(p_mg); free(p_model); free(p_phi);free(p_real);
   return;
   }
 
@@ -274,7 +278,7 @@ void phi_mlik_displacement(SimInfo *s, Pdata_pos *p, Interpar *mlik, float *disp
 
 
 void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp_rec, 
-                       float *d_rec, float *d_model, float *d_phi, long long npart) {
+                   float *d_rec, float *d_model, float *d_phi, float *d_real, long long npart) {
 
   FILE *fp;
   if(!(fp=fopen(fname, "wb"))) {
@@ -286,6 +290,7 @@ void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp
   fwrite(d_rec, sizeof(float), npart, fp);
   fwrite(d_model, sizeof(float), npart, fp);
   fwrite(d_phi, sizeof(float), npart, fp);
+  fwrite(d_real, sizeof(float), npart, fp);
 
 
   return;
