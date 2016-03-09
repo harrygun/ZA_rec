@@ -565,9 +565,9 @@ if __name__=='__main__':
                                   gap_size=0.5,return_figure=True)
 
 
-	    ax[0].plot(k2, pk2/np.sqrt(pk10*pk11), 'k-')
-	    ax[0].plot(k3, pk3/np.sqrt(pk10*pk12), 'r-')
-	    ax[0].plot(k1, pk1/np.sqrt(pk11*pk12), 'b-')
+	    ax[0].semilogx(k2, pk2/np.sqrt(pk10*pk11), 'k-')
+	    ax[0].semilogx(k3, pk3/np.sqrt(pk10*pk12), 'r-')
+	    ax[0].semilogx(k1, pk1/np.sqrt(pk11*pk12), 'b-')
 
 
             pl.tight_layout()
