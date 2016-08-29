@@ -126,7 +126,7 @@ displacement_tf_fname	parvar.h	/^       *displacement_tf_fname;$/;"	m	struct:rec
 displacement_type	parvar.h	/^  char *rec_type, *displacement_type, *displacement_order, rec_fname[200], $/;"	m	struct:rect_controller
 do_disp_perturb	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
 do_rect	parvar.h	/^  int do_rect, displacement_intp, do_disp_perturb;$/;"	m	struct:rect_controller
-do_trim	io.h	/^  int do_trim=FALSE;$/;"	m	struct:particle_pos_data
+do_trim	io.h	/^  int do_trim; \/\/=FALSE;$/;"	m	struct:particle_pos_data
 dpart	parvar.h	/^  double *pmin, *pmax, *dpart;$/;"	m	struct:simulation_info
 drift	parvar.h	/^  double xmin[3], xmax[3], drift[3], drift_init[3];$/;"	m	struct:simulation_info
 drift_init	parvar.h	/^  double xmin[3], xmax[3], drift[3], drift_init[3];$/;"	m	struct:simulation_info
@@ -168,7 +168,7 @@ mat_inv_3d_float	misc.c	/^void mat_inv_3d_float(float mat[3][3], float imat[3][3
 mat_multiply_3d_float	misc.c	/^void mat_multiply_3d_float(float mat[3][3], float x[3], float y[3]){$/;"	f
 mlik_interp	maxlike_phi_rec.c	/^double mlik_interp(Interpar *mlik, double p){$/;"	f
 move_grid	partmove.c	/^void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){$/;"	f
-move_grid_general	partmove.c	/^void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si, double boxsize, long long ngrid, int s_intp){$/;"	f
+move_grid_general	partmove.c	/^void move_grid_general(SimInfo *s, Pdata_pos *moved, float *si) {$/;"	f
 move_particle	partmove.c	/^void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_intp){$/;"	f
 ng_trim	io.h	/^  long long ngrid, npart, ntrim, ng_trim, npart_trim;$/;"	m	struct:particle_pos_data
 ng_trim	parvar.h	/^  long long ng_trim, ntrim, npart_trim;$/;"	m	struct:simulation_info
@@ -184,7 +184,7 @@ npart_trim	parvar.h	/^  long long ng_trim, ntrim, npart_trim;$/;"	m	struct:simul
 ntrim	io.h	/^  long long ngrid, npart, ntrim, ng_trim, npart_trim;$/;"	m	struct:particle_pos_data
 ntrim	parvar.h	/^  long long ng_trim, ntrim, npart_trim;$/;"	m	struct:simulation_info
 num_files	gadget_read_snapshot.c	/^  int num_files;$/;"	m	struct:io_header_1	file:
-output_maxlikelihood_data	maxlike_phi_rec.c	/^void output_maxlikelihood_data(SimInfo *s, float *disp, float *disp_rec, float *d_rec, long long npart){$/;"	f
+output_maxlikelihood_data	maxlike_phi_rec.c	/^void output_maxlikelihood_data(SimInfo *s, char *fname, float *disp, float *disp_rec, $/;"	f
 output_real_disp_field	stat_model.c	/^void output_real_disp_field(float *disp, float *disp_lpt, size_t ngrid, char *fname_out){$/;"	f
 output_stat_disp_model	stat_model.c	/^void output_stat_disp_model(float *disp, float *disp_lpt, float *disp_mc, $/;"	f
 output_stat_disp_potential_model	stat_model.c	/^void output_stat_disp_potential_model(float *disp, float *disp_lpt, float *disp_mc, $/;"	f
