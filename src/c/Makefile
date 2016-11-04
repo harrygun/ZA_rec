@@ -131,8 +131,37 @@ ifeq ($(MACHINE),cita)
 
 endif
 
+#----------------------#
+ifeq ($(MACHINE),scinet-gpc)
+    MYLIBPATH= /home/p/pen/wangxin/workspace/lib/mylib
+    INIPATH = /home/p/pen/wangxin/workspace/lib/iniparser
+    #MPIPATH = 
+    #FFTWPATH = 
+
+    INILIB = -L$(INIPATH) -liniparser
+    MPIINCLUDE= $(MPIPATH)/include
+    #FFTWINCLUDE = $(FFTWPATH)/
+
+    GENLIB   = lmylib
+    FISHLIB  = lfish
+
+    #FFTWLIB = -lfftw3 -lm
+    #FFTWLIB = -lfftw3f -lfftw3 -lm
+
+    GSLIB = -L/home/p/pen/wangxin/workspace/lib/lib/ -lgsl -lgslcblas -lm
+    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)
 
 
+    ifeq ($(DO_OMP),yes)
+        CFLAGS = -fopenmp -g  -D _OMP_ -I /home/p/pen/wangxin/workspace/lib/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+        FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm
+
+    else
+        CFLAGS = -g -I /home/p/pen/wangxin/workspace/lib/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  
+        FFTWLIB = -lfftw3f -lfftw3 -lm
+    endif
+
+endif
 
 
 
@@ -143,7 +172,7 @@ endif
 #MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) 
 
 
-LIB  = $(INILIB) $(GSLIB) $(MYLIB)
+LIB  = $(INILIB)  $(MYLIB) $(GSLIB)
 #lib  = $(inilib) $(gslib) 
 
 
