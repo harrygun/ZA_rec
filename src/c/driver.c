@@ -137,8 +137,15 @@
       s.npart=pow(s.ngrid,3);
 
       // ->> simulation box drift <<- //
-      fname_offset=iniparser_getstring(dict, "Rect:simbox_drift_file_name", "x.dat");
-      load_simulation_offset(fname_offset, s.drift, s.drift_init);
+      fname_offset=iniparser_getstring(dict, "Rect:simbox_drift_file_name", "None");
+
+      if(strcmp(rc.displacement_type, "None")!=0) {
+        load_simulation_offset(fname_offset, s.drift, s.drift_init);
+	}
+      else{
+        s.drift[0]=s.drift[1]=s.drift[2]=0.;
+        s.drift_init[0]=s.drift_init[1]=s.drift_init[2]=0.;
+        }
 
       //->> 
       printf("boxsize=%lg, ngrid=%d, npart=%d\n",s.boxsize,s.ngrid,s.npart);
