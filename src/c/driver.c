@@ -235,7 +235,12 @@
     -----------------------------------------------------*/
     //  ->> loading particle data <<- //
     Pdata_pos *p=(Pdata_pos *)malloc(s.npart*sizeof(Pdata_pos));
-    load_cita_simulation_position_pid(particle_fname, pid_fname, p, s.npart);
+    if(strcmp(rc.displacement_type, "backward_displacement")==0 ) {
+      load_cita_simulation_position(particle_fname, p, s.npart);
+      }
+    else if(strcmp(rc.displacement_type, "backward_displacement")==0) {
+      load_cita_simulation_position_pid(particle_fname, pid_fname, p, s.npart);
+      }
 
     // ->> initialize the boundary of particles <<- //
     s.pmin=(double *)malloc(3*sizeof(double));

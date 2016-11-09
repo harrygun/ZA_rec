@@ -106,7 +106,8 @@ void load_cita_simulation_pid(char *fname, Pdata_pos *p, long long npart){
 
 
 // ->> load position & PID together <<- //
-void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, Pdata_pos *p, long long npart){
+void load_cita_simulation_position_pid(char *fname_pos, char *fname_pid, 
+                                       Pdata_pos *p, long long npart){
 
   // ->> load position first <<- //
   load_cita_simulation_position(fname_pos, p, npart);

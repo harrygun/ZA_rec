@@ -4,8 +4,6 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-AR	Makefile	/^AR=ar$/;"	m
-ARFLAGS	Makefile	/^ARFLAGS=-r$/;"	m
 ArrayAccess2D_n2	parvar.h	/^  #define ArrayAccess2D_n2(/;"	d
 ArrayAccess2D_n2_list	parvar.h	/^  #define ArrayAccess2D_n2_list(/;"	d
 ArrayAccess3D	parvar.h	/^  #define ArrayAccess3D(/;"	d
@@ -13,49 +11,9 @@ ArrayAccess3D_n3	parvar.h	/^  #define ArrayAccess3D_n3(/;"	d
 ArrayAccess4D_n4	parvar.h	/^  #define ArrayAccess4D_n4(/;"	d
 ArrayAccess5D_n5	parvar.h	/^  #define ArrayAccess5D_n5(/;"	d
 BoxSize	gadget_read_snapshot.c	/^  double BoxSize;$/;"	m	struct:io_header_1	file:
-CC	Makefile	/^  CC= gcc$/;"	m
-CC	Makefile	/^  CC= mpicc$/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -D_MPI_ -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -D_MPI_ -I \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -arch i386 -arch x86_64 -I \/Users\/harrygun\/workspace\/lib\/gsl\/include \\$/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -arch x86_64 -D _MPI_ -I \/Users\/harrygun\/workspace\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^	CFLAGS = -g -fPIC -I \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^        CFLAGS = -fopenmp -g  -D _OMP_ -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-CFLAGS	Makefile	/^        CFLAGS = -g -I \/home\/wangxin\/lib\/gsl\/include -I $(MYLIBPATH) -I $(INIPATH) -I $(MPIINCLUDE)  $/;"	m
-COMFFLAGS	Makefile	/^COMFFLAGS = -nofor_main    $/;"	m
-DO_MPI	Makefile	/^DO_MPI= no$/;"	m
-DO_OMP	Makefile	/^DO_OMP=yes$/;"	m
-FC	Makefile	/^FC= ifort$/;"	m
-FFTWLIB	Makefile	/^        FFTWLIB =  -lfftw3f_threads -lfftw3_threads -lfftw3f -lfftw3 -lm$/;"	m
-FFTWLIB	Makefile	/^        FFTWLIB = -lfftw3f -lfftw3 -lm$/;"	m
-FISHLIB	Makefile	/^    FISHLIB  = lfish$/;"	m
-FLIB	Makefile	/^FLIB = -L\/usr\/local\/lib  -lm   $/;"	m
-GENLIB	Makefile	/^    GENLIB   = lmylib$/;"	m
-GSLIB	Makefile	/^    GSLIB = -L \/home\/wangxin\/workspace\/lib\/gsl\/$(HOSTNAME)\/lib -lgsl -lgslcblas -lm$/;"	m
-GSLIB	Makefile	/^    GSLIB = -L\/Users\/harrygun\/workspace\/lib\/gsl\/lib -lgsl -lgslcblas -lm$/;"	m
-GSLIB	Makefile	/^    GSLIB = -L\/home\/wangxin\/lib\/gsl\/lib -lgsl -lgslcblas -lm$/;"	m
 Histopar2d	histogram.h	/^    } Histopar2d;$/;"	t	typeref:struct:__anon1
 HubbleParam	gadget_read_snapshot.c	/^  double HubbleParam;$/;"	m	struct:io_header_1	file:
-INILIB	Makefile	/^    INILIB = -L$(INIPATH) -liniparser$/;"	m
-INIPATH	Makefile	/^    INIPATH = \/Users\/harrygun\/workspace\/lib\/iniparser$/;"	m
-INIPATH	Makefile	/^    INIPATH = \/home\/wangxin\/lib\/iniparser$/;"	m
-INIPATH	Makefile	/^    INIPATH = \/home\/wangxin\/workspace\/lib\/iniparser\/$(HOSTNAME)$/;"	m
-INIPATH	Makefile	/^    INIPATH = \/home\/xwang\/workspace\/lib\/iniparser$/;"	m
 Id	gadget_read_snapshot.c	/^int *Id;$/;"	v
-LIB	Makefile	/^LIB  = $(INILIB) $(GSLIB) $(MYLIB)$/;"	m
-MPICC	Makefile	/^MPICC= mpicc$/;"	m
-MPIINCLUDE	Makefile	/^    MPIINCLUDE= $(MPIPATH)\/include$/;"	m
-MPIPATH	Makefile	/^    MPIPATH = \/Users\/harrygun\/software\/work\/mpich2\/mpich2-1.2.1p1$/;"	m
-MPIPATH	Makefile	/^    MPIPATH = \/home\/wangxin\/software\/mpich2\/gwln1$/;"	m
-MPIPATH	Makefile	/^    MPIPATH = \/usr\/mpi\/intel\/openmpi-1.4.3$/;"	m
-MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB)  $(FFTWLIB)$/;"	m
-MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)  -$(GENLIB) -$(FISHLIB) $/;"	m
-MYLIB	Makefile	/^    MYLIB = -L$(MYLIBPATH)\/$(HOSTNAME)  -$(GENLIB) -$(FISHLIB) $/;"	m
-MYLIBPATH	Makefile	/^    MYLIBPATH= \/Users\/harrygun\/workspace\/lib\/mylib$/;"	m
-MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/wangxin\/lib\/mylib$/;"	m
-MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/wangxin\/workspace\/lib\/mylib$/;"	m
-MYLIBPATH	Makefile	/^    MYLIBPATH= \/home\/xwang\/workspace\/lib\/mylib$/;"	m
 Mass	gadget_read_snapshot.c	/^  float Mass;$/;"	m	struct:particle_data	file:
 MemIdx3D	parvar.h	/^  #define MemIdx3D(/;"	d
 MemIdx3D_n3	parvar.h	/^  #define MemIdx3D_n3(/;"	d
@@ -68,7 +26,6 @@ P	gadget_read_snapshot.c	/^} *P;$/;"	v	typeref:struct:particle_data
 Pdata	io.h	/^  } Pdata;$/;"	t	typeref:struct:particle_data
 Pdata_pos	io.h	/^  } Pdata_pos;$/;"	t	typeref:struct:particle_pos_data
 Pos	gadget_read_snapshot.c	/^  float Pos[3];$/;"	m	struct:particle_data	file:
-RANLIB	Makefile	/^RANLIB=ranlib$/;"	m
 RectCtrl	parvar.h	/^  }RectCtrl;$/;"	t	typeref:struct:rect_controller
 Redshift	gadget_read_snapshot.c	/^double Time, Redshift;$/;"	v
 Rho	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
@@ -79,7 +36,6 @@ Time	gadget_read_snapshot.c	/^double Time, Redshift;$/;"	v
 Type	gadget_read_snapshot.c	/^  int Type;$/;"	m	struct:particle_data	file:
 U	gadget_read_snapshot.c	/^  float Rho, U, Temp, Ne;$/;"	m	struct:particle_data	file:
 Vel	gadget_read_snapshot.c	/^  float Vel[3];$/;"	m	struct:particle_data	file:
-WORKSPACE	Makefile	/^WORKSPACE = ..\/..\/workspace$/;"	m
 _ANISOTROPIC_INTERPOLATOR_SMOOTH_	parvar.h	/^  #define _ANISOTROPIC_INTERPOLATOR_SMOOTH_ /;"	d
 _GAUSSIAN_SMOOTH_	parvar.h	/^  #define _GAUSSIAN_SMOOTH_ /;"	d
 _H_BACKWARD_DISPLACEMENT_	backward_displacement.h	/^#define _H_BACKWARD_DISPLACEMENT_$/;"	d
