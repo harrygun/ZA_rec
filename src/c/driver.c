@@ -138,7 +138,7 @@
 
       // ->> simulation box drift <<- //
       fname_offset=iniparser_getstring(dict, "Rect:simbox_drift_file_name", "None");
-      if(strcmp(rc.fname_offset, "None")!=0) {
+      if(strcmp(fname_offset, "None")!=0) {
         load_simulation_offset(fname_offset, s.drift, s.drift_init);
 	}
       else{
