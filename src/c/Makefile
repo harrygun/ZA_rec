@@ -1,6 +1,6 @@
 #---------------------------#
-DO_MPI= no
-#DO_MPI= yes
+#DO_MPI= no
+DO_MPI= yes
 
 #-->
 DO_OMP=yes
