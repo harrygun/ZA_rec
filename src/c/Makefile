@@ -3,8 +3,8 @@ DO_MPI= no
 #DO_MPI= yes
 
 #-->
-DO_OMP=yes
-#DO_OMP=no
+#DO_OMP=yes
+DO_OMP=no
 
 ifeq ($(DO_MPI), yes)
   CC= mpicc
