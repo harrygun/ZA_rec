@@ -147,6 +147,25 @@ void load_simulation_offset(char *fname, double *offset_f, double *offset_i){
 
 
 
+void write_cita_simulation_pos(char *fname, Pdata_pos *p, long long npart){
+  FILE *fp;
+  long long n, npt;
+    
+  // ->> start to read <<- //
+  if(!(fp=fopen(fname, "wb"))) {
+    printf("can't open file `%s`\n", fname);
+    exit(0);
+    }
+ 
+  for(n=0; n<npart; n++) {
+    fwrite(&p[n].pos[0], sizeof(float), 3, fp);
+    }
+
+  fclose(fp);
+  return;
+  }
+
+
 void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){
   int size;
   FILE *fp=fopen(fname, "r");
@@ -165,9 +184,9 @@ void load_scalar_map(char *fname, float *m, long long ngrid, char *dtype){
 
 
 
-
+/*
 void cp_pdata_info(SimInfo *s, Pdata_pos *p) {
-  /* ->> copy information of simulation <<- */
+  // ->> copy information of simulation <<- 
 
   p->npart=s->npart;   
   p->ngrid=s->ngrid; 
@@ -183,12 +202,12 @@ void cp_pdata_info(SimInfo *s, Pdata_pos *p) {
 
   return;
   }
+*/
 
 
-
-
+/*
 void pdata_access_trim(Pdata_pos *p, Pdata_pos r, size_t ip, size_t i){
-  /*->> call this routine if need to trim data, store returned in 'r' <<- */
+  //->> call this routine if need to trim data, store returned in 'r' <<- //
   size_t ip_old; 
   if(p->do_trim==TRUE)  {
 
@@ -201,9 +220,8 @@ void pdata_access_trim(Pdata_pos *p, Pdata_pos r, size_t ip, size_t i){
 
 
 
-
 void pdata_trim(Pdata_pos *p, Pdata_pos *r){
-  /*->> trim the pdata and stored in 'r' <<- */
+  //->> trim the pdata and stored in 'r' <<- //
   long long ip, pid, i, idx[3];
 
   if(p->do_trim!=TRUE) {
@@ -228,3 +246,4 @@ void pdata_trim(Pdata_pos *p, Pdata_pos *r){
   }
 
 
+*/

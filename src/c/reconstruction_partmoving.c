@@ -99,6 +99,7 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
   fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
   fclose(fp);
 
+  char *fn_moved="pos_moved.dat";
 
   /* ->> moving particles <<- */
   if(do_disp==TRUE) {
@@ -107,6 +108,7 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     // ->> moving particles <<- //
     move_particle(s, p, p_disp, disp, rc->displacement_intp);
 
+    write_cita_simulation_pos(fn_moved, p_disp, s->npart);
 
     // ->> density field from displaced particles <<- //
     dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz, NULL); 

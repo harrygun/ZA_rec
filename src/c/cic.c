@@ -89,6 +89,7 @@ double density(Pdata_pos *p, float *d, double mass, double pmin[3], double pmax[
         ArrayAccess3D(d, ngridx, i, j, k)=0.0;
   masstot=0.0;
 
+
   #ifdef _OMP_
   #pragma omp parallel for private(ip,i,j,k,i1,j1,k1,n,xc,yc,zc,pos_norm,tx,ty,tz,dx,dy,dz)
   #endif

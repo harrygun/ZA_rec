@@ -51,6 +51,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   //-> move particles <<- //
   long long i, ip, m, n, l, m1, n1, l1, idx[3];
   float moved_pos, dsi, dp[3], v[2][2][2], xmin, xmax, dx;
+  float disp__;
 
   // ->> box boundary <<- //
   xmin=0.; xmax=s->boxsize;
@@ -58,6 +59,12 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
        
   printf("->> displaceing particles, xmin=%f, xmax=%f, dx=%f\n", xmin, xmax, dx);
   //printf("->> displaceing particles ... \n");
+  //
+
+  //FILE *fp=fopen("si.dat", "wb");
+  //fwrite(si, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  //fclose(fp);
+
 
   #ifdef _OMP_
   #pragma omp parallel for private(ip,i,m,n,l,m1,n1,l1,idx,moved_pos,dsi,dp,v)
@@ -82,6 +89,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
       for(i=0; i<3; i++){
         moved_pos=p[ip].pos[i]+ArrayAccess4D_n4(si, 3, s->ngrid, s->ngrid, s->ngrid, i, idx[0], idx[1], idx[2]);
+	
 
         // ->> periodic boundary condition <<- //
 	if(moved_pos<0){
@@ -152,6 +160,7 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
   //#define _MOVED_PART_OUTPUT_
   #ifdef _MOVED_PART_OUTPUT_
   FILE *fp=fopen(s->test_fname, "wb");
+  //fp=fopen("si_after.dat", "wb");
 
   for(ip=0; ip<s->npart; ip++) 
     fwrite(moved[ip].pos, sizeof(float), 3, fp);
@@ -268,7 +277,6 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
       }
 
     // ->> interpolate shift field onto particle position <<- //
-    /*
     else if(s_intp==TRUE) {
       // ->> ("particle-moving interpolation.\n") <<- //
       // ->> distance to grid <<- //
@@ -316,7 +324,7 @@ void general_particle_mover(SimInfo *s, Pdata_pos *p, Pdata_pos *moved,
 	  moved[ip].pos[i]=moved_pos; }
         }
       }
-    */
+
     else{abort();}
 
     }

@@ -252,9 +252,8 @@
       }
     
     //->> 
-    //fp=fopen("", "wb");
-    //fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-    //fclose(fp);
+    char *fn_pos="pos_out.dat";
+    write_cita_simulation_pos(fn_pos, p, s.npart);
 
 
     // ->> initialize the boundary of particles <<- //
@@ -360,7 +359,7 @@
     s.bsize_trim=bsize_trim;
 
     //->> store trim info in 'Pdata_pos'
-    cp_pdata_info(&s, p);
+    //cp_pdata_info(&s, p);
 
     float *drec, *d_disp, *d_shift;
     float *disp, *disp_lpt, *disp_mc;   //->>displacement field
