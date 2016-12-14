@@ -251,9 +251,6 @@
       myerr("Simulation loading error.", FALSE);
       }
     
-    //->> 
-    char *fn_pos="pos_out.dat";
-    write_cita_simulation_pos(fn_pos, p, s.npart);
 
 
     // ->> initialize the boundary of particles <<- //
