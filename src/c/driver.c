@@ -252,9 +252,9 @@
       }
     
     //->> 
-    fp=fopen("", "wb");
-    fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
-    fclose(fp);
+    //fp=fopen("", "wb");
+    //fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+    //fclose(fp);
 
 
     // ->> initialize the boundary of particles <<- //
