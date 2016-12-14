@@ -94,9 +94,11 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     }
 
 
-
   FILE *fp;
-  fp=fopen("p_disp.dat", "wb");
+  fp=fopen("disp.dat", "wb");
+  fwrite(disp, sizeof(float), s->ngrid*s->ngrid*s->ngrid*3, fp);
+  fclose(fp);
+
 
   /* ->> moving particles <<- */
   if(do_disp==TRUE) {
@@ -105,7 +107,6 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
     // ->> moving particles <<- //
     move_particle(s, p, p_disp, disp, rc->displacement_intp);
 
-    fwrite(drec, sizeof(float), s->ngrid*s->ngrid*s->ngrid, fp);
 
     // ->> density field from displaced particles <<- //
     dm_disp=cic_density(p_disp,d_disp,s->boxsize,s->particle_mass,s->npart,s->ngrid_xyz, NULL); 
@@ -138,6 +139,5 @@ void reconstruction_partmover(RectCtrl *rc, SimInfo *s, Pdata_pos *p, float *d,
 
 
   fftwf_free(disp);
-  fclose(fp);
   return;
   }
