@@ -251,6 +251,11 @@
       myerr("Simulation loading error.", FALSE);
       }
     
+    //->> 
+    fp=fopen("", "wb");
+    fwrite(drec, sizeof(float), s.ngrid*s.ngrid*s.ngrid, fp);
+    fclose(fp);
+
 
     // ->> initialize the boundary of particles <<- //
     s.pmin=(double *)malloc(3*sizeof(double));
