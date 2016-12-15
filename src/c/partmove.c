@@ -179,8 +179,8 @@ void move_particle(SimInfo *s, Pdata_pos *p, Pdata_pos *moved, float *si, int s_
 
 void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   //->> grid moving, no need to generate the grid <<- //
-  long long i, j, k, m, ip;
-  float grid[3], xmin, xmax, dx, moved_pos;
+  long long i, j, k, m, ip, idx[3];
+  float grid[3], pos[3], xmin, xmax, dx, moved_pos;
 
   //->> do not need to interpolate, on grid already <<- //
   s_intp=FALSE;
@@ -190,7 +190,54 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
   dx=(xmax-xmin)/(float)s->ngrid;
 
   printf("\n->> shifting uniform grid ...\n");
+  
 
+  FILE *fp=fopen("/mnt/scratch-lustre/xwang/data/baorec/random/random_ng512_bx1024.dat", "rb");
+  float *rand=(float *)malloc(sizeof(float)*s->npart*3);
+  fread(rand, sizeof(float), s->npart*3, fp);
+  fclose(fp);
+
+
+  #ifdef _OMP_
+  #pragma omp parallel for private(i,ip,pos,idx,moved_pos)
+  #endif
+  for(ip=0; ip<s->npart; ip++) {
+
+    // ->> random particle 
+    pos[0]= rand[ip];            
+    pos[1]= rand[s->npart+ip];   
+    pos[2]= rand[2*s->npart+ip]; 
+
+
+    // ->> position index <<- //
+    for(i=0; i<3; i++){
+
+      idx[i]=(long long)(((double)pos[i])/s->dpart[i]); 
+      if(idx[i]==s->ngrid) {idx[i]=0;}
+
+      if((idx[i]<0)||(idx[i]>s->ngrid-1)) {
+        printf("move_part idx error: %d (ip=%d, i=%d), ", idx[i], ip, i); 
+	printf(" %f, %f, %f, %f, foat(idx)=%f\n", pos[i], (float)s->pmin[i], (float)s->pmax[i], 
+	       (float)s->dpart[i], (pos[i]-(float)s->pmin[i])/(float)s->dpart[i]);
+	fflush(stdout);}
+      }
+
+      for(i=0; i<3; i++)  {
+        moved_pos=pos[i]+ArrayAccess4D_n4(si, 3, s->ngrid, s->ngrid, s->ngrid, i, idx[0], idx[1], idx[2]);
+      
+        // ->> periodic boundary condition <<- //
+        if(moved_pos<0){
+          moved[ip].pos[i]=moved_pos+xmax; }
+        else if(moved_pos>=xmax){
+          moved[ip].pos[i]=moved_pos-xmax; }
+        else{
+           moved[ip].pos[i]=moved_pos; }
+         }
+
+    }
+
+
+  /*
   #ifdef _OMP_
   #pragma omp parallel for private(i,j,k,m,ip,grid,moved_pos)
   #endif
@@ -203,9 +250,9 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
           // ->> grid index <<- //
           ip=MemIdx3D(s->ngrid, i, j, k);
 
-	  grid[0]=xmin+i*dx;
-	  grid[1]=xmin+j*dx;
-	  grid[2]=xmin+k*dx;
+	  grid[0]= rand[ip];            //xmin+i*dx;
+	  grid[1]= rand[s->npart+ip];   //xmin+j*dx;
+	  grid[2]= rand[2*s->npart+ip]; //xmin+k*dx;
 
 	  for(m=0; m<3; m++)  {
             moved_pos=grid[m]+ArrayAccess2D_n2(si, 3, s->npart, m, ip);
@@ -228,6 +275,10 @@ void move_grid(SimInfo *s, Pdata_pos *moved, float *si, int s_intp){
           }
         else{abort();}
       }
+  */
+
+
+
 
   printf("->> shifting grid is done.\n");
   return;

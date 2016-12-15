@@ -98,6 +98,7 @@ void poisson_solver_float(float *d, float *phi, float *phi_i, float *phi_ij,
         if(smooth_type==_TOPHAT_SMOOTH_) { W=1.; }
         else if(smooth_type==_GAUSSIAN_SMOOTH_) {
           W=exp(-(sin2x+sin2y+sin2z)*smooth_R*smooth_R/2.); 
+          //W=exp(-(kx*kx+ky*ky+kz*kz)*smooth_R*smooth_R/2.); 
 	  }
         else { 
           printf("Poisson_solver window function error.\n");  fflush(stdout);
